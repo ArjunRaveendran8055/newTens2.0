@@ -52,14 +52,9 @@ export function DashboardNavbar() {
           <div className="search-bar mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
           </div>
-          <IconButton
-            variant="text"
-            color="blue-gray"
-            className="grid xl:hidden"
-            onClick={() => setOpenSidenav(dispatch, !openSidenav)}
-          >
-            <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
-          </IconButton>
+
+          
+
           <a href="#">
             <Button
               variant="text"
@@ -155,6 +150,8 @@ export function DashboardNavbar() {
               </MenuItem>
             </MenuList>
           </Menu>
+          
+
           <IconButton
             variant="text"
             color="blue-gray"
@@ -162,6 +159,16 @@ export function DashboardNavbar() {
           >
             <Cog6ToothIcon className="h-5 w-5 text-blue-gray-500" />
           </IconButton>
+          <IconButton
+            variant="text"
+            color="blue-gray"
+            className="grid xl:hidden"
+            onClick={() => setOpenSidenav(dispatch, !openSidenav)}
+          >
+            <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
+          </IconButton>
+
+
         </div>
       </div>
     </Navbar>
