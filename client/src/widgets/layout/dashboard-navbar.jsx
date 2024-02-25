@@ -22,29 +22,22 @@ import {
 } from "@heroicons/react/24/solid";
 import {
   useMaterialTailwindController,
-  setOpenConfigurator,
-  setOpenSidenav,
 } from "@/context";
 import { useDispatch } from "react-redux";
 import { setIsOpen } from "../../components/features/sideBar/sideNavSlice";
+import { setOpenConfigurator } from "../../components/features/configurator/configuratorSlice";
 
 export function DashboardNavbar() {
 
 
-
-  const [controller, dispatch] = useMaterialTailwindController();
+  const dispatch=useDispatch()
+  const [controller, ] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
-  const { pathname } = useLocation();
-  const [layout, page] = pathname.split("/").filter((el) => el !== "");
-
+  
   return (
     <Navbar
-      color={fixedNavbar ? "white" : "transparent"}
-      className={`rounded-xl transition-all ${
-        fixedNavbar
-          ? "sticky top-4 z-40 py-3 shadow-md shadow-blue-gray-500/5"
-          : "px-0 py-1"
-      }`}
+      color="white" 
+      className={`rounded-xl transition-all  top-4 z-40 py-3 shadow-md shadow-blue-gray-500/5`}
       fullWidth
       blurred={fixedNavbar}
     >
@@ -160,7 +153,7 @@ export function DashboardNavbar() {
           <IconButton
             variant="text"
             color="blue-gray"
-            onClick={() => setOpenConfigurator(dispatch, true)}
+            onClick={() => dispatch(setOpenConfigurator())}
           >
             <Cog6ToothIcon className="h-5 w-5 text-blue-gray-500" />
           </IconButton>
@@ -168,12 +161,10 @@ export function DashboardNavbar() {
             variant="text"
             color="blue-gray"
             className="grid xl:hidden"
-            onClick={() => {}}
+            onClick={() => {dispatch(setIsOpen())}}
           >
             <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
           </IconButton>
-
-
         </div>
       </div>
     </Navbar>

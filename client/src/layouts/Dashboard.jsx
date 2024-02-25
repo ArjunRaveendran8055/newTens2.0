@@ -4,16 +4,21 @@ import { IconButton } from "@material-tailwind/react";
 import {
   
   DashboardNavbar,
-  Configurator,
+
   Footer,
 } from "@/widgets/layout";
 import routes from "@/routes";
-import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import { useMaterialTailwindController,  } from "@/context";
 import Sidenav from "../components/features/sideBar/sidenav";
+import Configurator from "../components/features/configurator/configurator";
+import { setOpenConfigurator } from "../components/features/configurator/configuratorSlice";
+import { useDispatch } from "react-redux";
+
 
 
 export function Dashboard() {
-  const [controller, dispatch] = useMaterialTailwindController();
+  const dispatch=useDispatch()
+  const [controller] = useMaterialTailwindController();
   const { sidenavType } = controller;
 
   return (
@@ -28,13 +33,13 @@ export function Dashboard() {
       />
       <div className="p-4 xl:ml-80">
         <DashboardNavbar />
-        <Configurator />
+        <Configurator/>
         <IconButton
           size="lg"
           color="white"
           className="fixed bottom-8 right-8 z-40 rounded-full shadow-blue-gray-900/10"
           ripple={false}
-          onClick={() => setOpenConfigurator(dispatch,true)}
+          onClick={() => dispatch(setOpenConfigurator())}
         >
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>

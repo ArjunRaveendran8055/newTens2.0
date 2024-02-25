@@ -8,12 +8,8 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-
-
 export function Sidenav({  brandName, routes }) {
-
-  const {isOpen}=useSelector(state=>state.sideNav)
-  console.log("isOpen is: ",isOpen);
+const {isOpen}=useSelector(state=>state.sideNav)
   return (
     <>
       <aside
@@ -88,8 +84,6 @@ export function Sidenav({  brandName, routes }) {
           </ul>
         ))}
       </div>
-
-
     </aside>
 
 
@@ -98,7 +92,7 @@ export function Sidenav({  brandName, routes }) {
       }
 
 <aside
-      className={`sm:block xl:hidden translate-x-0
+      className={` sm:block xl:hidden ${!isOpen ? '-translate-x-80':'translate-x-0'}
        fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-white`}
     >
       <div

@@ -6,14 +6,14 @@ import {
   Switch,
   Typography,
   Chip,
+  useSelect,
 } from "@material-tailwind/react";
 import {
   useMaterialTailwindController,
-  setOpenConfigurator,
-  setSidenavColor,
-  setSidenavType,
-  setFixedNavbar,
+ 
 } from "@/context";
+import { useDispatch, useSelector } from "react-redux";
+import { setOpenConfigurator } from "./configuratorSlice";
 
 function formatNumber(number, decPlaces) {
   decPlaces = Math.pow(10, decPlaces);
@@ -41,9 +41,12 @@ function formatNumber(number, decPlaces) {
 }
 
 export function Configurator() {
-  const [controller, dispatch] = useMaterialTailwindController();
-  const { openConfigurator, sidenavColor, sidenavType, fixedNavbar } =
-    controller;
+  
+  const dispatch=useDispatch()
+  
+  const {openConfigurator}=useSelector(state=>state.configurator)
+  const [controller,] = useMaterialTailwindController();
+  const { sidenavColor, sidenavType, fixedNavbar } = controller;
   const [stars, setStars] = React.useState(0);
 
   const sidenavColors = {
@@ -81,7 +84,7 @@ export function Configurator() {
         <IconButton
           variant="text"
           color="blue-gray"
-          onClick={() => setOpenConfigurator(dispatch, false)}
+          onClick={() => {dispatch(setOpenConfigurator())}}
         >
           <XMarkIcon strokeWidth={2.5} className="h-5 w-5" />
         </IconButton>
@@ -100,7 +103,7 @@ export function Configurator() {
                 } ${
                   sidenavColor === color ? "border-black" : "border-transparent"
                 }`}
-                onClick={() => setSidenavColor(dispatch, color)}
+                onClick={() => {}}
               />
             ))}
           </div>
@@ -115,19 +118,19 @@ export function Configurator() {
           <div className="mt-3 flex items-center gap-2">
             <Button
               variant={sidenavType === "dark" ? "gradient" : "outlined"}
-              onClick={() => setSidenavType(dispatch, "dark")}
+              onClick={() => {}}
             >
               Dark
             </Button>
             <Button
               variant={sidenavType === "transparent" ? "gradient" : "outlined"}
-              onClick={() => setSidenavType(dispatch, "transparent")}
+              onClick={() => {}}
             >
               Transparent
             </Button>
             <Button
               variant={sidenavType === "white" ? "gradient" : "outlined"}
-              onClick={() => setSidenavType(dispatch, "white")}
+              onClick={() => {}}
             >
               White
             </Button>
@@ -142,7 +145,7 @@ export function Configurator() {
             <Switch
               id="navbar-fixed"
               value={fixedNavbar}
-              onChange={() => setFixedNavbar(dispatch, !fixedNavbar)}
+              onChange={() => {}}
             />
           </div>
           <hr />
