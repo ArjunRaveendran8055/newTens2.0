@@ -25,8 +25,13 @@ import {
   setOpenConfigurator,
   setOpenSidenav,
 } from "@/context";
+import { useDispatch } from "react-redux";
+import { setIsOpen } from "../../components/features/sideBar/sideNavSlice";
 
 export function DashboardNavbar() {
+
+
+
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
   const { pathname } = useLocation();
@@ -163,7 +168,7 @@ export function DashboardNavbar() {
             variant="text"
             color="blue-gray"
             className="grid xl:hidden"
-            onClick={() => setOpenSidenav(dispatch, !openSidenav)}
+            onClick={() => {}}
           >
             <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
           </IconButton>
