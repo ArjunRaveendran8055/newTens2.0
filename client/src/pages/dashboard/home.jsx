@@ -35,7 +35,7 @@ export function Home() {
           <StatisticsCard
             key={title}
             {...rest}
-            title="home"
+            title={title}
             icon={React.createElement(icon, {
               className: "w-6 h-6 text-white",
             })}

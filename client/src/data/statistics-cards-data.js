@@ -20,12 +20,12 @@ export const statisticsCardsData = [
   {
     color: "gray",
     icon: UsersIcon,
-    title: "Today's Users",
-    value: "2,300",
+    title: "STUDENTS",
+    value: "CRM",
     footer: {
       color: "text-green-500",
       value: "+3%",
-      label: "than last month",
+      label: "usage than last month",
     },
   },
   {
