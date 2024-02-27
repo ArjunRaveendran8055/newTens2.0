@@ -11,7 +11,7 @@ import {
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { authorsTableData, projectsTableData } from "@/data";
 
-export function Tables() {
+export function Table() {
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
@@ -218,4 +218,4 @@ export function Tables() {
   );
 }
 
-export default Tables;
+export default Table;

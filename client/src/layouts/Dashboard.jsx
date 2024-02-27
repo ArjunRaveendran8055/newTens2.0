@@ -8,7 +8,7 @@ import {
   Footer,
 } from "@/widgets/layout";
 import routes from "@/routes";
-import { useMaterialTailwindController,  } from "@/context";
+
 import Sidenav from "../components/features/sideBar/sidenav";
 import Configurator from "../components/features/configurator/configurator";
 import { setOpenConfigurator } from "../components/features/configurator/configuratorSlice";
@@ -44,7 +44,7 @@ export function Dashboard() {
         <div className="text-blue-gray-600">
 
         {
-          //<=.......type your content down here.......=>
+          //<=.......put your Outlet Component down here.......=>
         }
           <Outlet/>
           <Footer />
