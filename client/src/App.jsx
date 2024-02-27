@@ -7,8 +7,6 @@ import Table from "./pages/dashboard/Table";
 import SignUp from "./pages/auth/SignUp";
 import ToastContainer from "./components/features/toast/ToastContainer";
 
-
-
 function App() {
   return (
     <div className="relative">

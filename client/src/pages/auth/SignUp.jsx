@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setToastView } from "../../components/features/toast/toastSlice";
 
 const SignUp = () => {
+  const disptach=useDispatch()
   const [user, setUser] = useState({
     fName: "",
     lName: "",
@@ -12,7 +15,18 @@ const SignUp = () => {
   console.log("user details : ", user.cPassword);
 
   const signUpHandler=()=>{
-    console.log(user);
+    
+    //check for empty fields
+    if(user.fName.length===0 || user.lName.length===0 || user.email.length===0 || user.date.length===0 || user.password.length===0 || user.cPassword.length===0){
+      return disptach(setToastView({type:"error",msg:"enter complete details."}))
+    }
+
+    //checking for password matching
+
+    if(user.password !==user.cPassword){
+      return disptach(setToastView({type:"error",msg:"Password Missmatch."}))
+    }
+
   }
 
   return (

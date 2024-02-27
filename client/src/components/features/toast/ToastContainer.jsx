@@ -20,17 +20,17 @@ const ToastContainer = () => {
   z-50 flex justify-center items-center
   `}
     >
-      <div className="toast-container bg-white sm:px-2 md:px-3 lg:px-32 border-[1px] shadow-xl rounded-md flex flex-col items-center">
+      <div className="toast-container bg-white sm:px-10 md:px-12 lg:px-32 border-[1px] shadow-xl rounded-md flex flex-col items-center">
         <div
           className={`uppercase mt-[2px] font-enriq text-xs ${
-            type === "success" ? "text-green" : " text-crimson"
+            type === "success" ? "text-custGreen" : " text-custcrimson"
           }`}
         >
           ! {type}_MSG !
         </div>
         <div
           className={`pt-10 pb-5 font-Playfiar sm:text-md md:text-2xl flex flex-row justify-center items-center ${
-            type === "success" ? "text-green" : " text-orange"
+            type === "success" ? "text-custGreen" : " text-custorange"
           }`}
         >
           {msg}
@@ -42,7 +42,7 @@ const ToastContainer = () => {
         </div>
         <div>
           <button
-            className="mb-4 py-1 px-2 border-[1px] border-black rounded-xl bg-blue  font-semibold"
+            className="mb-4 py-1 px-2 border-[1px] border-black rounded-xl bg-custblue  font-semibold"
             onClick={submitHandler}
           >
             {type === "error" ? <p>OKAY</p> : <p>DONE</p>}
