@@ -16,11 +16,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate persistor={persistor}>
-      <ThemeProvider>
-        <MaterialTailwindControllerProvider>
+      
+        
           <App />
-        </MaterialTailwindControllerProvider>
-      </ThemeProvider>
+       
       </PersistGate>
       </Provider>
     </BrowserRouter>

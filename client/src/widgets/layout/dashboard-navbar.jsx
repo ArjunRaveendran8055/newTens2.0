@@ -4,7 +4,6 @@ import {
   Typography,
   Button,
   IconButton,
-  Breadcrumbs,
   Input,
   Menu,
   MenuHandler,
@@ -20,9 +19,7 @@ import {
   CreditCardIcon,
   Bars3Icon,
 } from "@heroicons/react/24/solid";
-import {
-  useMaterialTailwindController,
-} from "@/context";
+
 import { useDispatch } from "react-redux";
 import { setIsOpen } from "../../components/features/sideBar/sideNavSlice";
 import { setOpenConfigurator } from "../../components/features/configurator/configuratorSlice";
@@ -31,15 +28,14 @@ export function DashboardNavbar() {
 
 
   const dispatch=useDispatch()
-  const [controller, ] = useMaterialTailwindController();
-  const { fixedNavbar, openSidenav } = controller;
-  
+
+
   return (
     <Navbar
       color="white" 
       className={`rounded-xl transition-all  top-4 z-40 py-3 shadow-md shadow-blue-gray-500/5`}
       fullWidth
-      blurred={fixedNavbar}
+      
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
         <div className="capitalize">

@@ -17,17 +17,7 @@ export const statisticsCardsData = [
       label: "than last week",
     },
   },
-  {
-    color: "gray",
-    icon: UsersIcon,
-    title: "STUDENTS",
-    value: "CRM",
-    footer: {
-      color: "text-green-500",
-      value: "+3%",
-      label: "usage than last month",
-    },
-  },
+
   {
     color: "gray",
     icon: UserPlusIcon,
@@ -48,6 +38,17 @@ export const statisticsCardsData = [
       color: "text-green-500",
       value: "+5%",
       label: "than yesterday",
+    },
+  },
+  {
+    color: "gray",
+    icon: UsersIcon,
+    title: "STUDENTS",
+    value: "CRM",
+    footer: {
+      color: "text-green-500",
+      value: "+3%",
+      label: "usage than last month",
     },
   },
 ];
