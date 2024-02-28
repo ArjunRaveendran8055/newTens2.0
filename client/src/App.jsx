@@ -6,6 +6,8 @@ import Notifications from "./pages/dashboard/Notifications";
 import Table from "./pages/dashboard/Table";
 import SignUp from "./pages/auth/SignUp";
 import ToastContainer from "./components/features/toast/ToastContainer";
+import Search from "./components/search/Search";
+
 
 function App() {
   return (

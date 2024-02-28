@@ -63,4 +63,37 @@ export const routes = [
   },
 ];
 
+export const TAroutes = [
+  {
+    layout: "dashboard",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "dashboard",
+        path: "/",
+        
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "profile",
+        path: "/profile",
+        
+      },
+    
+    ],
+  },
+  {
+    title: "TA functions",
+    layout: "auth",
+    pages: [
+      {
+        icon: <ServerStackIcon {...icon} />,
+        name: "Search",
+        path: "/pro",
+        
+      },
+    ],
+  },
+];
+
 export default routes;
