@@ -7,6 +7,7 @@ import Table from "./pages/dashboard/Table";
 import SignUp from "./pages/auth/SignUp";
 import ToastContainer from "./components/features/toast/ToastContainer";
 import Search from "./components/search/Search";
+import SearchPage from "./pages/dashboard/SearchPage";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/profile" element={<Profile/>}/>
         <Route path="/notifications" element={<Notifications/>}/>
         <Route path="/tables" element={<Table/>} />
+        <Route path="/search" element={<SearchPage/>} />
       </Route> 
     </Routes>
     </div>

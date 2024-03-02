@@ -89,7 +89,7 @@ export const TAroutes = [
       {
         icon: <ServerStackIcon {...icon} />,
         name: "Search",
-        path: "/pro",
+        path: "/search",
         
       },
     ],
