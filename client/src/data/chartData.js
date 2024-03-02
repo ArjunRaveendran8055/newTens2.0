@@ -1,6 +1,4 @@
 import chartsConfig from "../configs/chartsConfig";
-
-
 const websiteViewsChart = {
   type: "bar",
   height: 220,

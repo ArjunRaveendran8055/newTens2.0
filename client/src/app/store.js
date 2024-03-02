@@ -4,6 +4,7 @@ import {persistStore,persistReducer} from "redux-persist"
 import sideNavReducer from "../components/features/sideBar/sideNavSlice"
 import configuratorSlice from "../components/features/configurator/configuratorSlice"
 import toastReducer from "../components/features/toast/toastSlice"
+import userReducer from "../components/features/user/userSlice"
 configuratorSlice
 const persistConfig={
     key:'root',
@@ -12,12 +13,14 @@ const persistConfig={
 
 const persistedSideNavReducer=persistReducer(persistConfig,sideNavReducer)
 const persistedConfiguratorReducer=persistReducer(persistConfig,configuratorSlice)
+const persistedUser=persistReducer(persistConfig,userReducer)
 
 
 const store=configureStore({
     reducer:{
         sideNav:persistedSideNavReducer,
         configurator:persistedConfiguratorReducer,
+        user:persistedUser,
         toast:toastReducer
  
     },
