@@ -25,30 +25,20 @@ import { setIsOpen } from "../../components/features/sideBar/sideNavSlice";
 import { setOpenConfigurator } from "../../components/features/configurator/configuratorSlice";
 
 export function DashboardNavbar() {
-
-
-  const dispatch=useDispatch()
-
+  const dispatch = useDispatch();
 
   return (
     <Navbar
-      color="white" 
+      color="white"
       className={`rounded-xl transition-all  top-4 z-40 py-3 shadow-md shadow-blue-gray-500/5`}
       fullWidth
-      
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
-        <div className="capitalize">
-        
-          
-        </div>
+        <div className="capitalize"></div>
         <div className="flex items-center">
           <div className="search-bar mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
           </div>
-
-          
-
           <a href="#">
             <Button
               variant="text"
@@ -144,8 +134,6 @@ export function DashboardNavbar() {
               </MenuItem>
             </MenuList>
           </Menu>
-          
-
           <IconButton
             variant="text"
             color="blue-gray"
@@ -157,7 +145,9 @@ export function DashboardNavbar() {
             variant="text"
             color="blue-gray"
             className="grid xl:hidden"
-            onClick={() => {dispatch(setIsOpen())}}
+            onClick={() => {
+              dispatch(setIsOpen());
+            }}
           >
             <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
           </IconButton>
