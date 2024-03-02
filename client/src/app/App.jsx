@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "../layouts/Dashboard";
-import { Home } from "../pages/dashboard";
+
 import Profile from "../pages/dashboard/profile";
 import Notifications from "../pages/dashboard/Notifications";
 import Table from "../pages/dashboard/Table";
@@ -11,10 +11,11 @@ import axios from "axios";
 import ActivationPage from "../pages/auth/ActivationPage";
 import Login from "../pages/auth/Login";
 import SearchPage from "../pages/dashboard/SearchPage";
-
+import Home from "../pages/dashboard/Home";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
+
 
   return (
     <div className="">
@@ -32,6 +33,7 @@ function App() {
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/tables" element={<Table />} />
           <Route path="/search" element={<SearchPage/>}/>
+          <Route path="/abc" element={<Login/>} />
         </Route>
       </Routes>
     </div>

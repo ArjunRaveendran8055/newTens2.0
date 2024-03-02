@@ -6,7 +6,7 @@ import {
   ServerStackIcon,
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
-import { Home, Profile,  Notifications } from "@/pages/dashboard";
+
 
 
 const icon = {

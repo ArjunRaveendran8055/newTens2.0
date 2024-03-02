@@ -1,15 +1,16 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { IconButton } from "@material-tailwind/react";
-import { DashboardNavbar, Footer } from "@/widgets/layout";
-import routes from "@/routes";
-
 import Sidenav from "../components/features/sideBar/sidenav";
 import Configurator from "../components/features/configurator/configurator";
 import { setOpenConfigurator } from "../components/features/configurator/configuratorSlice";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import axios from "axios";
+import DashboardNavbar from "../widgets/layout/DashboardNavbar";
+import Footer from "../widgets/layout/footer";
+import routes from "../routes";
+
 
 export function Dashboard() {
   let flag = false;
@@ -21,7 +22,6 @@ export function Dashboard() {
       .then((res) => {
         console.log(res.data.data);
         // if(res.data)
-        
       })
       .catch((err) => {
         console.log(err);
@@ -38,7 +38,6 @@ export function Dashboard() {
         console.log(err);
       });
   };
-  
 
   useEffect(() => {
     if (!flag) {

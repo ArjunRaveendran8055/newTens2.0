@@ -9,7 +9,10 @@ import {
   Progress,
 } from "@material-tailwind/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-import { authorsTableData, projectsTableData } from "@/data";
+
+import authorsTableData from "../../data/authorsTableData";
+import projectsTableData from "../../data/projectsTableData";
+
 
 export function Table() {
   return (
