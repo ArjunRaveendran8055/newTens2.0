@@ -132,6 +132,9 @@ const loginController = asyncWrapper(async (req, res, next) => {
 const verifyUserController = asyncWrapper(async (req, res, next) => {
   //console.log("ippa sheriyakki thara..");
   const cookie = req.headers.cookie;
+  if(!cookie){
+    throw new AppError(400,"Something wrong With Cookie")
+  }
   const token = cookie.split("=")[1];
   //console.log(token);
   const user = jwtVerifyToken(token);
@@ -144,6 +147,9 @@ const verifyUserController = asyncWrapper(async (req, res, next) => {
 
 const refreshTokenController = asyncWrapper(async (req, res, next) => {
   const cookie = req.headers.cookie;
+  if(!cookie){
+    throw new AppError(400,"Something wrong With Cookie")
+  }
   const token = cookie.split("=")[1];
   const user = jwtVerifyToken(token);
   if (!user) {

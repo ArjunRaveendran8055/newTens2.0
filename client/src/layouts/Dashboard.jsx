@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { IconButton } from "@material-tailwind/react";
 import Sidenav from "../components/features/sideBar/sidenav";
@@ -10,21 +10,25 @@ import axios from "axios";
 import DashboardNavbar from "../widgets/layout/DashboardNavbar";
 import Footer from "../widgets/layout/footer";
 import routes from "../routes";
+import { setToastView } from "../components/features/toast/toastSlice";
 
 
 export function Dashboard() {
   let flag = false;
-
+  const navigate=useNavigate()
+  const dispatch=useDispatch()
   //Api to verify user using cookie
   const verifyUser = () => {
     axios
       .get("/auth/verifyUser")
       .then((res) => {
-        console.log(res.data.data);
-        // if(res.data)
+
       })
       .catch((err) => {
-        console.log(err);
+        const {error}=err.response.data
+        //console.log(error);
+        dispatch(setToastView({type:"error",msg:error}))
+        return navigate("/")
       });
   };
   //api to genarate refreshToken
@@ -35,7 +39,10 @@ export function Dashboard() {
         console.log(res.data.data);
       })
       .catch((err) => {
-        console.log(err);
+        const {error}=err.response.data
+        //console.log(error);
+        dispatch(setToastView({type:"error",msg:error}))
+        return navigate("/")
       });
   };
 
