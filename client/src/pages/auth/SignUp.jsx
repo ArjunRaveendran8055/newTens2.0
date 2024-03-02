@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setToastView } from "../../components/features/toast/toastSlice";
+import axios from "axios";
 
 const SignUp = () => {
-  const disptach=useDispatch()
+  const disptach = useDispatch();
   const [user, setUser] = useState({
     fName: "",
     lName: "",
@@ -12,22 +13,48 @@ const SignUp = () => {
     password: "",
     cPassword: "",
   });
-  console.log("user details : ", user.cPassword);
-
-  const signUpHandler=()=>{
-    
+  const [loader, setLoader] = useState(false);
+  const signUpHandler = () => {
     //check for empty fields
-    if(user.fName.length===0 || user.lName.length===0 || user.email.length===0 || user.date.length===0 || user.password.length===0 || user.cPassword.length===0){
-      return disptach(setToastView({type:"error",msg:"enter complete details."}))
+    if (
+      user.fName.length === 0 ||
+      user.lName.length === 0 ||
+      user.email.length === 0 ||
+      user.date.length === 0 ||
+      user.password.length === 0 ||
+      user.cPassword.length === 0
+    ) {
+      return disptach(
+        setToastView({ type: "error", msg: "enter complete details." })
+      );
     }
 
     //checking for password matching
-
-    if(user.password !==user.cPassword){
-      return disptach(setToastView({type:"error",msg:"Password Missmatch."}))
+    if (user.password !== user.cPassword) {
+      return disptach(
+        setToastView({ type: "error", msg: "Password Missmatch." })
+      );
     }
 
-  }
+    //Api request for signUp
+    setLoader(true);
+    axios
+      .post("/auth/signUp", {
+        firstName: user.fName,
+        lastName: user.lName,
+        email: user.email,
+        password: user.password,
+        dob: user.date,
+      })
+      .then((res) => {
+        disptach(setToastView({ type: "success", msg: res.data.message }));
+        return setLoader(false);
+      })
+      .catch((err) => {
+        disptach(setToastView({ type: "error", msg: err.response.data.error }));
+        return setLoader(false);
+      });
+  };
 
   return (
     <div>
@@ -105,11 +132,18 @@ const SignUp = () => {
               }}
             />
           </div>
-          <button className="outline-none glass shadow-2xl  w-full p-3  bg-[#ffffff42] hover:border-[#035ec5] hover:border-solid hover:border-[1px]  hover:text-[#035ec5] font-bold"
-          onClick={signUpHandler}
-          >
-            Submit
-          </button>
+          {!loader ? (
+            <button
+              className="outline-none glass shadow-2xl  w-full p-3  bg-[#ffffff42] hover:border-[#035ec5] hover:border-solid hover:border-[1px]  hover:text-[#035ec5] font-bold"
+              onClick={signUpHandler}
+            >
+              Submit
+            </button>
+          ) : (
+            <button className="outline-none glass shadow-2xl  w-full p-3  bg-custGreen hover:border-[#035ec5] hover:border-solid hover:border-[1px]  hover:text-[#035ec5] font-bold">
+              Be Patient...
+            </button>
+          )}
         </div>
       </div>
     </div>

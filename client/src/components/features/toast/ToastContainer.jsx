@@ -15,7 +15,7 @@ const ToastContainer = () => {
   return (
     <div
       className={`${toastView ? "" : "hidden"} 
-  absolute h-[100vh] w-full 
+  absolute z-50 h-[100vh] w-full 
   ${type === "error" && "backdrop-blur-sm"}  
   z-50 flex justify-center items-center
   `}
