@@ -19,7 +19,9 @@ export function Dashboard() {
     axios
       .get("/auth/verifyUser")
       .then((res) => {
-        console.log(res.data);
+        console.log(res.data.data);
+        // if(res.data)
+        
       })
       .catch((err) => {
         console.log(err);
@@ -30,7 +32,7 @@ export function Dashboard() {
     axios
       .get("/auth/refreshToken")
       .then((res) => {
-        console.log(res);
+        console.log(res.data.data);
       })
       .catch((err) => {
         console.log(err);
@@ -45,7 +47,7 @@ export function Dashboard() {
     }
     const interval = setInterval(() => {
       refreshToken();
-    }, 3 * 1000);
+    }, 30 * 1000);
     return () => {
       clearInterval(interval);
     };

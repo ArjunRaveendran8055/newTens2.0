@@ -10,6 +10,7 @@ import ToastContainer from "../components/features/toast/ToastContainer";
 import axios from "axios";
 import ActivationPage from "../pages/auth/ActivationPage";
 import Login from "../pages/auth/Login";
+import SearchPage from "../pages/dashboard/SearchPage";
 
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
@@ -30,6 +31,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/tables" element={<Table />} />
+          <Route path="/search" element={<SearchPage/>}/>
         </Route>
       </Routes>
     </div>
