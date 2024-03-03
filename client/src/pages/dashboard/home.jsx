@@ -14,22 +14,76 @@ import {
   Progress,
 } from "@material-tailwind/react";
 import { EllipsisVerticalIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
-
 import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
 import StatisticsCard from "../../widgets/cards/StatisticsCard";
 import StatisticsChart from "../../widgets/charts/StatisticsChart";
-import {adminStatisticsCardsData} from "../../data/statisticsCardsData";
 import projectsTableData from "../../data/projectsTableData";
 import statisticsChartsData from "../../data/chartData";
 import ordersOverviewData from "../../data/ordersOverviewData";
 import { useSelector } from "react-redux";
+import {
+  BanknotesIcon,
+  UserPlusIcon,
+  UsersIcon,
+  ChartBarIcon,
+} from "@heroicons/react/24/solid";
 
 export function Home() {
   const {user}=useSelector(state=>state.user)
+  const {PendingUserList}=useSelector(state=>state.user)
+
+  const adminStatisticsCardsData = [
+    {
+      color: "gray",
+      icon: BanknotesIcon,
+      title: "Today's Money",
+      value: "$53k",
+      footer: {
+        color: "text-green-500",
+        value: "+55%",
+        label: "than last week",
+      },
+    },
+  
+    {
+      color: "gray",
+      icon: UserPlusIcon,
+      title: "APPROVE USERS",
+      value: "Pending list",
+      footer: {
+        color: "text-red-500",
+        value: "7",
+        label: "users waiting for Attention",
+      },
+    },
+    {
+      color: "gray",
+      icon: ChartBarIcon,
+      title: "Sales",
+      value: "$103,430",
+      footer: {
+        color: "text-green-500",
+        value: "+5%",
+        label: "than yesterday",
+      },
+    },
+    {
+      color: "gray",
+      icon: UsersIcon,
+      title: "STUDENTS",
+      value: "CRM",
+      footer: {
+        color: "text-green-500",
+        value: "+3%",
+        label: "usage than last month",
+      },
+    },
+  ];
+
   return (
     <div className="mt-12">
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
-
+        
       {
         user.role==="admin" &&
 
