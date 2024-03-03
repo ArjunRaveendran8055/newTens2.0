@@ -1,11 +1,15 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 
 function PendingUsers() {
+    const {PendingUserList}=useSelector(state=>state.user)
+    console.log(PendingUserList);
   return (
     <div className="bg-white p-8 rounded-md w-full">
   <div className=" flex items-center justify-between pb-6">
     <div>
       <h2 className="text-gray-800 font-semibold">Approval list</h2>
+
     </div>
     <div className="flex items-center justify-between">
     
@@ -37,8 +41,8 @@ function PendingUsers() {
           </thead>
           <tbody>
             {/* loop from here */}
-
-            <tr>
+            {PendingUserList.map((user,index)=>{
+               return( <tr key={index}>
               <td className="px-5 py-5 bg-white text-sm">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 w-10 h-10">
@@ -50,13 +54,15 @@ function PendingUsers() {
                   </div>
                   <div className="ml-3">
                     <p className="text-gray-900 whitespace-no-wrap">
-                      Ashin Antony
+                     {user.firstname}
                     </p>
                   </div>
                 </div>
               </td>
               <td className="px-5 py-5 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">ashin@gmail.com</p>
+                <p className="text-gray-900 whitespace-no-wrap">
+                    {user.email}
+                </p>
               </td>
               <td className="px-5 py-5 bg-white text-sm">
                 {/* DROP DOWN FOR DESIGNITION STARTS HERE */}
@@ -111,7 +117,9 @@ function PendingUsers() {
                     Approve
                     </button>
               </td>
-            </tr>
+            </tr> )
+            })}
+           
             {/* loop ends here */}
           </tbody>
         </table>

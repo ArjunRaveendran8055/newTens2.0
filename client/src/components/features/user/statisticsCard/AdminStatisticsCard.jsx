@@ -7,9 +7,11 @@ import {
   UsersIcon,
   ChartBarIcon,
 } from "@heroicons/react/24/solid";
+import { useSelector } from 'react-redux';
 
 function AdminStatisticsCard() {
-
+  const {PendingUserList}=useSelector(state=>state.user)
+  console.log("pending users:",PendingUserList)
     const adminStatisticsCardsData = [
         {
           color: "gray",
@@ -30,8 +32,8 @@ function AdminStatisticsCard() {
           value: "Pending list",
           footer: {
             color: "text-red-500",
-            value: "7",
-            label: "users waiting for Attention",
+            value: PendingUserList.length,
+            label: PendingUserList.length == 1 ? "user waiting for Attention" : "users waiting for Attention",
           },
         },
         {
