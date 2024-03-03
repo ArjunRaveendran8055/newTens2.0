@@ -15,6 +15,7 @@ const SignUp = () => {
   });
   const [loader, setLoader] = useState(false);
   const signUpHandler = () => {
+    
     //check for empty fields
     if (
       user.fName.length === 0 ||
