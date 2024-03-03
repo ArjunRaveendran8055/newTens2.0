@@ -14,41 +14,25 @@ import {
   Progress,
 } from "@material-tailwind/react";
 import { EllipsisVerticalIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
-
 import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
 import StatisticsCard from "../../widgets/cards/StatisticsCard";
 import StatisticsChart from "../../widgets/charts/StatisticsChart";
-import {adminStatisticsCardsData} from "../../data/statisticsCardsData";
 import projectsTableData from "../../data/projectsTableData";
 import statisticsChartsData from "../../data/chartData";
 import ordersOverviewData from "../../data/ordersOverviewData";
 import { useSelector } from "react-redux";
+import AdminStatisticsCard from "../../components/features/user/statisticsCard/AdminStatisticsCard";
 
 export function Home() {
   const {user}=useSelector(state=>state.user)
+
   return (
     <div className="mt-12">
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
-
+        
       {
         user.role==="admin" &&
-
-        adminStatisticsCardsData.map(({ icon, title, footer, ...rest }) => (
-          <StatisticsCard
-            key={title}
-            {...rest}
-            title={title}
-            icon={React.createElement(icon, {
-              className: "w-6 h-6 text-white",
-            })}
-            footer={
-              <Typography className="font-normal text-blue-gray-600">
-                <strong className={footer.color}>{footer.value}</strong>
-                &nbsp;{footer.label}
-              </Typography>
-            }
-          />
-        ))
+        <AdminStatisticsCard/>
       }
 
 
