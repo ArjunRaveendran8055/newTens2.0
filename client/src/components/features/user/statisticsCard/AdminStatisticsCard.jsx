@@ -10,14 +10,10 @@ import {
 import { useSelector } from 'react-redux';
 
 function AdminStatisticsCard() {
-<<<<<<< HEAD
   const {PendingUserList}=useSelector(state=>state.user)
   console.log("pending users:",PendingUserList)
     const adminStatisticsCardsData = [
-=======
 
-    const AAStatisticsCardsData = [
->>>>>>> work
         {
           color: "gray",
           icon: BanknotesIcon,
