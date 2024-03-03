@@ -61,14 +61,14 @@ const activationController = asyncWrapper(async (req, res, next) => {
 
   //checking validity of the token
   const user = actionvationVerify(activationToken);
-  console.log("decoded user is: ", user);
+ // console.log("decoded user is: ", user);
   if (!user) {
     throw new AppError(400, "Token Has Expired.");
   }
 
   //checking wheather the account already activated.
   const result = await UserModel.findOne({ email: user.email });
-  console.log("result is :", result);
+  //console.log("result is :", result);
   if (result) {
     throw new AppError(400, "Account Already Activated.");
   }
