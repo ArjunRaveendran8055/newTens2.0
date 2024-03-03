@@ -57,7 +57,6 @@ function AdminStatisticsCard() {
           },
         },
       ];
-
   return (
     <>
         {adminStatisticsCardsData.map(({ icon, title, footer, ...rest }) => (
