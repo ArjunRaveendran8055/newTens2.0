@@ -7,17 +7,9 @@ import {
   UsersIcon,
   ChartBarIcon,
 } from "@heroicons/react/24/solid";
-import { useSelector } from 'react-redux';
+const AAStatisticsCard = () => {
 
-function AdminStatisticsCard() {
-<<<<<<< HEAD
-  const {PendingUserList}=useSelector(state=>state.user)
-  console.log("pending users:",PendingUserList)
     const adminStatisticsCardsData = [
-=======
-
-    const AAStatisticsCardsData = [
->>>>>>> work
         {
           color: "gray",
           icon: BanknotesIcon,
@@ -37,8 +29,8 @@ function AdminStatisticsCard() {
           value: "Pending list",
           footer: {
             color: "text-red-500",
-            value: PendingUserList.length,
-            label: PendingUserList.length == 1 ? "user waiting for Attention" : "users waiting for Attention",
+            value: "7",
+            label: "users waiting for Attention",
           },
         },
         {
@@ -64,27 +56,11 @@ function AdminStatisticsCard() {
           },
         },
       ];
+
+      
   return (
-    <>
-        {AAStatisticsCardsData.map(({ icon, title, footer, ...rest }) => (
-            <StatisticsCard
-            key={title}
-            {...rest}
-            title={title}
-            icon={React.createElement(icon, {
-              className: "w-6 h-6 text-white",
-            })}
-            footer={
-              <Typography className="font-normal text-blue-gray-600">
-                <strong className={footer.color}>{footer.value}</strong>
-                &nbsp;{footer.label}
-              </Typography>
-            }
-          />
-        ))
-      }
-    </>
+    <div>AAStatisticsCard</div>
   )
 }
 
-export default AdminStatisticsCard
+export default AAStatisticsCard
