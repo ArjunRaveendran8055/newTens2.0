@@ -10,7 +10,7 @@ import {
 
 function AdminStatisticsCard() {
 
-    const adminStatisticsCardsData = [
+    const AAStatisticsCardsData = [
         {
           color: "gray",
           icon: BanknotesIcon,
@@ -60,7 +60,7 @@ function AdminStatisticsCard() {
 
   return (
     <>
-        {adminStatisticsCardsData.map(({ icon, title, footer, ...rest }) => (
+        {AAStatisticsCardsData.map(({ icon, title, footer, ...rest }) => (
             <StatisticsCard
             key={title}
             {...rest}
