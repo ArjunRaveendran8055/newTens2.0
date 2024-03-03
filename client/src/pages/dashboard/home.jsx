@@ -32,7 +32,7 @@ export function Home() {
   useEffect(()=>{
     axios.get("/user/getPendingUserList")
     .then((res)=>{
-      console.log(res.data.data)
+      
       dispatch(setPendingUsers(res.data.data))
     })
     .catch((err)=>console.log(err.message))
@@ -49,7 +49,6 @@ export function Home() {
         user.role==="admin" &&
         <AdminStatisticsCard/>
       }
-
 
       </div>
       <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
