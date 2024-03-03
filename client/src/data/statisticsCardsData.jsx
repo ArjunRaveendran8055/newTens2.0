@@ -5,7 +5,7 @@ import {
   ChartBarIcon,
 } from "@heroicons/react/24/solid";
 
-export const statisticsCardsData = [
+export const adminStatisticsCardsData = [
   {
     color: "gray",
     icon: BanknotesIcon,
@@ -21,12 +21,12 @@ export const statisticsCardsData = [
   {
     color: "gray",
     icon: UserPlusIcon,
-    title: "New Clients",
-    value: "3,462",
+    title: "APPROVE USERS",
+    value: "See pending list",
     footer: {
       color: "text-red-500",
-      value: "-2%",
-      label: "than yesterday",
+      value: "7",
+      label: "users waiting for Attention",
     },
   },
   {
@@ -52,5 +52,3 @@ export const statisticsCardsData = [
     },
   },
 ];
-
-export default statisticsCardsData;

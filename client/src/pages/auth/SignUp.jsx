@@ -29,6 +29,11 @@ const SignUp = () => {
       );
     }
 
+    //checking password length
+    if(password.length <5){
+      return disptach(setToastView({type:"error",msg:"Password Must be AtLeast 5 char"}))
+    }
+
     //checking for password matching
     if (user.password !== user.cPassword) {
       return disptach(

@@ -18,16 +18,22 @@ import { EllipsisVerticalIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
 import StatisticsCard from "../../widgets/cards/StatisticsCard";
 import StatisticsChart from "../../widgets/charts/StatisticsChart";
-import statisticsCardsData from "../../data/statisticsCardsData";
+import {adminStatisticsCardsData} from "../../data/statisticsCardsData";
 import projectsTableData from "../../data/projectsTableData";
 import statisticsChartsData from "../../data/chartData";
 import ordersOverviewData from "../../data/ordersOverviewData";
+import { useSelector } from "react-redux";
 
 export function Home() {
+  const {user}=useSelector(state=>state.user)
   return (
     <div className="mt-12">
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
+
+      {
+        user.role==="admin" &&
+
+        adminStatisticsCardsData.map(({ icon, title, footer, ...rest }) => (
           <StatisticsCard
             key={title}
             {...rest}
@@ -42,7 +48,10 @@ export function Home() {
               </Typography>
             }
           />
-        ))}
+        ))
+      }
+
+
       </div>
       <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         {statisticsChartsData.map((props) => (

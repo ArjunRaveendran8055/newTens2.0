@@ -6,9 +6,11 @@ import {
   ServerStackIcon,
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
-
-
-
+import { BsClipboardData } from "react-icons/bs";
+import { GrTableAdd } from "react-icons/gr";
+import { TbReportSearch } from "react-icons/tb";
+import { MdOutlineAssignmentInd } from "react-icons/md"
+import { IoSearch } from "react-icons/io5";
 const icon = {
   className: "w-5 h-5 text-inherit",
 };
@@ -21,43 +23,64 @@ export const routes = [
         icon: <HomeIcon {...icon} />,
         name: "dashboard",
         path: "/home",
-        
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "profile",
+        name: "my profile",
         path: "/profile",
-        
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "tables",
-        path: "/tables",
-        
       },
       {
         icon: <InformationCircleIcon {...icon} />,
         name: "notifications",
         path: "/notifications",
-       
+      },
+      {
+        icon: <TableCellsIcon {...icon} />,
+        name: "tables",
+        path: "/tables",
       },
     ],
   },
   {
-    title: "auth pages",
-    layout: "auth",
+    title: "CRM Controlls",
+    layout: "crm",
     pages: [
       {
-        icon: <ServerStackIcon {...icon} />,
-        name: "sign in",
+        icon: <BsClipboardData {...icon} />,
+        name: "General Leads",
         path: "/pro",
-        
       },
       {
-        icon: <RectangleStackIcon {...icon} />,
-        name: "sign up",
+        icon: <GrTableAdd {...icon} />,
+        name: "Bulk Upload",
         path: "/pro",
-        
+      },
+      {
+        icon: <MdOutlineAssignmentInd {...icon} />,
+        name: "Assign Leads",
+        path: "/pro",
+      },
+      {
+        icon: <TbReportSearch {...icon} />,
+        name: "Reports",
+        path: "/pro",
+      },
+
+    ],
+  },
+  {
+    title: "User Controlls",
+    layout: "user",
+    pages: [
+      {
+        icon: <IoSearch {...icon} />,
+        name: "Search User",
+        path: "/pro",
+      },
+      {
+        icon: <TbReportSearch {...icon} />,
+        name: "Reports",
+        path: "/pro",
       },
     ],
   },
@@ -70,16 +93,13 @@ export const TAroutes = [
       {
         icon: <HomeIcon {...icon} />,
         name: "dashboard",
-        path: "/",
-        
+        path: "/home",
       },
       {
         icon: <UserCircleIcon {...icon} />,
         name: "profile",
         path: "/profile",
-        
       },
-    
     ],
   },
   {
@@ -88,9 +108,8 @@ export const TAroutes = [
     pages: [
       {
         icon: <ServerStackIcon {...icon} />,
-        name: "Search",
+        name: "Search Student",
         path: "/search",
-        
       },
     ],
   },

@@ -5,7 +5,7 @@ import Sidenav from "../components/features/sideBar/sidenav";
 import Configurator from "../components/features/configurator/configurator";
 import { setOpenConfigurator } from "../components/features/configurator/configuratorSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import DashboardNavbar from "../widgets/layout/DashboardNavbar";
 import Footer from "../widgets/layout/footer";
@@ -15,8 +15,8 @@ import { setUser } from "../components/features/user/userSlice";
 
 export function Dashboard() {
   const { user } = useSelector((state) => state.user);
-  
   let flag = false;
+  const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -26,6 +26,7 @@ export function Dashboard() {
       .get("/auth/verifyUser")
       .then((res) => {
         const { data } = res.data;
+        console.log("user is", data);
         return dispatch(setUser(data));
       })
       .catch((err) => {
@@ -40,8 +41,8 @@ export function Dashboard() {
     axios
       .get("/auth/refreshToken")
       .then((res) => {
-        const {data}=res.data;
-        return dispatch(setUser(data))
+        const { data } = res.data;
+        return dispatch(setUser(data));
       })
       .catch((err) => {
         const { error } = err.response.data;

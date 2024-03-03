@@ -1,4 +1,3 @@
-
 import {
   Navbar,
   Typography,
@@ -20,11 +19,12 @@ import {
   Bars3Icon,
 } from "@heroicons/react/24/solid";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsOpen } from "../../components/features/sideBar/sideNavSlice";
 import { setOpenConfigurator } from "../../components/features/configurator/configuratorSlice";
 
 export function DashboardNavbar() {
+  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   return (
@@ -34,8 +34,8 @@ export function DashboardNavbar() {
       fullWidth
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
-        <div className="capitalize"></div>
-        <div className="flex items-center">
+        <div className="uppercase font-bold text-black sm:text-sm md:text-md lg:text-2xl">{user.firstname}{user.lastname}&nbsp;-&nbsp;{user.role}</div>
+        <div className="flex items-between ">
           <div className="search-bar mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
           </div>

@@ -161,7 +161,6 @@ const refreshTokenController = asyncWrapper(async (req, res, next) => {
 
 const refreshTokenGenerator = asyncWrapper(async (req, res, next) => {
   const { user } = res;
-  console.log("user", user);
   const token = jwtSign({
     id: user.id,
     email: user.email,
