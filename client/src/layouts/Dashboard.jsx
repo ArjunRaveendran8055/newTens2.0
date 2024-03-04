@@ -26,7 +26,7 @@ export function Dashboard() {
       .get("/auth/verifyUser")
       .then((res) => {
         const { data } = res.data;
-        console.log("user is", data);
+        //console.log("user is", data);
         return dispatch(setUser(data));
       })
       .catch((err) => {
