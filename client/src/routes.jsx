@@ -9,8 +9,9 @@ import {
 import { BsClipboardData } from "react-icons/bs";
 import { GrTableAdd } from "react-icons/gr";
 import { TbReportSearch } from "react-icons/tb";
-import { MdOutlineAssignmentInd } from "react-icons/md"
+import { MdOutlineAssignmentInd } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
+import { MdClass } from "react-icons/md";
 const icon = {
   className: "w-5 h-5 text-inherit",
 };
@@ -65,7 +66,6 @@ export const routes = [
         name: "Reports",
         path: "/pro",
       },
-
     ],
   },
   {
@@ -86,7 +86,7 @@ export const routes = [
   },
 ];
 
-export const TAroutes = [
+export const AAroutes = [
   {
     layout: "dashboard",
     pages: [
@@ -103,16 +103,24 @@ export const TAroutes = [
     ],
   },
   {
-    title: "TA functions",
-    layout: "auth",
+    title: "CLASS MANAGEMENT",
+    layout: "class",
     pages: [
       {
         icon: <ServerStackIcon {...icon} />,
-        name: "Search Student",
+        name: "Search Students",
+        path: "/search",
+      },
+      {
+        icon: <MdClass {...icon} />,
+        name: "Class List",
+        path: "/search",
+      },
+      {
+        icon: <MdClass {...icon} />,
+        name: "Add Student",
         path: "/search",
       },
     ],
   },
 ];
-
-export default routes;

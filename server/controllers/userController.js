@@ -8,7 +8,7 @@ const pendingUserController = asyncWrapper(async (req, res, next) => {
   const pendingData = await UserModel.find({ activestatus: false });
 
   if (pendingData.length < 1) {
-    res.status(200).json({ message: "no pending users!" });
+    res.status(200).json({ message: "No pending users!" });
   } else {
     res.status(200).json({ count: pendingData.length, data: pendingData });
   }

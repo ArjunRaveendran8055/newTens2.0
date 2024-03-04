@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Typography,
   Card,
@@ -20,21 +20,35 @@ import StatisticsChart from "../../widgets/charts/StatisticsChart";
 import projectsTableData from "../../data/projectsTableData";
 import statisticsChartsData from "../../data/chartData";
 import ordersOverviewData from "../../data/ordersOverviewData";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import AdminStatisticsCard from "../../components/features/user/statisticsCard/AdminStatisticsCard";
+import { setPendingUsers } from "../../components/features/user/userSlice";
 
 export function Home() {
+  const {PendingUserList}=useSelector(state=>state.user)
+
+  const dispatch=useDispatch()
+  useEffect(()=>{
+    axios.get("/user/getPendingUserList")
+    .then((res)=>{
+      
+      dispatch(setPendingUsers(res.data.data))
+    })
+    .catch((err)=>console.log(err.message))
+  },[])
+
   const {user}=useSelector(state=>state.user)
+
 
   return (
     <div className="mt-12">
-      <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-12 grid cursor-pointer gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
         
       {
         user.role==="admin" &&
         <AdminStatisticsCard/>
       }
-
 
       </div>
       <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">

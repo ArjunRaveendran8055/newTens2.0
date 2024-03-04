@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import DashboardNavbar from "../widgets/layout/DashboardNavbar";
 import Footer from "../widgets/layout/footer";
-import routes from "../routes";
+import {routes} from "../routes";
 import { setToastView } from "../components/features/toast/toastSlice";
 import { setUser } from "../components/features/user/userSlice";
 
@@ -26,7 +26,7 @@ export function Dashboard() {
       .get("/auth/verifyUser")
       .then((res) => {
         const { data } = res.data;
-        console.log("user is", data);
+        //console.log("user is", data);
         return dispatch(setUser(data));
       })
       .catch((err) => {
@@ -67,7 +67,6 @@ export function Dashboard() {
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
       <Sidenav
-        routes={routes}
         brandName="NEWTEN'S"
         brandImg={"/img/logo-ct.png"}
       />
