@@ -1,8 +1,12 @@
+import axios from "axios";
 import React from "react";
 import { useSelector } from "react-redux";
 
 function PendingUsers() {
   const { PendingUserList } = useSelector((state) => state.user);
+
+  // APPROVE PENDING USER FUNCTION
+
 
   return (
     <div className="bg-white p-8 rounded-md w-full min-h-[90vh] mt-10">
@@ -106,7 +110,7 @@ function PendingUsers() {
                         </td>
                         <td className="px-5 py-5 bg-white text-sm">
                           {/* approve button */}
-                          <button className="inline-flex items-center px-4 py-2 bg-green-600 transition ease-in-out delay-75 hover:bg-green-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-110">
+                          <button onClick={onApproveHandler} className="inline-flex items-center px-4 py-2 bg-green-600 transition ease-in-out delay-75 hover:bg-green-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-110">
                             Approve
                           </button>
                         </td>
