@@ -114,12 +114,12 @@ export const AAroutes = [
       {
         icon: <MdClass {...icon} />,
         name: "Class List",
-        path: "/search",
+        path: "/",
       },
       {
         icon: <MdClass {...icon} />,
         name: "Add Student",
-        path: "/search",
+        path: "/",
       },
     ],
   },
