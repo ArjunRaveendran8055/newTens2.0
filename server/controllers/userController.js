@@ -58,6 +58,9 @@ const allUserController = asyncWrapper(async (req, res, next) => {
       const userId = req.params.id;
       const { role } = req.body;
       
+      if(!role){
+        throw new AppError(400,"role not specified")
+      }
   
       if (!mongoose.Types.ObjectId.isValid(userId)) {
           throw new AppError(400, "invalid Id!");
