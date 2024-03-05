@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import StatisticsCard from "../../../../widgets/cards/StatisticsCard";
 import { Typography } from "@material-tailwind/react";
 import {
@@ -9,9 +9,21 @@ import {
 } from "@heroicons/react/24/solid";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function AdminStatisticsCard() {
-  const { PendingUserList } = useSelector((state) => state.user);
+  const [PendingUserList,setPendingUserList] = useState([])
+
+  useEffect(()=>{
+    axios.get("/user/getPendingUserList")
+    .then((res)=>{
+      setPendingUserList(res.data)
+    })
+    .catch((err)=>console.log(err.message))
+  },[])
+
+
+
   console.log("pending users:", PendingUserList);
   const adminStatisticsCardsData = [
     {
@@ -34,9 +46,9 @@ function AdminStatisticsCard() {
       value: "Pending list",
       footer: {
         color: "text-red-500",
-        value: PendingUserList.length,
+        value: PendingUserList.count,
         label:
-          PendingUserList.length == 1
+          PendingUserList?.count == 1
             ? "user waiting for Attention"
             : "users waiting for Attention",
       },
