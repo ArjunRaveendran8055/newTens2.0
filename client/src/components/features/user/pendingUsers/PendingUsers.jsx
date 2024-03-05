@@ -1,17 +1,92 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { setToastView } from "../../toast/toastSlice";
+import { useDispatch } from "react-redux";
+
 
 function PendingUsers() {
-  const { PendingUserList } = useSelector((state) => state.user);
+
+  // PENDING USER LIST FETCHED
+  const [PendingUserList,setPendingUserList] = useState([])
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    axios.get("/user/getPendingUserList")
+    .then((res)=>{
+      setPendingUserList(res.data)
+    })
+    .catch((err)=>console.log(err.message))
+  })
+
+
+  // STATE USED FOR STORE DESIGNITION VALUE FROM DROPDOWN
+  const [selectedValue, setSelectedValue] = useState([]);
+ 
+
+  
+  // SELECT STORE FUNCTION
+const handleSelectChange = (event,id) => {
+  
+    let flag=false;
+
+     const result =  selectedValue.map((data)=>{
+        
+      if(data.id==id) {
+        data.role=event.target.value;
+        flag=true;
+      }
+
+      return data
+       })
+
+if(flag){
+
+  setSelectedValue(result);
+
+}else{
+
+   setSelectedValue([...selectedValue,{
+      id,
+      role:event.target.value,
+    }]);
+}
+
+  };
+
+  
+  const findObjectById = (id) => {
+    return selectedValue.find(item => item.id === id);
+  };
+
+  // APPROVE PENDING USER FUNCTION
+  const onApproveHandler=(userID)=>{
+    const userData = findObjectById(userID)
+    console.log(userData)
+    
+    if(userData!=undefined || userData.role!=''){
+       axios.put(`/user/approveUser/${userID}`,{role:userData.role})
+     .then((res)=>{
+      console.log(res)
+     })
+     .catch((err)=>{
+      console.log(err);
+     })
+    
+    }else{
+      dispatch(setToastView({ type: "error", msg: "Choose Designition" }))
+    }
+    
+  }
 
   return (
+   
     <div className="bg-white p-8 rounded-md w-full min-h-[90vh] mt-10">
       <div className=" flex items-center justify-between pb-6">
         <div>
           <h2 className="text-gray-800 font-semibold">Approval list</h2>
         </div>
         <div className="flex items-center justify-between"></div>
-      </div>
+      </div> 
       {PendingUserList?.length !== 0 ? (
         <div>
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
@@ -35,7 +110,7 @@ function PendingUsers() {
                 <tbody>
                   {/* loop from here */}
 
-                  {PendingUserList?.map((user, index) => {
+                  {PendingUserList.data?.map((user, index) => {
                     return (
                       <tr key={index}>
                         <td className="px-5 py-5 bg-white text-sm">
@@ -49,14 +124,14 @@ function PendingUsers() {
                             </div>
                             <div className="ml-3">
                               <p className="text-gray-900 whitespace-no-wrap">
-                                {user.firstname}
+                                {user?.firstname}
                               </p>
                             </div>
                           </div>
                         </td>
                         <td className="px-5 py-5 bg-white text-sm">
                           <p className="text-gray-900 whitespace-no-wrap">
-                            {user.email}
+                            {user?.email}
                           </p>
                         </td>
                         <td className="px-5 py-5 bg-white text-sm">
@@ -73,12 +148,12 @@ function PendingUsers() {
                                 fillRule="nonzero"
                               />
                             </svg>
-                            <select className="border border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none">
-                              <option>Choose a Designition</option>
-                              <option>TA</option>
-                              <option>S-TA</option>
-                              <option>AA</option>
-                              <option>CC</option>
+                            <select onChange={(e)=>handleSelectChange(e,user._id)} className="border border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none">
+                              <option value=''>Choose a Designition</option>
+                              <option value="TA">TA</option>
+                              <option value="S-TA">S-TA</option>
+                              <option value="AA">AA</option>
+                              <option value="CC">CC</option>
                             </select>
                           </div>
                         </td>
@@ -106,7 +181,7 @@ function PendingUsers() {
                         </td>
                         <td className="px-5 py-5 bg-white text-sm">
                           {/* approve button */}
-                          <button className="inline-flex items-center px-4 py-2 bg-green-600 transition ease-in-out delay-75 hover:bg-green-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-110">
+                          <button onClick={()=>onApproveHandler(user._id)} className="inline-flex items-center px-4 py-2 bg-green-600 transition ease-in-out delay-75 hover:bg-green-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-110">
                             Approve
                           </button>
                         </td>
