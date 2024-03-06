@@ -9,7 +9,7 @@ import {
 } from "@material-tailwind/react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { routes,AAroutes } from "../../../routes";
+import { routes, AAroutes } from "../../../routes";
 export function Sidenav({ brandName }) {
   const { isOpen } = useSelector((state) => state.sideNav);
   const { user } = useSelector((state) => state.user);
@@ -18,7 +18,7 @@ export function Sidenav({ brandName }) {
     <>
       <aside
         className={`hidden xl:block translate-x-0
-       fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-white`}
+       fixed inset-0 z-44 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-white`}
       >
         <div className={`relative`}>
           <div className="py-6 px-8 text-center">
@@ -38,62 +38,13 @@ export function Sidenav({ brandName }) {
           </IconButton>
         </div>
         <div className="m-4">
-        
-          {
-          user.role==="admin" &&
-          routes.map(({ layout, title, pages }, key) => (
-            <ul key={key} className="mb-4 flex flex-col gap-1">
-              {
-                //MODULE TITLE
-              }
-
-              {title && (
-                <li className="mx-3.5 mt-4 mb-2">
-                  <Typography
-                    variant="small"
-                    color="inherit"
-                    className="font-black uppercase opacity-75"
-                  >
-                    {title}
-                  </Typography>
-                </li>
-              )}
-
-              {pages.map(({ icon, name, path }) => (
-                <li key={name}>
-                  <NavLink to={`${path}`}>
-                    {({ isActive }) => (
-                      <Button
-                        variant={isActive ? "gradient" : "text"}
-                        color="green"
-                        className="flex items-center gap-4 px-4 capitalize"
-                        fullWidth
-                      >
-                        {icon}
-                        <Typography
-                          color="inherit"
-                          className="font-medium capitalize"
-                        >
-                          {name}
-                        </Typography>
-                      </Button>
-                    )}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          ))
-          }
-
-          {
-            user.role==="AA" &&
-
-            AAroutes.map(({ layout, title, pages }, key) => (
+          {user.role === "admin" &&
+            routes.map(({ layout, title, pages }, key) => (
               <ul key={key} className="mb-4 flex flex-col gap-1">
                 {
                   //MODULE TITLE
                 }
-  
+
                 {title && (
                   <li className="mx-3.5 mt-4 mb-2">
                     <Typography
@@ -105,7 +56,7 @@ export function Sidenav({ brandName }) {
                     </Typography>
                   </li>
                 )}
-  
+
                 {pages.map(({ icon, name, path }) => (
                   <li key={name}>
                     <NavLink to={`${path}`}>
@@ -129,8 +80,51 @@ export function Sidenav({ brandName }) {
                   </li>
                 ))}
               </ul>
-            ))
-          }
+            ))}
+
+          {user.role === "AA" &&
+            AAroutes.map(({ layout, title, pages }, key) => (
+              <ul key={key} className="mb-4 flex flex-col gap-1">
+                {
+                  //MODULE TITLE
+                }
+
+                {title && (
+                  <li className="mx-3.5 mt-4 mb-2">
+                    <Typography
+                      variant="small"
+                      color="inherit"
+                      className="font-black uppercase opacity-75"
+                    >
+                      {title}
+                    </Typography>
+                  </li>
+                )}
+
+                {pages.map(({ icon, name, path }) => (
+                  <li key={name}>
+                    <NavLink to={`${path}`}>
+                      {({ isActive }) => (
+                        <Button
+                          variant={isActive ? "gradient" : "text"}
+                          color="green"
+                          className="flex items-center gap-4 px-4 capitalize"
+                          fullWidth
+                        >
+                          {icon}
+                          <Typography
+                            color="inherit"
+                            className="font-medium capitalize"
+                          >
+                            {name}
+                          </Typography>
+                        </Button>
+                      )}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            ))}
         </div>
       </aside>
 
@@ -209,7 +203,5 @@ export function Sidenav({ brandName }) {
     </>
   );
 }
-
-
 
 export default Sidenav;

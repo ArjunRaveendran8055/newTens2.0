@@ -7,23 +7,38 @@ import { useDispatch } from "react-redux";
 function PendingUsers() {
 
   // PENDING USER LIST FETCHED
-  const [PendingUserList,setPendingUserList] = useState([])
+  const [PendingUserList,setPendingUserList] = useState([]) 
+
+  // STATE USED FOR STORE DESIGNITION VALUE FROM DROPDOWN
+  const [selectedValue, setSelectedValue] = useState([]);
+
   const dispatch = useDispatch();
 
   useEffect(()=>{
+   pendingCall()
+  },[])
+
+  // TAKING PENDING USER LIST FROM SERVER
+  const pendingCall=()=>{
     axios.get("/user/getPendingUserList")
     .then((res)=>{
       setPendingUserList(res.data)
     })
     .catch((err)=>console.log(err.message))
-  })
+  }
 
+  // DELETE PENDING USER FROM LIST
+  const deleteUser = (userID) => {
+    axios.delete(`/user/deleteUser/${userID}`)
+      .then((res) => {
+        //  dispatch(setToastView({ type: "success", msg: res.data.message }));
+        pendingCall()
+      })
+      .catch((err) => {
+        console.error(`Error deleting user with ID ${userID}:`, err);
+      });
+  };
 
-  // STATE USED FOR STORE DESIGNITION VALUE FROM DROPDOWN
-  const [selectedValue, setSelectedValue] = useState([]);
- 
-
-  
   // SELECT STORE FUNCTION
 const handleSelectChange = (event,id) => {
   
@@ -59,23 +74,23 @@ if(flag){
   };
 
   // APPROVE PENDING USER FUNCTION
-  const onApproveHandler=(userID)=>{
-    const userData = findObjectById(userID)
-    console.log(userData)
-    
-    if(userData!=undefined || userData.role!=''){
-       axios.put(`/user/approveUser/${userID}`,{role:userData.role})
-     .then((res)=>{
-      console.log(res)
-     })
-     .catch((err)=>{
-      console.log(err);
-     })
-    
-    }else{
-      dispatch(setToastView({ type: "error", msg: "Choose Designition" }))
+  const onApproveHandler = (userID) => {
+    const userData = findObjectById(userID);
+    console.log(userData);
+  
+    if (userData !== undefined && userData.role !== '') {
+      axios.put(`/user/approveUser/${userID}`, { role: userData.role })
+        .then((res) => {
+          console.log(res);
+          pendingCall()
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  
+    } else {
+      dispatch(setToastView({ type: "error", msg: "Choose Designation" }));
     }
-    
   }
 
   return (
@@ -160,7 +175,7 @@ if(flag){
                         {/* DROPDOWN ENDS HERE */}
                         <td className="px-5 py-5 bg-white text-sm">
                           {/* reject button */}
-                          <button className="inline-flex items-center px-4 py-2 bg-red-600 transition ease-in-out delay-75 hover:bg-red-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-110">
+                          <button onClick={()=>{deleteUser(user._id)}} className="inline-flex items-center px-4 py-2 bg-red-600 transition ease-in-out delay-75 hover:bg-red-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-110">
                             <svg
                               stroke="currentColor"
                               viewBox="0 0 24 24"
