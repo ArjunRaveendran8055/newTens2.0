@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { hideToastView, setToastView } from "./toastSlice";
 import { FcApproval } from "react-icons/fc";
 import { FcHighPriority } from "react-icons/fc";
-const ToastContainer = () => {
+const CustToastContainer = () => {
   const { toastView, type, msg } = useSelector((state) => state.toast);
   const dispatch = useDispatch();
 
@@ -53,4 +53,4 @@ const ToastContainer = () => {
   );
 };
 
-export default ToastContainer;
+export default CustToastContainer;

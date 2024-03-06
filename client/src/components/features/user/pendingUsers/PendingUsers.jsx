@@ -22,11 +22,22 @@ function PendingUsers() {
   const pendingCall=()=>{
     axios.get("/user/getPendingUserList")
     .then((res)=>{
-      console.log(res.data);
       setPendingUserList(res.data)
     })
     .catch((err)=>console.log(err.message))
   }
+
+  // DELETE PENDING USER FROM LIST
+  const deleteUser = (userID) => {
+    axios.delete(`/user/deleteUser/${userID}`)
+      .then((res) => {
+        //  dispatch(setToastView({ type: "success", msg: res.data.message }));
+        pendingCall()
+      })
+      .catch((err) => {
+        console.error(`Error deleting user with ID ${userID}:`, err);
+      });
+  };
 
   // SELECT STORE FUNCTION
 const handleSelectChange = (event,id) => {
@@ -164,7 +175,7 @@ if(flag){
                         {/* DROPDOWN ENDS HERE */}
                         <td className="px-5 py-5 bg-white text-sm">
                           {/* reject button */}
-                          <button className="inline-flex items-center px-4 py-2 bg-red-600 transition ease-in-out delay-75 hover:bg-red-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-110">
+                          <button onClick={()=>{deleteUser(user._id)}} className="inline-flex items-center px-4 py-2 bg-red-600 transition ease-in-out delay-75 hover:bg-red-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-110">
                             <svg
                               stroke="currentColor"
                               viewBox="0 0 24 24"
