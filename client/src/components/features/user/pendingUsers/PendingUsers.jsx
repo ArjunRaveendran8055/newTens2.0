@@ -7,23 +7,27 @@ import { useDispatch } from "react-redux";
 function PendingUsers() {
 
   // PENDING USER LIST FETCHED
-  const [PendingUserList,setPendingUserList] = useState([])
-  const dispatch = useDispatch();
-
-  useEffect(()=>{
-    axios.get("/user/getPendingUserList")
-    .then((res)=>{
-      setPendingUserList(res.data)
-    })
-    .catch((err)=>console.log(err.message))
-  })
-
+  const [PendingUserList,setPendingUserList] = useState([]) 
 
   // STATE USED FOR STORE DESIGNITION VALUE FROM DROPDOWN
   const [selectedValue, setSelectedValue] = useState([]);
- 
 
-  
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+   pendingCall()
+  },[])
+
+  // TAKING PENDING USER LIST FROM SERVER
+  const pendingCall=()=>{
+    axios.get("/user/getPendingUserList")
+    .then((res)=>{
+      console.log(res.data);
+      setPendingUserList(res.data)
+    })
+    .catch((err)=>console.log(err.message))
+  }
+
   // SELECT STORE FUNCTION
 const handleSelectChange = (event,id) => {
   
@@ -59,23 +63,23 @@ if(flag){
   };
 
   // APPROVE PENDING USER FUNCTION
-  const onApproveHandler=(userID)=>{
-    const userData = findObjectById(userID)
-    console.log(userData)
-    
-    if(userData!=undefined || userData.role!=''){
-       axios.put(`/user/approveUser/${userID}`,{role:userData.role})
-     .then((res)=>{
-      console.log(res)
-     })
-     .catch((err)=>{
-      console.log(err);
-     })
-    
-    }else{
-      dispatch(setToastView({ type: "error", msg: "Choose Designition" }))
+  const onApproveHandler = (userID) => {
+    const userData = findObjectById(userID);
+    console.log(userData);
+  
+    if (userData !== undefined && userData.role !== '') {
+      axios.put(`/user/approveUser/${userID}`, { role: userData.role })
+        .then((res) => {
+          console.log(res);
+          pendingCall()
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  
+    } else {
+      dispatch(setToastView({ type: "error", msg: "Choose Designation" }));
     }
-    
   }
 
   return (
