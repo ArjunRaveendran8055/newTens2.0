@@ -13,9 +13,10 @@ import { PiStudentBold } from "react-icons/pi";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 import { MdPhoneAndroid } from "react-icons/md";
 import axios from "axios";
+import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 
 function Search() {
-  
+  const dispatch = useDispatch();
   const [roll, setRoll] = useState("");
   const [no, setNo] = useState("");
   const [name, setName] = useState("");
@@ -45,17 +46,20 @@ function Search() {
 
   //Api to fetch students according to the search string
   const searchStudents = () => {
+    dispatch(setLoader())
     axios
       .get(`/student/getAllStudents?roll=${roll}&name=${name}&phno=${no}`)
       .then((res) => {
         //console.log(res.data.data);
         setNoUsers(false);
         setStudentList(res.data.data);
+        dispatch(removeLoader())
       })
       .catch((err) => {
         console.log(err.response.data.error);
         setNoUsers(true);
         setStudentList([]);
+        dispatch(removeLoader())
       });
   };
 
@@ -69,9 +73,7 @@ function Search() {
   }, [roll, no, name]);
 
   //function to set selected student details
-  const selectHandler = (student) => {
-    
-  };
+  const selectHandler = (student) => {};
 
   return (
     <div>
