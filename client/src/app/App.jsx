@@ -12,22 +12,16 @@ import ActivationPage from "../pages/auth/ActivationPage";
 import Login from "../pages/auth/Login";
 import SearchPage from "../pages/dashboard/SearchPage";
 import PendingUsers from "../components/features/user/pendingUsers/PendingUsers";
-import Home from "../pages/dashboard/Home";
-
-
-
 import Loader from "../components/features/Loader/Loader";
+import Home from "../pages/dashboard/home";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
-
-
   return (
     <div className="">
-
       <CustToastContainer />
 
-      <Loader/>
+      <Loader />
 
       <Routes>
         <Route path="/signUp" element={<SignUp />} />
@@ -41,9 +35,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/tables" element={<Table />} />
-          <Route path="/search" element={<SearchPage/>}/>
-          <Route path="/pendingusers" element={<PendingUsers/>} />
-
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/pendingusers" element={<PendingUsers />} />
         </Route>
       </Routes>
     </div>
