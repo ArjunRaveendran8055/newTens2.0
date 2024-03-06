@@ -8,9 +8,9 @@ const pendingUserController = asyncWrapper(async (req, res, next) => {
   const pendingData = await UserModel.find({ activestatus: false });
 
   if (pendingData.length < 1) {
-    res.status(200).json({ message: "no pending users!" });
+    res.status(200).json({ success:true, message: "no pending users!" });
   } else {
-    res.status(200).json({ count: pendingData.length, data: pendingData });
+    res.status(200).json({ success:true, count: pendingData.length, data: pendingData });
   }
 });
 
@@ -20,9 +20,9 @@ const allUserController = asyncWrapper(async (req, res, next) => {
   const allData = await UserModel.find();
 
   if (allData.length < 1) {
-    res.status(200).json({ message: "no users!" });
+    res.status(200).json({ success:true, message: "no users!" });
   } else {
-    res.status(200).json({ count: allData.length, data: allData });
+    res.status(200).json({ success:true, count: allData.length, data: allData });
   }
 });
 
@@ -38,7 +38,7 @@ const oneUserController = asyncWrapper(async (req, res, next) => {
     if (!userData) {
       throw new AppError(404, "no user found!");
     } else {
-      res.status(200).json({ data: userData });
+      res.status(200).json({ success:true, data: userData });
     }
   }
 });
@@ -64,7 +64,7 @@ const approveUserController = asyncWrapper(async (req, res, next) => {
     if (!updatedUser) {
       throw new AppError(404, "no user found by id!");
     } else {
-      res.status(200).json({ message: "user approved sucessfully!" });
+      res.status(200).json({ success:true, message: "user approved sucessfully!" });
     }
   }
 });
@@ -80,7 +80,7 @@ const deleteUserByIdController = asyncWrapper(async (req, res, next) => {
     if (!deletedUser) {
       throw new AppError(404, "No user found by ID!");
     } else {
-      res.status(200).json({ message: "User deleted successfully!" });
+      res.status(200).json({ success:true, message: "User deleted successfully!" });
     }
   }
 });
