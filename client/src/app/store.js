@@ -5,6 +5,7 @@ import sideNavReducer from "../components/features/sideBar/sideNavSlice"
 import configuratorSlice from "../components/features/configurator/configuratorSlice"
 import toastReducer from "../components/features/toast/toastSlice"
 import userReducer from "../components/features/user/userSlice"
+import loaderReducer from "../components/features/Loader/loaderSlice"
 
 configuratorSlice
 const persistConfig={
@@ -20,7 +21,8 @@ const store=configureStore({
         sideNav:persistedSideNavReducer,
         configurator:persistedConfiguratorReducer,
         user:persistedUser,
-        toast:toastReducer
+        toast:toastReducer,
+        loader:loaderReducer
     },
     middleware:(getDefaultMiddleware)=> getDefaultMiddleware({serializableCheck:false},),
 })

@@ -13,6 +13,7 @@ import Login from "../pages/auth/Login";
 import SearchPage from "../pages/dashboard/SearchPage";
 import PendingUsers from "../components/features/user/pendingUsers/PendingUsers";
 import Home from "../pages/dashboard/Home";
+import Loader from "../components/features/Loader/Loader";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -21,6 +22,7 @@ function App() {
   return (
     <div className="">
       <ToastContainer />
+      <Loader/>
       <Routes>
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/" element={<Login />} />
