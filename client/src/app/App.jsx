@@ -17,6 +17,7 @@ import Home from "../pages/dashboard/Home";
 
 
 import Loader from "../components/features/Loader/Loader";
+import DisplayClassesPage from "../pages/dashboard/DisplayClassesPage";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -43,6 +44,7 @@ function App() {
           <Route path="/tables" element={<Table />} />
           <Route path="/search" element={<SearchPage/>}/>
           <Route path="/pendingusers" element={<PendingUsers/>} />
+          <Route path="/classes" element={<DisplayClassesPage/>} />
 
         </Route>
       </Routes>
