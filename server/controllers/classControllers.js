@@ -13,7 +13,7 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     classsubject,
   } = req.body;
 
-  if (tutorname == "" || classname == "" || classdate == "" || classexam == "" || classsyllabus == "" || classsubject == "") {
+  if (tutorname == "" || classname == "" || classdate == ""  || classsyllabus == "" || classsubject == "") {
     throw new AppError(400, "required all fields!");
   }
 
@@ -28,7 +28,7 @@ const createClassController = asyncWrapper(async (req, res, next) => {
 
   const savedClass = await newClass.save();
 
-  res.status(201).json(savedClass);
+  res.status(201).json({success:true, message:"class created sucessfully!" ,savedClass});
 });
 
 const updateClassController = asyncWrapper(async (req, res, next) => {
@@ -36,7 +36,7 @@ const updateClassController = asyncWrapper(async (req, res, next) => {
   const { tutorname, classname, classdate, classexam, classsyllabus,classsubject } =
     req.body;
 
-    if (!tutorname || !classname || !classdate || !classexam  || !classsyllabus  || !classsubject) {
+    if (!tutorname || !classname || !classdate  || !classsyllabus  || !classsubject) {
       throw new AppError(400, "required all fields!");
     }
 
@@ -54,7 +54,7 @@ const updateClassController = asyncWrapper(async (req, res, next) => {
     throw new AppError(404, "No class found by ID!");
   }
 
-  res.status(200).json(updatedClass);
+  res.status(200).json({success:true, message:"updated sucessfully!" ,updatedClass});
 });
 
 const deleteClassController = asyncWrapper(async (req, res, next) => {
@@ -70,19 +70,30 @@ const deleteClassController = asyncWrapper(async (req, res, next) => {
     throw new AppError(404, "No class found by ID!");
   }
 
-  res.status(200).json({ message: "Class deleted successfully!" });
+  res.status(200).json({ success:true, message: "Class deleted successfully!" });
 });
 
 const getAllClassesController = asyncWrapper(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
+  const syllabus = req.query.syllabus;
+
+  console.log(syllabus)
 
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
 
   const total = await ClassModel.countDocuments();
+  
+  let  classes;
 
-  const classes = await ClassModel.find().skip(startIndex).limit(limit);
+  if(syllabus){
+     classes = await ClassModel.find({classsyllabus:syllabus}).skip(startIndex).limit(limit);
+  }else{
+    classes = await ClassModel.find().skip(startIndex).limit(limit);
+  }
+
+  
 
   const pagination = {};
 
