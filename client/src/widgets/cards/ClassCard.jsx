@@ -6,7 +6,7 @@ function ClassCard() {
     <>
     <div className="flex-shrink-0 m-6 relative overflow-hidden bg-teal-500 rounded-lg max-w-xs shadow-lg cursor-pointer">
     
-    <span className="block bg-white rounded-full ml-6 text-teal-500 text-xs font-bold justify-between px-3 mt-3 py-2 leading-none flex w-[80%] items-center">
+    <span className=" bg-white rounded-full ml-6 text-teal-500 text-xs font-bold justify-between px-3 mt-3 py-2 leading-none flex w-[80%] items-center">
             <p>03/04/2024</p>
            <p className='text-red-500'>No Exam</p> 
           </span>
@@ -53,7 +53,7 @@ function ClassCard() {
               <span className="block opacity-75 -mb-1">STATE</span>
         <div className="flex justify-between">
           <span className="block font-semibold text-xl">CLASS 12</span>
-          <span className="block bg-white rounded-full text-teal-500 text-xs font-bold px-3 py-2 leading-none flex items-center">
+          <span className=" bg-white rounded-full text-teal-500 text-xs font-bold px-3 py-2 leading-none flex items-center">
             7.00 PM
           </span>
         </div>

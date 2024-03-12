@@ -12,6 +12,7 @@ import {
   Select,
   Option,
 } from "@material-tailwind/react";
+import axios from "axios";
 
 function DisplayClasses() {
   const [open, setOpen] = useState(false);
@@ -55,8 +56,21 @@ function DisplayClasses() {
       alert('Please fill in all fields.');
       return;
     }
-    // Your submit logic here
-    console.log('Submitting:', classDetails);
+
+    // POSTING DATA TO SERVER
+    axios.post('/class/createClass',{
+      tutorname:classDetails.tutorName,
+    classname:classDetails.selectedClass,
+    classdate:classDetails.scheduleTime,
+    classexam:classDetails.isExam,
+    classsyllabus:classDetails.selectedSyllabus,
+    classsubject:classDetails.selectedClass,
+    })
+    .then((res)=>{
+      console.log(res.data)
+      handleOpen()
+    })
+    .catch((err)=>console.log(err))
   };
 
   return (
@@ -88,8 +102,8 @@ function DisplayClasses() {
 
             <div className="w-100">
               <Select label="Class" onChange={(value) => handleInputChange('selectedSyllabus', value)}>
-                <Option value="State">STATE</Option>
-                <Option value="Cbse">CBSE</Option>
+                <Option value="state">STATE</Option>
+                <Option value="cbse">CBSE</Option>
               </Select>
             </div>
 
@@ -113,13 +127,13 @@ function DisplayClasses() {
 
             <div className="w-100">
               <Select label="Subject" onChange={(value) => handleInputChange('selectedSubject', value)}>
-                <Option value="Maths">Maths</Option>
-                <Option value="Biology">Biology</Option>
-                <Option value="Chemistry">Chemistry</Option>
-                <Option value="Physics">Physics</Option>
-                <Option value="English">English</Option>
-                <Option value="Hindi">Hindi</Option>
-                <Option value="Other">Other</Option>
+                <Option value="maths">Maths</Option>
+                <Option value="biology">Biology</Option>
+                <Option value="chemistry">Chemistry</Option>
+                <Option value="physics">Physics</Option>
+                <Option value="english">English</Option>
+                <Option value="hindi">Hindi</Option>
+                <Option value="other">Other</Option>
               </Select>
             </div>
 
