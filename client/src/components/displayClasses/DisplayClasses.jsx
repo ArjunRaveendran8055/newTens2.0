@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import ClassCard from "../../widgets/cards/ClassCard";
 import {
   Button,
@@ -12,6 +12,9 @@ import {
   Select,
   Option,
 } from "@material-tailwind/react";
+import { IconButton, ButtonGroup } from "@material-tailwind/react";
+import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
+
 import axios from "axios";
 
 function DisplayClasses() {
@@ -24,6 +27,29 @@ function DisplayClasses() {
     scheduleTime: '',
     isExam: false,
   });
+
+  // pagination state's
+  const [classes, setClasses] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(9);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // function to fetch classes from server
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`http://localhost:8055/class/getAllClass?page=${currentPage}&limit=${limit}`);
+        const data = await response.json();
+        setClasses(data.classes);
+
+        setTotalPages(data.pagination.next.page);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [currentPage, limit]);
 
   const handleOpen = () => {
     setOpen((cur) => !cur)
@@ -141,7 +167,6 @@ function DisplayClasses() {
               Tutor
             </Typography>
             <Input label="Enter Tutor Name" size="lg" onChange={(e) => handleInputChange('tutorName', e.target.value)}/>
-
             <Typography className="-mb-2" variant="h6">
               Date & Time
             </Typography>
@@ -164,9 +189,32 @@ function DisplayClasses() {
       </Dialog>
       {/* LISTING THE CLASSES FETCHED FROM DB */}
       <div className="flex flex-wrap justify-center">
-        <ClassCard />
-        <ClassCard /> <ClassCard /> <ClassCard /> <ClassCard />
+      {classes.map((cls) => (
+        <ClassCard classDetail={cls} key={cls._id}/>
+        ))}
       </div>
+
+{/* <div>
+        <button onClick={() => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))}>Previous Page</button>
+        <span>{currentPage} of {totalPages}</span>
+        <button onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))}>Next Page</button>
+      </div> */}
+
+<div>
+<ButtonGroup variant="outlined">
+      <IconButton onClick={() => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))}>
+        <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
+      </IconButton>
+      {Array.from({ length: totalPages }, (_, index) => (
+    <IconButton key={index + 1} onClick={() => setCurrentPage(index + 1)}>
+      {index + 1}
+    </IconButton>
+  ))}
+      <IconButton onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))}>
+        <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
+      </IconButton>
+    </ButtonGroup>
+    </div>
     </div>
   );
 }
