@@ -15,6 +15,7 @@ import PendingUsers from "../components/features/user/pendingUsers/PendingUsers"
 import Loader from "../components/features/Loader/Loader";
 import Home from "../pages/dashboard/home";
 import StudentDetailsPage from "../pages/otherPages/StudentDetailsPage";
+import DisplayClassesPage from "../pages/dashboard/DisplayClassesPage";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -38,6 +39,7 @@ function App() {
           <Route path="/tables" element={<Table />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/pendingusers" element={<PendingUsers />} />
+          <Route path="/classes" element={<DisplayClassesPage />} />
           <Route path="/studentdetails" element={<StudentDetailsPage/>}/>
         </Route>
       </Routes>

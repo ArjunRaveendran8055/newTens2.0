@@ -16,6 +16,7 @@ import { IconButton, ButtonGroup } from "@material-tailwind/react";
 import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 import axios from "axios";
+import Skeleton from "../../widgets/skeletonLoading/Skeleton";
 
 function DisplayClasses() {
   const [open, setOpen] = useState(false);
@@ -31,17 +32,19 @@ function DisplayClasses() {
   // pagination state's
   const [classes, setClasses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(9);
+  const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [isLoading, setIsLoading] = useState(true)
 
   // function to fetch classes from server
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(`http://localhost:8055/class/getAllClass?page=${currentPage}&limit=${limit}`);
         const data = await response.json();
         setClasses(data.classes);
-
+        setIsLoading(false);
         setTotalPages(data.pagination.next.page);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -189,9 +192,18 @@ function DisplayClasses() {
       </Dialog>
       {/* LISTING THE CLASSES FETCHED FROM DB */}
       <div className="flex flex-wrap justify-center">
+      {isLoading ? (
+        <>
+        <Skeleton/><Skeleton/><Skeleton/><Skeleton/><Skeleton/>
+        <Skeleton/><Skeleton/><Skeleton/><Skeleton/><Skeleton/>
+        </>
+      ):(
+        <>
       {classes.map((cls) => (
         <ClassCard classDetail={cls} key={cls._id}/>
         ))}
+        </>
+      )}
       </div>
 
 {/* <div>
