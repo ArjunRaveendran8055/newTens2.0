@@ -201,6 +201,7 @@ function DisplayClasses() {
       </div> */}
 
 <div>
+  
 <ButtonGroup variant="outlined">
       <IconButton onClick={() => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))}>
         <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
