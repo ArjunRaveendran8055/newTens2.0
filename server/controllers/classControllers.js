@@ -114,6 +114,7 @@ const getAllClassesController = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ count: classes.length ,classes, pagination });
 });
 
+
 const getClassByIdController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
 
