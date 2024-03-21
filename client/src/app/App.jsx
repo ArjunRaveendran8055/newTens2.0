@@ -13,7 +13,7 @@ import Login from "../pages/auth/Login";
 import SearchPage from "../pages/dashboard/SearchPage";
 import PendingUsers from "../components/features/user/pendingUsers/PendingUsers";
 import Loader from "../components/features/Loader/Loader";
-import DisplayClassesPage from "../pages/dashboard/DisplayClassesPage";
+
 import Home from "../pages/dashboard/home";
 import StudentDetailsPage from "../pages/otherPages/StudentDetailsPage";
 import DisplayClassesPage from "../pages/dashboard/DisplayClassesPage";
@@ -41,7 +41,7 @@ function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/pendingusers" element={<PendingUsers />} />
           <Route path="/classes" element={<DisplayClassesPage />} />
-          <Route path="/studentdetails" element={<StudentDetailsPage/>}/>
+          <Route path="/studentdetails/:id" element={<StudentDetailsPage/>}/>
 
         </Route>
       </Routes>
