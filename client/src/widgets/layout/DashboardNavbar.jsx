@@ -134,13 +134,19 @@ export function DashboardNavbar() {
               </MenuItem>
             </MenuList>
           </Menu>
-          <IconButton
+
+          {/* configarator icon in dashboardNav is hidden due to lack of space in moblie screen */}
+
+          
+          {/* <IconButton
             variant="text"
             color="blue-gray"
             onClick={() => dispatch(setOpenConfigurator())}
           >
             <Cog6ToothIcon className="h-5 w-5 text-blue-gray-500" />
-          </IconButton>
+          </IconButton> */}
+
+
           <IconButton
             variant="text"
             color="blue-gray"
@@ -157,6 +163,6 @@ export function DashboardNavbar() {
   );
 }
 
-DashboardNavbar.displayName = "/src/widgets/layout/dashboard-navbar.jsx";
+
 
 export default DashboardNavbar;

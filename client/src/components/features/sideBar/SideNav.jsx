@@ -156,7 +156,7 @@ export function Sidenav({ brandName }) {
           </IconButton>
         </div>
         <div className="m-4">
-          {routes.map(({ layout, title, pages }, key) => (
+          {user.role === "admin" && routes.map(({ layout, title, pages }, key) => (
             <ul key={key} className="mb-4 flex flex-col gap-1">
               {
                 //MODULE TITLE
@@ -198,6 +198,50 @@ export function Sidenav({ brandName }) {
               ))}
             </ul>
           ))}
+
+{user.role === "AA" && AAroutes.map(({ layout, title, pages }, key) => (
+            <ul key={key} className="mb-4 flex flex-col gap-1">
+              {
+                //MODULE TITLE
+              }
+
+              {title && (
+                <li className="mx-3.5 mt-4 mb-2">
+                  <Typography
+                    variant="small"
+                    color="inherit"
+                    className="font-black uppercase opacity-75"
+                  >
+                    {title}
+                  </Typography>
+                </li>
+              )}
+
+              {pages.map(({ icon, name, path }) => (
+                <li key={name}>
+                  <NavLink to={`${path}`}>
+                    {({ isActive }) => (
+                      <Button
+                        variant={isActive ? "gradient" : "text"}
+                        color="green"
+                        className="flex items-center gap-4 px-4 capitalize"
+                        fullWidth
+                      >
+                        {icon}
+                        <Typography
+                          color="inherit"
+                          className="font-medium capitalize"
+                        >
+                          {name}
+                        </Typography>
+                      </Button>
+                    )}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          ))}
+
         </div>
       </aside>
     </>

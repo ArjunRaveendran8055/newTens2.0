@@ -20,7 +20,7 @@ const CustToastContainer = () => {
   z-50 flex justify-center items-center
   `}
     >
-      <div className="toast-container bg-white sm:px-10 md:px-12 lg:px-32 border-[1px] shadow-xl rounded-md flex flex-col items-center">
+      <div className="toast-container z-50 bg-white sm:px-10 md:px-12 lg:px-32 border-[1px] shadow-xl rounded-md flex flex-col items-center">
         <div
           className={`uppercase mt-[2px] font-enriq text-xs ${
             type === "success" ? "text-custGreen" : " text-custcrimson"

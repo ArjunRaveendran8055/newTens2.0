@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ClassCard from "../../widgets/cards/ClassCard";
 import {
   Button,
@@ -21,11 +21,11 @@ import Skeleton from "../../widgets/skeletonLoading/Skeleton";
 function DisplayClasses() {
   const [open, setOpen] = useState(false);
   const [classDetails, setClassDetails] = useState({
-    selectedSyllabus: '',
-    selectedClass: '',
-    selectedSubject: '',
-    tutorName: '',
-    scheduleTime: '',
+    selectedSyllabus: "",
+    selectedClass: "",
+    selectedSubject: "",
+    tutorName: "",
+    scheduleTime: "",
     isExam: false,
   });
 
@@ -34,20 +34,22 @@ function DisplayClasses() {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
   // function to fetch classes from server
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`http://localhost:8055/class/getAllClass?page=${currentPage}&limit=${limit}`);
+        const response = await fetch(
+          `http://localhost:8055/class/getAllClass?page=${currentPage}&limit=${limit}`
+        );
         const data = await response.json();
         setClasses(data.classes);
         setIsLoading(false);
         setTotalPages(data.pagination.next.page);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -55,7 +57,7 @@ function DisplayClasses() {
   }, [currentPage, limit]);
 
   const handleOpen = () => {
-    setOpen((cur) => !cur)
+    setOpen((cur) => !cur);
   };
 
   // HANDLE INPUT FUNCTION
@@ -76,30 +78,31 @@ function DisplayClasses() {
   // Validate fields before submitting
   const handleSubmit = () => {
     if (
-      classDetails.selectedClass.trim() === '' ||
-      classDetails.selectedSubject.trim() === '' ||
-      classDetails.tutorName.trim() === '' ||
-      classDetails.scheduleTime.trim() === ''||
-      classDetails.selectedSyllabus.trim() === ''
+      classDetails.selectedClass.trim() === "" ||
+      classDetails.selectedSubject.trim() === "" ||
+      classDetails.tutorName.trim() === "" ||
+      classDetails.scheduleTime.trim() === "" ||
+      classDetails.selectedSyllabus.trim() === ""
     ) {
-      alert('Please fill in all fields.');
+      alert("Please fill in all fields.");
       return;
     }
 
     // POSTING DATA TO SERVER
-    axios.post('/class/createClass',{
-      tutorname:classDetails.tutorName,
-    classname:classDetails.selectedClass,
-    classdate:classDetails.scheduleTime,
-    classexam:classDetails.isExam,
-    classsyllabus:classDetails.selectedSyllabus,
-    classsubject:classDetails.selectedClass,
-    })
-    .then((res)=>{
-      console.log(res.data)
-      handleOpen()
-    })
-    .catch((err)=>console.log(err))
+    axios
+      .post("/class/createClass", {
+        tutorname: classDetails.tutorName,
+        classname: classDetails.selectedClass,
+        classdate: classDetails.scheduleTime,
+        classexam: classDetails.isExam,
+        classsyllabus: classDetails.selectedSyllabus,
+        classsubject: classDetails.selectedClass,
+      })
+      .then((res) => {
+        console.log(res.data);
+        handleOpen();
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -128,9 +131,13 @@ function DisplayClasses() {
             <Typography className="-mb-2" variant="h6">
               Select Syllabus
             </Typography>
-
             <div className="w-100">
-              <Select label="Class" onChange={(value) => handleInputChange('selectedSyllabus', value)}>
+              <Select
+                label="Class"
+                onChange={(value) =>
+                  handleInputChange("selectedSyllabus", value)
+                }
+              >
                 <Option value="state">STATE</Option>
                 <Option value="cbse">CBSE</Option>
               </Select>
@@ -142,7 +149,10 @@ function DisplayClasses() {
             </Typography>
 
             <div className="w-100">
-              <Select label="Class" onChange={(value) => handleInputChange('selectedClass', value)}>
+              <Select
+                label="Class"
+                onChange={(value) => handleInputChange("selectedClass", value)}
+              >
                 <Option value="class 12">Class 12</Option>
                 <Option value="class 10">Class 10</Option>
                 <Option value="class 9">Class 9</Option>
@@ -155,7 +165,12 @@ function DisplayClasses() {
             </Typography>
 
             <div className="w-100">
-              <Select label="Subject" onChange={(value) => handleInputChange('selectedSubject', value)}>
+              <Select
+                label="Subject"
+                onChange={(value) =>
+                  handleInputChange("selectedSubject", value)
+                }
+              >
                 <Option value="maths">Maths</Option>
                 <Option value="biology">Biology</Option>
                 <Option value="chemistry">Chemistry</Option>
@@ -169,7 +184,11 @@ function DisplayClasses() {
             <Typography className="-mb-2" variant="h6">
               Tutor
             </Typography>
-            <Input label="Enter Tutor Name" size="lg" onChange={(e) => handleInputChange('tutorName', e.target.value)}/>
+            <Input
+              label="Enter Tutor Name"
+              size="lg"
+              onChange={(e) => handleInputChange("tutorName", e.target.value)}
+            />
             <Typography className="-mb-2" variant="h6">
               Date & Time
             </Typography>
@@ -177,10 +196,17 @@ function DisplayClasses() {
               label="Schedule time"
               type="datetime-local"
               className="mmm"
-              onChange={(e) => handleInputChange('scheduleTime', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("scheduleTime", e.target.value)
+              }
             />
             <div className="-ml-2.5 -mt-3">
-              <Checkbox onChange={(isChecked) => handleCheckboxChange(isChecked.target.checked)} label="Exam" />
+              <Checkbox
+                onChange={(isChecked) =>
+                  handleCheckboxChange(isChecked.target.checked)
+                }
+                label="Exam"
+              />
             </div>
           </CardBody>
           <CardFooter className="pt-0">
@@ -192,42 +218,60 @@ function DisplayClasses() {
       </Dialog>
       {/* LISTING THE CLASSES FETCHED FROM DB */}
       <div className="flex flex-wrap justify-center">
-      {isLoading ? (
-        <>
-        <Skeleton/><Skeleton/><Skeleton/><Skeleton/><Skeleton/>
-        <Skeleton/><Skeleton/><Skeleton/><Skeleton/><Skeleton/>
-        </>
-      ):(
-        <>
-      {classes.map((cls) => (
-        <ClassCard classDetail={cls} key={cls._id}/>
-        ))}
-        </>
-      )}
+        {isLoading ? (
+          <>
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+          </>
+        ) : (
+          <>
+            {classes.map((cls) => (
+              <ClassCard classDetail={cls} key={cls._id} />
+            ))}
+          </>
+        )}
       </div>
 
-{/* <div>
+      {/* <div>
         <button onClick={() => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))}>Previous Page</button>
         <span>{currentPage} of {totalPages}</span>
         <button onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))}>Next Page</button>
       </div> */}
 
-<div>
-  
-<ButtonGroup variant="outlined">
-      <IconButton onClick={() => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))}>
-        <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
-      </IconButton>
-      {Array.from({ length: totalPages }, (_, index) => (
-    <IconButton key={index + 1} onClick={() => setCurrentPage(index + 1)}>
-      {index + 1}
-    </IconButton>
-  ))}
-      <IconButton onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))}>
-        <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
-      </IconButton>
-    </ButtonGroup>
-    </div>
+      <div>
+        <ButtonGroup variant="outlined">
+          <IconButton
+            onClick={() =>
+              setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))
+            }
+          >
+            <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
+          </IconButton>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <IconButton
+              key={index + 1}
+              onClick={() => setCurrentPage(index + 1)}
+            >
+              {index + 1}
+            </IconButton>
+          ))}
+          <IconButton
+            onClick={() =>
+              setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))
+            }
+          >
+            <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
+          </IconButton>
+        </ButtonGroup>
+      </div>
     </div>
   );
 }
