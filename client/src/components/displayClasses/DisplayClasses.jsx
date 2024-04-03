@@ -233,8 +233,9 @@ function DisplayClasses() {
           </>
         ) : (
           <>
-            {classes.map((cls) => (
-              <ClassCard classDetail={cls} key={cls._id} />
+          
+            {classes.map((item) => (
+              <ClassCard classDetail={item} key={item._id} />
             ))}
           </>
         )}

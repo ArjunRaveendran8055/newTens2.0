@@ -1,14 +1,27 @@
 import React from 'react'
 import classLogo from '/customImages/class-logo.png'
 
-function ClassCard() {
+function ClassCard(item) {
+
+// Extracting time in 12-hour format
+const classDate = new Date(item.classDetail.classdate);
+const hours = classDate.getHours();
+const minutes = classDate.getMinutes();
+const meridiem = hours >= 12 ? 'PM' : 'AM';
+const hour12 = hours % 12 || 12; // Convert to 12-hour format
+
+const time12HourFormat = `${hour12}:${minutes < 10 ? '0' : ''}${minutes} ${meridiem}`;
+
+console.log(time12HourFormat); // Output the time in 12-hour format
+
+
   return (
     <>
     <div className="flex-shrink-0 m-6 relative overflow-hidden bg-teal-500 rounded-lg max-w-xs shadow-lg cursor-pointer">
     
     <span className=" bg-white rounded-full ml-6 text-teal-500 text-xs font-bold justify-between px-3 mt-3 py-2 leading-none flex w-[80%] items-center">
             <p>03/04/2024</p>
-           <p className='text-red-500'>No Exam</p> 
+           <p className='text-red-500'>{item.classDetail.classexam? "Exam" : "No Exam"}</p> 
           </span>
       <svg
         className="absolute bottom-0 left-0 mb-8"
@@ -50,16 +63,16 @@ function ClassCard() {
         />
       </div>
       <div className="relative text-white px-6 pb-6 mt-6">
-              <span className="block opacity-75 -mb-1">STATE</span>
+              <span className="block opacity-75 -mb-1">{item.classDetail.classsyllabus}</span>
         <div className="flex justify-between">
-          <span className="block font-semibold text-xl">CLASS 12</span>
+          <span className="block font-semibold text-xl">{item.classDetail.classname}</span>
           <span className=" bg-white rounded-full text-teal-500 text-xs font-bold px-3 py-2 leading-none flex items-center">
-            7.00 PM
+            {time12HourFormat}
           </span>
         </div>
   
         <div className="flex flex-col">
-          <span className="block font-semibold pacity-80 text-l">Tutor: Jithin</span>
+          <span className="block font-semibold pacity-80 text-l">Tutor: {item.classDetail.tutorname}</span>
         </div>
       </div>
     </div>
