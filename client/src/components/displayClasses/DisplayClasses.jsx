@@ -218,6 +218,7 @@ function DisplayClasses() {
       </Dialog>
       {/* LISTING THE CLASSES FETCHED FROM DB */}
       <div className="flex flex-wrap justify-center">
+        
         {isLoading ? (
           <>
             <Skeleton />
@@ -235,9 +236,10 @@ function DisplayClasses() {
           <>
           
             {classes.map((item) => (
-              <ClassCard classDetail={item} key={item._id} />
+              <ClassCard classDetail={item} key={item._id} /> 
             ))}
           </>
+         
         )}
       </div>
 
@@ -246,6 +248,8 @@ function DisplayClasses() {
         <span>{currentPage} of {totalPages}</span>
         <button onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))}>Next Page</button>
       </div> */}
+
+      {classes.length>10 &&
 
       <div>
         <ButtonGroup variant="outlined">
@@ -273,6 +277,7 @@ function DisplayClasses() {
           </IconButton>
         </ButtonGroup>
       </div>
+      }
     </div>
   );
 }
