@@ -1,4 +1,5 @@
 import React from 'react'
+import { LuEye } from "react-icons/lu";
 
 function ClassHome() {
   return (
@@ -6,9 +7,8 @@ function ClassHome() {
     
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
         
-        <div className="flex flex-col md:flex-row md:items-center mb-4 md:mb-0">
-          <h1 className="text-2xl font-semibold text-gray-800 mr-4">Chemistry - Jithin</h1>
-          <span className="text-sm text-gray-500">arjun</span>
+        <div className="flex flex-col md:flex-row md:items-center mb-4 mt-4 md:mb-0">
+          <h1 className="text-2xl font-semibold text-black mr-4">Chemistry - Jithin</h1>
         </div>
     
       </div>
@@ -21,30 +21,46 @@ function ClassHome() {
           <p className="text-right text-l text-black-500 mb-4">December, 12</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#ffd940] rounded-lg p-4 cursor-pointer">
-              <h3 className="text-lg font-semibold">Report</h3>
-              <p className="text-sm text-black-500">Total reports: 05</p>
+              <h3 className="text-lg font-semibold text-black">Report</h3>
+              <p className="text-l text-black-500">Total reports: 05</p>
             </div>
             <div className="bg-[#90a5f8] rounded-lg p-4 cursor-pointer">
-              <h3 className="text-lg font-semibold">Attendance</h3>
-              <p className="text-sm text-white">Status: uploaded</p>
+              <h3 className="text-lg text-black font-semibold">Attendance</h3>
+              <p className="text-l text-white">Status: uploaded</p>
             </div>
             <div className="bg-[#BFDBFE] rounded-lg p-4 cursor-pointer">
-              <h3 className="text-lg font-semibold">Absenties</h3>
-              <p className="text-sm text-black-500">Status: Updated</p>
+              <h3 className="text-lg font-semibold text-black">Absenties</h3>
+              <p className="text-l text-black-500">Status: Updated</p>
             </div>
             <div className="bg-[#FED7AA] rounded-lg p-4 cursor-pointer">
-              <h3 className="text-lg font-semibold">Daily Report</h3>
-              <p className="text-sm text-black-500">Status: Not updated</p>
+              <h3 className="text-lg font-semibold text-black">Daily Report</h3>
+              <p className="text-l text-black-500">Status: Not updated</p>
             </div>
             <div className="bg-[#ffbe74] rounded-lg p-4 col-span-2 cursor-pointer">
-              <h3 className="text-lg font-semibold">View Daily Report</h3>
-              <p className="text-sm text-black-500">Status: Uploaded</p>
+              <h3 className="text-lg font-semibold text-black">View Daily Report</h3>
+              <p className="text-l text-black-500">Status: Uploaded</p>
             </div>
           </div>
         </div>
+        
         <div className="bg-white rounded-lg p-6 w-[40%] lg:w-[40%] sm:w-[100%]">
-          <h2 className="text-lg font-semibold mb-4">Reports</h2>
+          <h2 className="text-xl text-black font-semibold mb-4">Reports</h2>
+
+          {/* div to loop , loop each reports here */}
+          <div>
+            <hr></hr>
+            <div className='flex flex-col mt-2 mb-2'>
+              <div className='flex justify-between'>
+                 <p className='text-black text-lg mb-1 font-bold'>ZA024 - Fathima Hana</p>
+                  <LuEye className='text-xl cursor-pointer'/>
+              </div>
+              <p>Reported by : Fayaz</p>
+            </div>
+            <hr></hr>
+          </div>
         </div>
+
+        
       </div>
     </div> 
 
