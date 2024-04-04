@@ -8,7 +8,7 @@ import { Dialog, Select, Option, button } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import { setToastView } from "../features/toast/toastSlice";
-import "react-vertical-timeline-component/style.min.css";
+
 
 const StudentDetails = () => {
   const navigate = useNavigate();

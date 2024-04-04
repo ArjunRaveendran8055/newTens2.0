@@ -17,6 +17,7 @@ import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 import axios from "axios";
 import Skeleton from "../../widgets/skeletonLoading/Skeleton";
+import { Link } from "react-router-dom";
 
 function DisplayClasses() {
   const [open, setOpen] = useState(false);
@@ -236,7 +237,9 @@ function DisplayClasses() {
           <>
           
             {classes.map((item) => (
-              <ClassCard classDetail={item} key={item._id} /> 
+              <Link to={`/classhome/${item._id}`}>
+              <ClassCard classDetail={item} key={item._id} />
+              </Link>
             ))}
           </>
          

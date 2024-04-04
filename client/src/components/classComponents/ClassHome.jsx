@@ -1,14 +1,46 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { LuEye } from "react-icons/lu";
+import {
+  Button,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+  Typography,
+} from "@material-tailwind/react";
+import { useParams } from 'react-router-dom';
 
 function ClassHome() {
+  const { id } = useParams();
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(!open);
+  const [classData,setClassData] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8055/class/getoneclass/${id}`
+        );
+        const data = await response.json();
+        console.log(data);
+        setClassData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
 <div className="min-h-screen bg-gray-100 p-8 sm:p-2">
     
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
         
         <div className="flex flex-col md:flex-row md:items-center mb-4 mt-4 md:mb-0">
-          <h1 className="text-2xl font-semibold text-black mr-4">Chemistry - Jithin</h1>
+          <h1 className="text-2xl font-semibold text-black mr-4">{classData.classsubject} - {classData.tutorname}</h1>
         </div>
     
       </div>
@@ -52,7 +84,29 @@ function ClassHome() {
             <div className='flex flex-col mt-2 mb-2'>
               <div className='flex justify-between'>
                  <p className='text-black text-lg mb-1 font-bold'>ZA024 - Fathima Hana</p>
-                  <LuEye className='text-xl cursor-pointer'/>
+                 <Button onClick={handleOpen}> <LuEye className='text-xl cursor-pointer'/></Button>
+      <Dialog open={open} handler={handleOpen}>
+        <DialogHeader>
+          <Typography variant="h5" color="blue-gray">
+            Report
+          </Typography>
+        </DialogHeader>
+        <DialogBody divider className="grid place-items-center gap-4">
+          <Typography color="red" variant="h4">
+            ZA024 Fathima Hana
+          </Typography>
+          <Typography className="text-center font-normal">
+            Classil Nalla urakkam aanu, Ottum sredhikunila!!
+          </Typography>
+        </DialogBody>
+        <DialogFooter className="space-x-2">
+
+          <Button variant="gradient" onClick={handleOpen}>
+            Close
+          </Button>
+        </DialogFooter>
+      </Dialog>
+                 
               </div>
               <p>Reported by : Fayaz</p>
             </div>
