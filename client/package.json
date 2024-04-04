@@ -24,6 +24,7 @@
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.17.0",
     "react-toastify": "^10.0.4",
+    "react-vertical-timeline-component": "^3.6.0",
     "redux-persist": "^6.0.0"
   },
   "devDependencies": {

@@ -4,10 +4,12 @@ import { FaPhoneSquareAlt } from "react-icons/fa";
 import { RiParentLine } from "react-icons/ri";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { Dialog, Select, Option } from "@material-tailwind/react";
+import { Dialog, Select, Option, button } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import { setToastView } from "../features/toast/toastSlice";
+import "react-vertical-timeline-component/style.min.css";
+
 const StudentDetails = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
@@ -21,6 +23,7 @@ const StudentDetails = () => {
   });
 
   const [openAddReport, setOpenAddReport] = useState(false);
+  const [openViewReports, setOpenViewReports] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [btnLoader, setBtnLoader] = useState(false);
 
@@ -46,6 +49,31 @@ const StudentDetails = () => {
     setOpenAddReport((cur) => !cur);
   };
 
+  const handleOpenViewReports = () => {
+    setOpenViewReports((prev) => !prev);
+  };
+  //function handling reason change
+
+  const reasonChangeHandler = (e) => {
+    setErrMsg("");
+    //trimming whitespace at the end and begining
+    const updatedReason = e.target.value.trimStart();
+    //trimming enter key and multiple white spaces in between
+    const trimmedReason = updatedReason.replace(/\s{2,}|\n{2,}/g, " ");
+    // console.log("final reason is",trimmedReason)
+    setReport({ ...report, reason: trimmedReason });
+  };
+
+  const responseChangeHandler = (e) => {
+    setErrMsg("");
+    //trimming whitespace at the end and begining
+    const updatedResponse = e.target.value.trimStart();
+    //trimming enter key and multiple white spaces in between
+    const trimmedResponse = updatedResponse.replace(/\s{2,}|\n{2,}/g, " ");
+    // console.log("final reason is",trimmedResponse)
+    setReport({ ...report, response: trimmedResponse });
+  };
+
   const onSaveReportHandler = () => {
     if (report.type.length === 0) {
       return setErrMsg("*( Please Select Type of Call.)");
@@ -57,8 +85,7 @@ const StudentDetails = () => {
       return setErrMsg("*( Please Enter Detailed Response.)");
     }
 
-    setBtnLoader(false);
-
+    setBtnLoader(true);
     //add report to the current student
     axios
       .post("/student/addReport", {
@@ -68,7 +95,16 @@ const StudentDetails = () => {
         response: report.response,
         calledBy: `${user.firstname + " " + user.lastname}`,
       })
-      .then((res) => console.log(res.data))
+      .then((res) => {
+        setReport({
+          type: "",
+          reason: "",
+          response: "",
+        });
+        setOpenAddReport(false);
+        setBtnLoader(false);
+        dispatch(setToastView({ type: "success", msg: res.data.message }));
+      })
       .catch((err) => console.log(err.message));
   };
 
@@ -108,10 +144,8 @@ const StudentDetails = () => {
                 <textarea
                   placeholder={`${"Enter the reason.."}`}
                   className={`p-2  w-full border-[1px] border-black font-bold`}
-                  onChange={(e) => {
-                    setReport({ ...report, reason: e.target.value }),
-                      setErrMsg("");
-                  }}
+                  onChange={reasonChangeHandler}
+                  value={report.reason}
                 ></textarea>
               </div>
             </div>
@@ -122,12 +156,10 @@ const StudentDetails = () => {
               </div>
               <div className="responseinput lg:w-[70%] sm:w-full">
                 <textarea
+                  value={report.response}
                   placeholder={`Enter the response...`}
                   className={`p-2  w-full border-[1px] border-black rounded-sm font-bold `}
-                  onChange={(e) => {
-                    setReport({ ...report, response: e.target.value }),
-                      setErrMsg("");
-                  }}
+                  onChange={responseChangeHandler}
                 ></textarea>
               </div>
             </div>
@@ -152,7 +184,7 @@ const StudentDetails = () => {
       {/* view Report div */}
 
       <div className="leftdiv sm:h-[95vh] lg:h-[92vh]  sm:w-full lg:w-[35%] flex flex-col sm:gap-2 lg:gap-3 xl:gap-10 sm:p-1 md:p-3 lg:p-2  xl:p-10">
-        <div className="profilecard bg-white shadow-lg flex flex-col w-full sm:h-[70%] lg:h-[62%] rounded-3xl  justify-around">
+        <div className="profilecard bg-white shadow-lg flex flex-col w-full sm:h-[70%] lg:h-[65%] rounded-3xl  justify-around">
           <div className="imagediv flex flex-col w-full justify-center items-center gap-2">
             <div className=" font-extrabold sm:text-lg md:text-xl lg:text-lg  decoration-black underline underline-offset-4">
               STUDENT DETAILS
@@ -186,9 +218,22 @@ const StudentDetails = () => {
             >
               Add Report
             </button>
-            <button className="px-4 py-2 bg-custblue text-white font-bold rounded-md hover:shadow-custdarkblue hover:shadow-md hover:scale-105 duration-75">
-              View Reports
-            </button>
+
+            {openViewReports ? (
+              <button
+                className="px-4 py-2 bg-custblue text-white font-bold rounded-md hover:shadow-custdarkblue hover:shadow-md hover:scale-105 duration-75"
+                onClick={handleOpenViewReports}
+              >
+                View Reports
+              </button>
+            ) : (
+              <button
+                className="px-4 py-2 bg-custblue text-white font-bold rounded-md hover:shadow-custdarkblue hover:shadow-md hover:scale-105 duration-75"
+                onClick={handleOpenViewReports}
+              >
+                Hide Reports
+              </button>
+            )}
           </div>
         </div>
         <div className="contactcard flex flex-col w-full h-[38%] border-2 rounded-3xl shadow-2xl">
@@ -221,51 +266,63 @@ const StudentDetails = () => {
           </div>
         </div>
       </div>
-      <div className="rightdiv h-[92vh] sm:w-full lg:w-[65%]  flex flex-col lg:gap-10 sm:p-1 md:p-3 lg:py-2 lg:px-0  xl:p-10">
-        <div className="descDiv basis-1/2 font-enriq sm:text-xl md:text-2xl lg:text-md w-full  rounded-3xl lg:p-10 sm:p-3 md:p-5 flex flex-col gap-2 shadow-2xl">
-          <span className="flex flex-row border-b-[1px] border-gray-400">
-            <p>Father's Name </p>&nbsp;:&nbsp;<p>{student.father}</p>
-          </span>
-          <span className="flex flex-row border-b-[1px] border-gray-400">
-            <p>Mother's Name </p>&nbsp;:&nbsp;
-            <p>{student.mother?.length === 0 ? "Not Given" : student.mother}</p>
-          </span>
-          <span className="flex flex-row border-b-[1px] border-gray-400">
-            <p>Address </p>&nbsp;:&nbsp;<p>{student.address} </p>
-          </span>
-          <span className="flex flex-row  border-b-[1px] border-gray-400">
-            <p>PinCode </p>&nbsp;:&nbsp;
-            <p>
-              {student.pin_code?.length === 0 ? "Not Given" : student.pin_code}
-            </p>
-          </span>
-          <span className="flex flex-row border-b-[1px] border-gray-400">
-            <p>Syllabus: </p>&nbsp;:&nbsp;<p>{student.syllabus}</p>
-          </span>
-          <span className="flex flex-row border-b-[1px] border-gray-400">
-            <p>Medium </p>&nbsp;:&nbsp;<p>{student.medium}</p>
-          </span>
-          <span className="flex flex-row border-b-[1px] border-gray-400">
-            <p>School Name </p>&nbsp;:&nbsp;<p> {student.school_name}</p>
-          </span>
-          <span className="flex flex-row border-b-[1px] border-gray-400">
-            <p>School Location </p>&nbsp;:&nbsp;<p>{student.school_location}</p>
-          </span>
-          <span className="flex flex-row border-b-[1px] border-gray-400">
-            <p>District </p>&nbsp;:&nbsp;<p>{student.district}</p>
-          </span>
-        </div>
-        <div className="mainReportsContainer basis-1/2 w-fullrounded-3xl flex sm:flex-col lg:flex-row gap-5 lg:px-5">
-          <div className="lg:basis-[33%] sm:basis-1  rounded-3xl shadow-md p-5">
-            card1
-          </div>
-          <div className="lg:basis-[33%] sm:basis-1b  rounded-3xl shadow-md p-5">
-            card2
-          </div>
-          <div className="lg:basis-[33%] sm:basis-1 rounded-3xl shadow-md p-5">
-            card3
-          </div>
-        </div>
+      <div className="rightdiv min-h-[92vh] sm:w-full lg:w-[65%]  flex flex-col lg:gap-10 sm:p-1 md:p-3 lg:py-2 lg:px-0  xl:p-10">
+        {!openViewReports ? (
+          <>
+            <div className="descDiv basis-1/2 font-enriq sm:text-xl md:text-2xl lg:text-md w-full  rounded-3xl lg:p-10 sm:p-3 md:p-5 flex flex-col gap-2 shadow-2xl">
+              <span className="flex flex-row border-b-[1px] border-gray-400">
+                <p>Father's Name </p>&nbsp;:&nbsp;<p>{student.father}</p>
+              </span>
+              <span className="flex flex-row border-b-[1px] border-gray-400">
+                <p>Mother's Name </p>&nbsp;:&nbsp;
+                <p>
+                  {student.mother?.length === 0 ? "Not Given" : student.mother}
+                </p>
+              </span>
+              <span className="flex flex-row border-b-[1px] border-gray-400">
+                <p>Address </p>&nbsp;:&nbsp;
+                <p>{student.address}</p>
+              </span>
+              <span className="flex flex-row  border-b-[1px] border-gray-400">
+                <p>PinCode </p>&nbsp;:&nbsp;
+                <p>
+                  {student.pin_code?.length === 0
+                    ? "Not Given"
+                    : student.pin_code}
+                </p>
+              </span>
+              <span className="flex flex-row border-b-[1px] border-gray-400">
+                <p>Syllabus: </p>&nbsp;:&nbsp;<p>{student.syllabus}</p>
+              </span>
+              <span className="flex flex-row border-b-[1px] border-gray-400">
+                <p>Medium </p>&nbsp;:&nbsp;<p>{student.medium}</p>
+              </span>
+              <span className="flex flex-row border-b-[1px] border-gray-400">
+                <p>School Name </p>&nbsp;:&nbsp;<p> {student.school_name}</p>
+              </span>
+              <span className="flex flex-row border-b-[1px] border-gray-400">
+                <p>School Location </p>&nbsp;:&nbsp;
+                <p>{student.school_location}</p>
+              </span>
+              <span className="flex flex-row border-b-[1px] border-gray-400">
+                <p>District </p>&nbsp;:&nbsp;<p>{student.district}</p>
+              </span>
+            </div>
+            <div className="mainReportsContainer basis-1/2 w-fullrounded-3xl flex sm:flex-col lg:flex-row gap-5 lg:px-5">
+              <div className="lg:basis-[33%] sm:basis-1  rounded-3xl shadow-md p-5">
+                card1
+              </div>
+              <div className="lg:basis-[33%] sm:basis-1b  rounded-3xl shadow-md p-5">
+                card2
+              </div>
+              <div className="lg:basis-[33%] sm:basis-1 rounded-3xl shadow-md p-5">
+                card3
+              </div>
+            </div>
+          </>
+        ) : (
+          <div></div>
+        )}
       </div>
     </div>
   );
