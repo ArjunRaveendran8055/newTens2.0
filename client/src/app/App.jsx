@@ -17,7 +17,7 @@ import Loader from "../components/features/Loader/Loader";
 import Home from "../pages/dashboard/home";
 import StudentDetailsPage from "../pages/otherPages/StudentDetailsPage";
 import DisplayClasses from "../components/displayClasses/DisplayClasses";
-import ClassHome from "../components/classHome/ClassHome";
+import ClassHome from "../components/classComponents/ClassHome";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
