@@ -8,7 +8,7 @@ import {
   DialogFooter,
   Typography,
 } from "@material-tailwind/react";
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 function ClassHome() {
   const { id } = useParams();
@@ -52,10 +52,12 @@ function ClassHome() {
           <p className="text-sm text-gray-500">Total Students</p>
           <p className="text-right text-l text-black-500 mb-4">December, 12</p>
           <div className="grid grid-cols-2 gap-4">
+            <Link to={'/classreport'}>
             <div className="bg-[#ffd940] rounded-lg p-4 cursor-pointer">
               <h3 className="text-lg font-semibold text-black">Report</h3>
               <p className="text-l text-black-500">Total reports: 05</p>
             </div>
+            </Link>
             <div className="bg-[#90a5f8] rounded-lg p-4 cursor-pointer">
               <h3 className="text-lg text-black font-semibold">Attendance</h3>
               <p className="text-l text-white">Status: uploaded</p>

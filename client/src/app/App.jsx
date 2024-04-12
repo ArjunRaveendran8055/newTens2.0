@@ -18,6 +18,7 @@ import Home from "../pages/dashboard/home";
 import StudentDetailsPage from "../pages/otherPages/StudentDetailsPage";
 import DisplayClasses from "../components/displayClasses/DisplayClasses";
 import ClassHome from "../components/classComponents/ClassHome";
+import ClassReport from "../components/classComponents/ClassReport";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -44,6 +45,7 @@ function App() {
           <Route path="/classes" element={<DisplayClasses />} />
           <Route path="/studentdetails/:id" element={<StudentDetailsPage/>}/>
           <Route path="/classhome/:id" element={<ClassHome/>}/>
+          <Route path="/classreport" element={<ClassReport/>}/>
 
         </Route>
       </Routes>
