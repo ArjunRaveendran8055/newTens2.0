@@ -61,7 +61,7 @@ function ClassHome() {
               <p className="text-l text-white">Status: uploaded</p>
             </div>
             <div className="bg-[#BFDBFE] rounded-lg p-4 cursor-pointer">
-              <h3 className="text-lg font-semibold text-black">Absenties</h3>
+              <h3 className="text-lg font-semibold text-black">Absenties </h3>
               <p className="text-l text-black-500">Status: Updated</p>
             </div>
             <div className="bg-[#FED7AA] rounded-lg p-4 cursor-pointer">
