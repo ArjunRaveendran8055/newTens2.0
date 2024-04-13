@@ -10,6 +10,7 @@ function ClassReport() {
     const [searchRoll, setSearchRoll]=useState("")
     // STATE FOR STORE STUDENT NAME
     const [studentName,setStudentName]=useState("")
+    const [studentId,setStudentId]=useState("")
     // STATE FOR STORE STUDENT DATA FROM CHECKBOXES
     const [reportData,setReportData]=useState(
         {
@@ -40,6 +41,8 @@ function ClassReport() {
         try {
             const response = await axios.get(`http://localhost:8055/student/getAllStudents?roll=${searchRoll}`);
             const fetchedStudentName = response.data.data[0].student_name;
+            console.log(response.data.data[0]._id)
+            setStudentId(response.data.data[0]._id)
             setStudentName(fetchedStudentName);
             setReportData(prevState => ({
                 ...prevState,
@@ -96,7 +99,11 @@ function ClassReport() {
 
 // POST REQUEST TO SERVER
    const handleSave = async() => {
-   await axios.post(`http://localhost:8055/classReport/CreateReport/${id}`,{reportData})
+    console.log(reportData)
+   await axios.post(`http://localhost:8055/classReport/CreateReport/${id}`,{
+    reportData,
+    studentId,
+  })
     .then((res)=>console.log(res))
     .catch((err)=>console.log(err))
 };
