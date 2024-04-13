@@ -124,3 +124,33 @@ export const AAroutes = [
     ],
   },
 ];
+
+
+export const TAroutes = [
+  {
+    layout: "dashboard",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "dashboard",
+        path: "/home",
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "profile",
+        path: "/profile",
+      },
+    ],
+  },
+  {
+    title: "CLASS MANAGEMENT",
+    layout: "class",
+    pages: [
+      {
+        icon: <MdClass {...icon} />,
+        name: "Class List",
+        path: "/classes",
+      },
+    ],
+  },
+];
