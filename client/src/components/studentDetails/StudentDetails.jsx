@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import { setToastView } from "../features/toast/toastSlice";
 
+import { SsrReportView } from "./ssrReportView/SsrReportView";
 
 const StudentDetails = () => {
   const navigate = useNavigate();
@@ -267,7 +268,7 @@ const StudentDetails = () => {
         </div>
       </div>
       <div className="rightdiv min-h-[92vh] sm:w-full lg:w-[65%]  flex flex-col lg:gap-10 sm:p-1 md:p-3 lg:py-2 lg:px-0  xl:p-10">
-        {!openViewReports ? (
+        {openViewReports ? (
           <>
             <div className="descDiv basis-1/2 font-enriq sm:text-xl md:text-2xl lg:text-md w-full  rounded-3xl lg:p-10 sm:p-3 md:p-5 flex flex-col gap-2 shadow-2xl">
               <span className="flex flex-row border-b-[1px] border-gray-400">
@@ -321,7 +322,9 @@ const StudentDetails = () => {
             </div>
           </>
         ) : (
-          <div></div>
+          <div>
+            <SsrReportView/>
+          </div>
         )}
       </div>
     </div>
