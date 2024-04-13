@@ -101,7 +101,7 @@ function ClassReport() {
    const handleSave = async() => {
     console.log(reportData)
    await axios.post(`http://localhost:8055/classReport/CreateReport/${id}`,{
-    reportData,
+    ...reportData,
     studentId,
   })
     .then((res)=>console.log(res))
