@@ -20,30 +20,36 @@ function ClassReport() {
         }
     )
 
+      // STATE FOR SAVE BUTTON ENABLE/DISABLE
+      const [isDataFetched, setIsDataFetched] = useState(false);
+
 
    useEffect(()=>{
         fetchData()
    },[searchRoll])
        
-      // FUNCTION TO GET STUDENT NAME FROM ROLL NUMBER
-       const fetchData = async () => {
-        if(searchRoll.length==5){
+   // FUNCTION TO GET STUDENT NAME FROM ROLL NUMBER
+   const fetchData = async () => {
+    if (searchRoll.length === 5) {
         try {
-          const response = await axios.get(`http://localhost:8055/student/getAllStudents?roll=${searchRoll}`);
-          const fetchedStudentName = response.data.data[0].student_name;
-          setStudentName(fetchedStudentName);
-          setReportData(prevState => ({
-              ...prevState,
-              name: fetchedStudentName,
-              roll: searchRoll,
-          }));
+            const response = await axios.get(`http://localhost:8055/student/getAllStudents?roll=${searchRoll}`);
+            const fetchedStudentName = response.data.data[0].student_name;
+            setStudentName(fetchedStudentName);
+            setReportData(prevState => ({
+                ...prevState,
+                name: fetchedStudentName,
+                roll: searchRoll,
+            }));
+            setIsDataFetched(true); // Enable the save button
         } catch (error) {
-          console.log(error)
+            console.log(error);
+            setIsDataFetched(false); // Disable the save button
         }
-    }else{
-        setStudentName("")
+    } else {
+        setStudentName("");
+        setIsDataFetched(false); // Disable the save button
     }
-    }
+};
 
     const handleCheckboxChange = (e) => {
       const { id, checked } = e.target;
@@ -90,7 +96,7 @@ const handleSave = () => {
     
 
   return (
-    <div className="max-w-4xl h-auto mx-auto p-8">
+    <div className="max-w-4xl min-h-screen h-auto mx-auto p-8">
       <h1 className="text-3xl font-bold text-black text-center mb-6">ReportPage</h1>
       <div className="border p-6 bg-white rounded-lg">
         <div className="flex sm:flex-col lg:flex-row justify-between items-center mb-4">
@@ -100,7 +106,7 @@ const handleSave = () => {
           <input
             className="block w-1/4 border rounded-md py-2 px-3 text-lg text-gray-700"
             id="studentId"
-            placeholder="ZA001"
+            placeholder="Enter Roll NO"
             type="text"
             onChange={(e)=>setSearchRoll(e.target.value)}
           />
@@ -110,6 +116,8 @@ const handleSave = () => {
             Student Name : {studentName}
           </label>
         </div>
+        {isDataFetched && (
+      <div> 
         <h2 className="text-xl text-black font-semibold mb-4">Class Report</h2>
 
         <div className="grid grid-cols-3 sm:grid-cols-1 lg:grid-cols-3 text-black gap-7 mb-6">
@@ -202,10 +210,14 @@ const handleSave = () => {
             onChange={handleRemarkChange}
           ></textarea>
         </div>
-        <button onClick={handleSave} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
-          Save
-        </button>
-      </div>
+        
+            <button onClick={handleSave} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                Save
+           </button>
+               
+      </div> 
+      )}
+      </div> 
     </div>
   );
 }
