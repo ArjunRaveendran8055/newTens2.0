@@ -3,6 +3,7 @@ const { asyncWrapper } = require("../helpers/asyncWrapper");
 const { StudentModel } = require("../models/StudentModel");
 const mongoose = require("mongoose");
 
+//fetch all students
 const getAllStudentsController = asyncWrapper(async (req, res, next) => {
   const { roll, name, phno } = req.query;
 
@@ -25,6 +26,7 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ data: result, sucess: true });
 });
 
+//student details using student id as params
 const getStudentDetailsController = asyncWrapper(async (req, res, next) => {
   const { id } = req.params;
 
@@ -45,17 +47,49 @@ const getStudentDetailsController = asyncWrapper(async (req, res, next) => {
 //controller to add a student report
 const addReportController = asyncWrapper(async (req, res, next) => {
   const { id, callType, reason, response, calledBy } = req.body;
-  console.log(reason)
-  const reportObj = { callType, reason, response, callType,time: new Date(Date.now())};
-  const result= await StudentModel.findByIdAndUpdate(id,{$push:{report:reportObj}})
-  if(!result){
-    throw new AppError(400,"Report Insertion Failed!")
+  console.log(reason);
+  const reportObj = {
+    callType,
+    reason,
+    response,
+    callType,
+    time: new Date(Date.now()),
+  };
+  const result = await StudentModel.findByIdAndUpdate(id, {
+    $push: { report: reportObj },
+  });
+  if (!result) {
+    throw new AppError(400, "Report Insertion Failed!");
   }
-  res.status(200).json({ data: result,success:true,message:"Report Added SuccessFully." });
+  res.status(200).json({
+    data: result,
+    success: true,
+    message: "Report Added SuccessFully.",
+  });
+});
+
+//getSsrReport of a student using id as params
+const fetchStudentReportsController = asyncWrapper(async (req, res, next) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new AppError(400, "Invalid StudentID.");
+  }
+  const result = await StudentModel.findById(id);
+  console.log("result is", result);
+  if (!result) {
+    throw new AppError(400, "SomeThing wrong with StudentID.");
+  }
+
+  res.status(200).json({
+    data: result.report,
+    success: true,
+    message: "Reports sent successfully.",
+  });
 });
 
 module.exports = {
   getAllStudentsController,
   getStudentDetailsController,
   addReportController,
+  fetchStudentReportsController,
 };
