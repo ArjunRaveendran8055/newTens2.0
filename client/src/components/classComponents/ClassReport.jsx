@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Switch } from "@material-tailwind/react";
 import { useParams } from 'react-router-dom';
+import { useSelector } from "react-redux";
 
 function ClassReport() {
   const { id } = useParams();
+  const { user } = useSelector(state => state.user);
 
     // STATE FOR STORE ROLL NUMBER TO SEARCH
     const [searchRoll, setSearchRoll]=useState("")
@@ -48,6 +49,7 @@ function ClassReport() {
                 ...prevState,
                 name: fetchedStudentName,
                 roll: searchRoll,
+                reportedBy:user.firstname,
             }));
             setIsDataFetched(true); // Enable the save button
         } catch (error) {
