@@ -1,8 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Switch } from "@material-tailwind/react";
+import { useParams } from 'react-router-dom';
 
 function ClassReport() {
+  const { id } = useParams();
+
     // STATE FOR STORE ROLL NUMBER TO SEARCH
     const [searchRoll, setSearchRoll]=useState("")
     // STATE FOR STORE STUDENT NAME
@@ -12,11 +15,11 @@ function ClassReport() {
         {
             roll:"",
             name:"",
-            studentid:"",
+            studentId:"",
             report:[],
             remark:"",
-            reportedby:"TA",
-            followup:false,
+            reportedBy:"TA",
+            followUp:false,
         }
     )
 
@@ -27,6 +30,9 @@ function ClassReport() {
    useEffect(()=>{
         fetchData()
    },[searchRoll])
+
+
+
        
    // FUNCTION TO GET STUDENT NAME FROM ROLL NUMBER
    const fetchData = async () => {
@@ -42,7 +48,7 @@ function ClassReport() {
             }));
             setIsDataFetched(true); // Enable the save button
         } catch (error) {
-            console.log(error);
+            console.log(error.response);
             setIsDataFetched(false); // Disable the save button
         }
     } else {
@@ -72,7 +78,7 @@ function ClassReport() {
 
     setReportData(prevState => ({
         ...prevState,
-        followup: checked
+        followUp: checked
     }));
 };
 
@@ -86,11 +92,14 @@ function ClassReport() {
     }));
 };
 
-const handleSave = () => {
-    // Handle saving reportData
-    console.log(reportData);
-};
 
+
+// POST REQUEST TO SERVER
+   const handleSave = async() => {
+   await axios.post(`http://localhost:8055/classReport/CreateReport/${id}`,{reportData})
+    .then((res)=>console.log(res))
+    .catch((err)=>console.log(err))
+};
 
     
     
@@ -164,7 +173,7 @@ const handleSave = () => {
             </label>
           </div>
           <div className="flex items-center space-x-2">
-            <input id="followUp" type="checkbox"  checked={reportData.followup} onChange={handleFollowUpChange} className="rounded border-gray-300" />
+            <input id="followUp" type="checkbox"  checked={reportData.followUp} onChange={handleFollowUpChange} className="rounded border-gray-300" />
             <label className="text-lg font-medium leading-none" htmlFor="followUp">
               Follow up
             </label>

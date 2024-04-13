@@ -45,7 +45,7 @@ function App() {
           <Route path="/classes" element={<DisplayClasses />} />
           <Route path="/studentdetails/:id" element={<StudentDetailsPage/>}/>
           <Route path="/classhome/:id" element={<ClassHome/>}/>
-          <Route path="/classreport" element={<ClassReport/>}/>
+          <Route path="/classreport/:id" element={<ClassReport/>}/>
 
         </Route>
       </Routes>
