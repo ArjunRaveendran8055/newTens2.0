@@ -58,6 +58,7 @@ function ClassReport() {
         }
     } else {
         setStudentName("");
+        setReportData({})
         setIsDataFetched(false); // Disable the save button
     }
 };
@@ -106,7 +107,12 @@ function ClassReport() {
     ...reportData,
     studentId,
   })
-    .then((res)=>console.log(res))
+    .then((res)=>{
+      console.log(res)
+      setReportData({
+
+      })
+    })
     .catch((err)=>console.log(err))
 };
 
