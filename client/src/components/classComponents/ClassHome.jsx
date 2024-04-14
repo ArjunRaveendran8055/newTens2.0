@@ -176,9 +176,9 @@ function ClassHome() {
                 <hr></hr>
                 <div className="flex flex-col mt-2 mb-2">
                   <div className="flex justify-between">
-                    <p className="text-black text-lg mb-1 font-bold">
-                      <p>{item.roll.toUpperCase()} - {item.name.toUpperCase()}<p>{formatTimestamp(item.time)}</p></p>
-                    </p>{" "}
+                    <span className="text-black text-lg mb-1 font-bold">
+                      <span><p>{item.roll.toUpperCase()} - {item.name.toUpperCase()}</p><p>{formatTimestamp(item)}</p></span>
+                    </span>{" "}
                     <LuEye
                       className="text-xl cursor-pointer"
                       onClick={() => handleOpen(item)}
