@@ -19,6 +19,7 @@ import StudentDetailsPage from "../pages/otherPages/StudentDetailsPage";
 import DisplayClasses from "../components/displayClasses/DisplayClasses";
 import ClassHome from "../components/classComponents/ClassHome";
 import ClassReport from "../components/classComponents/ClassReport";
+import AddStudent from "../components/AddStudent/AddStudent";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -46,7 +47,7 @@ function App() {
           <Route path="/studentdetails/:id" element={<StudentDetailsPage/>}/>
           <Route path="/classhome/:id" element={<ClassHome/>}/>
           <Route path="/classreport/:id" element={<ClassReport/>}/>
-
+          <Route path="/addstudent" element={<AddStudent/>}/>
         </Route>
       </Routes>
     </div>

@@ -154,10 +154,11 @@ function DisplayClasses() {
                 label="Class"
                 onChange={(value) => handleInputChange("selectedClass", value)}
               >
-                <Option value="class 12">Class 12</Option>
-                <Option value="class 10">Class 10</Option>
-                <Option value="class 9">Class 9</Option>
-                <Option value="class 8">Class 8</Option>
+                <Option value="12TH">Class 12</Option>
+                <Option value="11TH">Class 11</Option>
+                <Option value="10TH">Class 10</Option>
+                <Option value="9TH">Class 9</Option>
+                <Option value="8TH">Class 8</Option>
               </Select>
             </div>
             {/* SUBJECT SELECTION BOX */}
@@ -236,8 +237,8 @@ function DisplayClasses() {
         ) : (
           <>
           
-            {classes.map((item) => (
-              <Link to={`/classhome/${item._id}`}>
+            {classes.map((item,index) => (
+              <Link key={index} to={`/classhome/${item._id}`}>
               <ClassCard classDetail={item} key={item._id} />
               </Link>
             ))}

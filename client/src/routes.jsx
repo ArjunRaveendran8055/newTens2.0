@@ -119,7 +119,7 @@ export const AAroutes = [
       {
         icon: <MdClass {...icon} />,
         name: "Add Student",
-        path: "/",
+        path: "/addstudent",
       },
     ],
   },
