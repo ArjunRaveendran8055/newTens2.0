@@ -59,6 +59,16 @@ function ClassHome() {
     }
   };
 
+  //formatting incoming timestamp
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Adding 1 because months are zero-indexed
+    const year = date.getFullYear().toString().slice(-2); // Getting the last two digits of the year
+
+    return `${day}-${month}-${year}`;
+  };
+
   return (
     <div className="bg-gray-100 p-8 sm:p-2">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
@@ -167,7 +177,7 @@ function ClassHome() {
                 <div className="flex flex-col mt-2 mb-2">
                   <div className="flex justify-between">
                     <p className="text-black text-lg mb-1 font-bold">
-                      {item.roll.toUpperCase()} - {item.name.toUpperCase()}
+                      <p>{item.roll.toUpperCase()} - {item.name.toUpperCase()}<p>{formatTimestamp(item.time)}</p></p>
                     </p>{" "}
                     <LuEye
                       className="text-xl cursor-pointer"
