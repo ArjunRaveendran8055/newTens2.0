@@ -27,74 +27,7 @@ function Icon({ id, open }) {
   );
 }
 
-const dummyReports = [
-  {
-    callType: "study call",
-    reason: "kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "2study call",
-    reason: "2kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "2nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "2study call",
-    reason: "2kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "2nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "2study call",
-    reason: "2kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "2nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "study call",
-    reason: "kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "2study call",
-    reason: "2kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "2nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "2study call",
-    reason: "2kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "2nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "2study call",
-    reason: "2kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "2nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "2study call",
-    reason: "2kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "2nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "2study call",
-    reason: "2kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "2nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-  {
-    callType: "2study call",
-    reason: "2kuttiyude oru reportum classil ninnu varathathukond vilichathanu",
-    response: "2nannayi padikkarund nalla pole class shredhikunund",
-    time: "2024-03-25T09:01:01.090+00:00",
-  },
-];
+
 
 export function SsrReportView({ id }) {
   const [open, setOpen] = React.useState(0);
@@ -119,7 +52,6 @@ export function SsrReportView({ id }) {
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Adding 1 because months are zero-indexed
     const year = date.getFullYear().toString().slice(-2); // Getting the last two digits of the year
-
     return `${day}-${month}-${year}`;
   };
   return (

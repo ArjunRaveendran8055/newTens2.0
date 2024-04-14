@@ -48,14 +48,16 @@ function DisplayClasses() {
         const data = await response.json();
         setClasses(data.classes);
         setIsLoading(false);
-        setTotalPages(data.pagination.next.page);
+        // console.log(data)
+        setTotalPages(data.pagination.next?.page);
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, [currentPage, limit]);
+  }, [currentPage, limit, open]);<div className="0"></div>
 
   const handleOpen = () => {
     setOpen((cur) => !cur);
@@ -102,6 +104,15 @@ function DisplayClasses() {
       .then((res) => {
         console.log(res.data);
         handleOpen();
+        setClassDetails({
+          selectedSyllabus: "",
+          selectedClass: "",
+          selectedSubject: "",
+          tutorName: "",
+          scheduleTime: "",
+          isExam: false,
+        })
+        
       })
       .catch((err) => console.log(err));
   };
