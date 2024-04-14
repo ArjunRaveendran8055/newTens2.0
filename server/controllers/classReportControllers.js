@@ -7,7 +7,7 @@ const { StudentModel } = require("../models/StudentModel");
 const createReportController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
 
-  const { roll, name, studentId, report, remark, reportedBy, followUp } =
+  const { roll, name, studentId, report, remark, reportedBy, followUp, response, respondedBy} =
     req.body;
 
   if (!mongoose.Types.ObjectId.isValid(classId)) {
@@ -28,6 +28,11 @@ const createReportController = asyncWrapper(async (req, res, next) => {
         "classreport.$.remark": remark,
         "classreport.$.reportedBy": reportedBy,
         "classreport.$.followUp": followUp,
+        "classreport.$.response" : response,
+        "classreport.$.respondedBy" : respondedBy,
+        "classreport.$.time" :new Date(Date.now()),
+
+
       },
     },
     { new: true }
@@ -41,8 +46,10 @@ const createReportController = asyncWrapper(async (req, res, next) => {
       report,
       remark,
       reportedBy,
+      response,
+      respondedBy,
       followUp,
-      time:Date.now()
+      time:new Date(Date.now())
     };
 
     const updatedReport = await ClassModel.findOneAndUpdate(
