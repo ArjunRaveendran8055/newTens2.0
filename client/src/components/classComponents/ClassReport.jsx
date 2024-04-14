@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
+import { Switch } from "@material-tailwind/react";
 
 function ClassReport() {
   const { id } = useParams();
@@ -20,16 +21,20 @@ function ClassReport() {
       report: [], 
       remark: "",
       reportedBy: "",
+      response:"",
+      respondedBy:"",
       followUp: false,
   });
     // state to show message after submitting report
     const[saveMessage,setSaveMessage]=useState("")
     // STATE FOR SAVE BUTTON ENABLE/DISABLE
     const [isDataFetched, setIsDataFetched] = useState(false);
+    const[errorMsg,setErrorMsg]=useState("")
 
 
    useEffect(()=>{
         fetchData()
+        setErrorMsg("")
    },[searchRoll])
 
 
@@ -40,7 +45,8 @@ function ClassReport() {
     if (searchRoll.length === 5) {
         try {
             const responseReport = await axios.get(`http://localhost:8055/classReport/GetAllReport/${id}?roll=${searchRoll}`);
-            const response = await axios.get(`http://localhost:8055/student/getAllStudents?roll=${searchRoll}`);
+            const response = await axios.get(`http://localhost:8055/classReport/GetClassStudentDetails/${id}?roll=${searchRoll}`);
+            console.log(response)
             const fetchedReportData = responseReport.data.report; 
             console.log(fetchedReportData)
             const fetchedStudentName = response.data.data[0].student_name;
@@ -74,7 +80,8 @@ function ClassReport() {
        
             }
             catch (error) {
-            console.log(error.response);
+            console.log(error.response.data.error);
+            setErrorMsg(error.response.data.error);
             setIsDataFetched(false); // Disable the save button
         }
     } else {
@@ -86,6 +93,8 @@ function ClassReport() {
           report: [], 
           remark: "",
           reportedBy: "",
+          response:"",
+          respondedBy:"",
           followUp: false,
         })
         setIsDataFetched(false); // Disable the save button
@@ -164,6 +173,7 @@ function ClassReport() {
           <input
             className="block w-1/4 border rounded-md py-2 px-3 text-lg text-gray-700"
             id="studentId"
+            maxLength="5"
             placeholder="Enter Roll NO"
             type="text"
             onChange={(e)=>setSearchRoll(e.target.value)}
@@ -171,7 +181,7 @@ function ClassReport() {
         </div>
         <div className="mb-6">
           <label className="block text-lg font-medium text-black mb-1" htmlFor="studentName">
-            Student Name : {studentName}
+            Student Name : {studentName? studentName : errorMsg }
           </label>
         </div>
         {isDataFetched && (
@@ -221,12 +231,13 @@ function ClassReport() {
               Left WOT permission
             </label>
           </div>
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <input id="followUp" type="checkbox"  checked={reportData.followUp} onChange={handleFollowUpChange} className="rounded border-gray-300" />
             <label className="text-lg font-medium leading-none" htmlFor="followUp">
               Follow up
             </label>
-          </div>
+          </div> */}
+
         </div>
         <h2 className="text-xl text-black font-semibold mb-4">Exam Report</h2>
         <div className="grid text-black grid-cols-3 sm:grid-cols-1 lg:grid-cols-3 gap-7 mb-6">
@@ -258,7 +269,15 @@ function ClassReport() {
         </div>
   
         <div className="mb-6">
-          <label className="block text-xl font-bold text-black mb-1" htmlFor="remarks">
+        <h2 className="text-xl text-black font-semibold mb-4">Status</h2>
+        <div className='flex gap-4'>
+        <label className="text-lg text-black font-medium leading-none">
+              Follow Up
+        </label>
+        <Switch onChange={handleFollowUpChange} checked={reportData.followUp} />
+        </div>
+
+          <label className="block text-xl mt-4 font-bold text-black mb-1" htmlFor="remarks">
             Remarks
           </label>
           <textarea
