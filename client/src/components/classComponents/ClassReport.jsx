@@ -13,17 +13,15 @@ function ClassReport() {
     const [studentName,setStudentName]=useState("")
     const [studentId,setStudentId]=useState("")
     // STATE FOR STORE STUDENT DATA FROM CHECKBOXES
-    const [reportData,setReportData]=useState(
-        {
-            roll:"",
-            name:"",
-            studentId:"",
-            report:[],
-            remark:"",
-            reportedBy:"TA",
-            followUp:false,
-        }
-    )
+    const [reportData, setReportData] = useState({
+      roll: "",
+      name: "",
+      studentId: "",
+      report: [], 
+      remark: "",
+      reportedBy: "",
+      followUp: false,
+  });
 
       // STATE FOR SAVE BUTTON ENABLE/DISABLE
       const [isDataFetched, setIsDataFetched] = useState(false);
@@ -58,12 +56,21 @@ function ClassReport() {
         }
     } else {
         setStudentName("");
-        setReportData({})
+        setReportData({
+          roll: "",
+          name: "",
+          studentId: "",
+          report: [], 
+          remark: "",
+          reportedBy: "",
+          followUp: false,
+        })
         setIsDataFetched(false); // Disable the save button
     }
 };
 
     const handleCheckboxChange = (e) => {
+      console.log(reportData)
       const { id, checked } = e.target;
       let updatedReport = [...reportData.report];
 
@@ -109,9 +116,6 @@ function ClassReport() {
   })
     .then((res)=>{
       console.log(res)
-      setReportData({
-
-      })
     })
     .catch((err)=>console.log(err))
 };
