@@ -42,6 +42,7 @@ const createReportController = asyncWrapper(async (req, res, next) => {
       remark,
       reportedBy,
       followUp,
+      time:Date.now()
     };
 
     const updatedReport = await ClassModel.findOneAndUpdate(
