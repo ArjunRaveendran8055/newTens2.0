@@ -2,6 +2,7 @@ const { AppError } = require("../AppError");
 const { asyncWrapper } = require("../helpers/asyncWrapper");
 const { ClassModel } = require("../models/ClassModel");
 const mongoose = require("mongoose");
+const { StudentModel } = require("../models/StudentModel");
 
 const createReportController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
@@ -81,13 +82,63 @@ const getReportController = asyncWrapper(async (req, res, next) => {
     if (roll) {
       const Data = reports.classreport.find((e) => e.roll == roll);
       return res.status(200).json({ success: true, report: Data });
+    } else {
+      return res
+        .status(200)
+        .json({ success: true, report: reports.classreport });
     }
-    return res.status(200).json({ success: true, report: reports.classreport });
   }
+
   throw new AppError(404, "No Data Found");
 });
+
+//student details using class data
+const getClassStudentDetailsController = asyncWrapper(
+  async (req, res, next) => {
+    const { id } = req.params;
+    const roll = req.query.roll;
+    let students;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new AppError(400, "Invalid StudentID.");
+    }
+
+    const result = await ClassModel.findById(id);
+    console.log(result)
+    if (!result) {
+      throw new AppError(400, "SomeThing wrong with ClassID.");
+    } else {
+
+      if(roll){
+
+        students = await StudentModel.find({
+          syllabus:  result.classsyllabus.toUpperCase(),
+          class: result.classname,
+          roll_no : roll
+        });
+
+      }else{
+        students = await StudentModel.find({
+          syllabus:  result.classsyllabus.toUpperCase(),
+          class: result.classname,
+        });
+      }
+
+      
+
+
+
+      res.status(200).json({
+        data: students,
+        success: true,
+        message: "student details fetched Successfully.",
+      });
+    }
+  }
+);
 
 module.exports = {
   createReportController,
   getReportController,
+  getClassStudentDetailsController
 };
