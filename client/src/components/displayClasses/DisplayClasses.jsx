@@ -236,8 +236,8 @@ function DisplayClasses() {
         ) : (
           <>
           
-            {classes.map((item) => (
-              <Link to={`/classhome/${item._id}`}>
+            {classes.map((item,index) => (
+              <Link key={index} to={`/classhome/${item._id}`}>
               <ClassCard classDetail={item} key={item._id} />
               </Link>
             ))}
