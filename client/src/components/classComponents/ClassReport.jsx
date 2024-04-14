@@ -26,10 +26,12 @@ function ClassReport() {
     const[saveMessage,setSaveMessage]=useState("")
     // STATE FOR SAVE BUTTON ENABLE/DISABLE
     const [isDataFetched, setIsDataFetched] = useState(false);
+    const[errorMsg,setErrorMsg]=useState("")
 
 
    useEffect(()=>{
         fetchData()
+        setErrorMsg("")
    },[searchRoll])
 
 
@@ -40,7 +42,8 @@ function ClassReport() {
     if (searchRoll.length === 5) {
         try {
             const responseReport = await axios.get(`http://localhost:8055/classReport/GetAllReport/${id}?roll=${searchRoll}`);
-            const response = await axios.get(`http://localhost:8055/student/getAllStudents?roll=${searchRoll}`);
+            const response = await axios.get(`http://localhost:8055/classReport/GetClassStudentDetails/${id}?roll=${searchRoll}`);
+            console.log(response)
             const fetchedReportData = responseReport.data.report; 
             console.log(fetchedReportData)
             const fetchedStudentName = response.data.data[0].student_name;
@@ -74,7 +77,8 @@ function ClassReport() {
        
             }
             catch (error) {
-            console.log(error.response);
+            console.log(error.response.data.error);
+            setErrorMsg(error.response.data.error);
             setIsDataFetched(false); // Disable the save button
         }
     } else {
@@ -164,6 +168,7 @@ function ClassReport() {
           <input
             className="block w-1/4 border rounded-md py-2 px-3 text-lg text-gray-700"
             id="studentId"
+            maxlength="5"
             placeholder="Enter Roll NO"
             type="text"
             onChange={(e)=>setSearchRoll(e.target.value)}
@@ -171,7 +176,7 @@ function ClassReport() {
         </div>
         <div className="mb-6">
           <label className="block text-lg font-medium text-black mb-1" htmlFor="studentName">
-            Student Name : {studentName}
+            Student Name : {studentName? studentName : errorMsg }
           </label>
         </div>
         {isDataFetched && (
