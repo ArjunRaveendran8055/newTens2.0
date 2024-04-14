@@ -100,33 +100,34 @@ const getClassStudentDetailsController = asyncWrapper(
     let students;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new AppError(400, "Invalid StudentID.");
+      throw new AppError(400, "Invalid ClassId.");
     }
 
     const result = await ClassModel.findById(id);
-    console.log(result)
+
     if (!result) {
       throw new AppError(400, "SomeThing wrong with ClassID.");
     } else {
-
-      if(roll){
-
+      if (roll) {
         students = await StudentModel.find({
-          syllabus:  result.classsyllabus.toUpperCase(),
+          syllabus: result.classsyllabus.toUpperCase(),
           class: result.classname,
-          roll_no : roll
+          roll_no: roll,
         });
 
-      }else{
+        if (students.length == 0) {
+          throw new AppError(404, "Invalid Roll Number!");
+        }
+      } else {
         students = await StudentModel.find({
-          syllabus:  result.classsyllabus.toUpperCase(),
+          syllabus: result.classsyllabus.toUpperCase(),
           class: result.classname,
         });
+
+        if (students.length == 0) {
+          throw new AppError(404, "no Data Found!");
+        }
       }
-
-      
-
-
 
       res.status(200).json({
         data: students,
@@ -140,5 +141,5 @@ const getClassStudentDetailsController = asyncWrapper(
 module.exports = {
   createReportController,
   getReportController,
-  getClassStudentDetailsController
+  getClassStudentDetailsController,
 };
