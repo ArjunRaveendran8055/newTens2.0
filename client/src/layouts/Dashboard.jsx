@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import DashboardNavbar from "../widgets/layout/DashboardNavbar";
 import Footer from "../widgets/layout/footer";
-import {routes} from "../routes";
+import { routes } from "../routes";
 import { setToastView } from "../components/features/toast/toastSlice";
 import { setUser } from "../components/features/user/userSlice";
 
@@ -66,10 +66,7 @@ export function Dashboard() {
   }, []);
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
-      <Sidenav
-        brandName="NEWTEN'S"
-        brandImg={"/img/logo-ct.png"}
-      />
+      <Sidenav brandName="NEWTEN'S" brandImg={"/img/logo-ct.png"} />
       <div className="p-4 xl:ml-80">
         <DashboardNavbar />
         <Configurator />
@@ -82,7 +79,7 @@ export function Dashboard() {
         >
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>
-        <div className="text-blue-gray-600">
+        <div className="text-blue-gray-600 relative">
           {
             //<=.......put your Outlet Component down here.......=>
           }

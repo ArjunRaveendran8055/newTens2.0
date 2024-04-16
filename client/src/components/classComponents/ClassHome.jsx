@@ -25,19 +25,9 @@ function ClassHome() {
   const [reportCount, setReportCount] = useState(0);
   const [reportData, setReportData] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState({});
-  useEffect(() => {
-    dispatch(setLoader());
-    fetchData();
-  }, []);
+  const [openDetailedReport, setOpenDetailedReport] = useState(false);
 
-  //dialogue box handler
-  const handleOpen = (item) => {
-    setOpen(!open);
-    console.log(item);
-    setSelectedStudent(item);
-  };
-  const handleClose = () => setOpen(false);
-
+  // function to fetch class details
   const fetchData = async () => {
     try {
       const response = await axios.get(
@@ -59,18 +49,32 @@ function ClassHome() {
     }
   };
 
+  useEffect(() => {
+    dispatch(setLoader());
+    fetchData();
+  }, []);
+
+  //dialogue box handler
+  const handleOpen = (item) => {
+    setOpen(!open);
+    console.log(item);
+    setSelectedStudent(item);
+  };
+  const handleClose = () => setOpen(false);
+
   //formatting incoming timestamp
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Adding 1 because months are zero-indexed
-    const year = date.getFullYear().toString().slice(-2); // Getting the last two digits of the year
-
-    return `${day}-${month}-${year}`;
+    // Get hours and minutes from the Date object
+    const hours = date.getHours().toString().padStart(2, "0"); // Ensure 2 digits with leading zero
+    const minutes = date.getMinutes().toString().padStart(2, "0"); // Ensure 2 digits with leading zero
+    return `${hours}:${minutes}`;
   };
 
+  console.log(openDetailedReport, "check karo");
+
   return (
-    <div className="bg-gray-100 p-8 sm:p-2">
+    <div className="bg-gray-100 p-8 sm:p-2 min-h-screen">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
         <div className="flex flex-col md:flex-row md:items-center mb-4 mt-4 md:mb-0">
           <h1 className="text-2xl font-semibold text-black mr-4">
@@ -79,8 +83,12 @@ function ClassHome() {
         </div>
       </div>
 
-      <div className="flex lg:flex-row h-[35rem] lg:h-[35rem] sm:h-[70rem] sm:flex-col gap-6">
-        <div className="bg-white rounded-lg p-6 lg:w-[60%] sm:w-[100%]">
+      <div className="flex w-full relative bg-red-50 lg:flex-row h-[35rem] lg:h-[35rem] sm:h-[70rem] sm:flex-col gap-6 ">
+        <div
+          className={`${
+            openDetailedReport && "transform duration-300 hidden w-0"
+          } bg-white rounded-lg p-6 lg:w-[60%] sm:w-[100%]`}
+        >
           <h2 className="text-lg font-semibold mb-4">Class 8</h2>
           <p className="text-4xl font-bold text-gray-800 mb-2">62</p>
           <p className="text-sm text-gray-500">Total Students</p>
@@ -88,7 +96,7 @@ function ClassHome() {
           <div className="grid grid-cols-2 gap-4">
             <Link to={`/classreport/${id}`}>
               <div className="bg-[#ffd940] rounded-lg h-full p-4 cursor-pointer">
-                <h3 className="text-lg font-semibold text-black">Report</h3>
+                <h3 className="text-lg font-semibold text-black">Add Report</h3>
                 <p className="text-l text-black-500">
                   Total reports: {reportCount}
                 </p>
@@ -106,30 +114,47 @@ function ClassHome() {
               <h3 className="text-lg font-semibold text-black">Daily Report</h3>
               <p className="text-l text-black-500">Status: Not updated</p>
             </div>
-            <div className="bg-[#ffbe74] rounded-lg p-4 col-span-2 cursor-pointer">
+            <div
+              className="bg-[#ffbe74] rounded-lg p-4 col-span-2 cursor-pointer"
+              onClick={() => setOpenDetailedReport(!openDetailedReport)}
+            >
               <h3 className="text-lg font-semibold text-black">
-                View Daily Report
+                Detailed Report View
               </h3>
-              <p className="text-l text-black-500">Status: Uploaded</p>
+              <p className="text-l text-black-500">Status: Done</p>
             </div>
           </div>
         </div>
 
         <Dialog open={open}>
           <DialogHeader>
-            <Typography variant="h5" color="blue-gray">
-              Report
+            <Typography className="w-full flex" variant="h5" color="blue-gray">
+              <span className="text-2xl flex font-Playfiar w-full justify-between">
+                <p>Detailed Report</p>{" "}
+                <span className="flex justify-center items-center">
+                  <p className="text-xs">Reported Time :</p>{" "}
+                  <p className=" font-thin text-gray-500">
+                    {formatTimestamp(selectedStudent.time)}
+                  </p>
+                </span>
+              </span>
             </Typography>
           </DialogHeader>
           <DialogBody divider className="grid place-items-center gap-4">
             <Typography color="red" variant="h4">
-              <p className="uppercase">
+              <p className="uppercase font-Playfiar">
                 {selectedStudent.roll} {selectedStudent.name}
               </p>
             </Typography>
             <div className=" w-full flex flex-col">
-              <h2 className="text-xl text-black">Reported Issues</h2>
-              <div className="followupitemscontainer flex flex-wrap gap-2">
+              <span className="text-xl text-black flex font-Playfiar">
+                Reported Issues
+                <p className=" font-caveat text-gray-700">
+                  {" "}
+                  &nbsp;({selectedStudent.reportedBy})
+                </p>
+              </span>
+              <div className="followupitemscontainer flex flex-wrap gap-2  capitalize">
                 {selectedStudent.report?.map((item, key) => (
                   <div key={key}>
                     {key + 1}. {item}
@@ -139,7 +164,7 @@ function ClassHome() {
             </div>
             <div className=" w-full flex flex-col">
               <h2 className="text-xl text-black">Remarks</h2>
-              <div className="remark-container flex flex-wrap gap-2">
+              <div className="remark-container flex flex-wrap gap-2 capitalize">
                 {selectedStudent.remark?.length === 0 ? (
                   "No Remarks Found."
                 ) : (
@@ -147,17 +172,29 @@ function ClassHome() {
                 )}
               </div>
             </div>
-
-            <div className=" w-full flex flex-col">
-              <h2 className="text-xl text-black">Response</h2>
-              <div className="response-container flex flex-wrap gap-2">
-                {selectedStudent.remark?.length === 0 ? (
-                  "No Response Found."
-                ) : (
-                  <div>{selectedStudent.remark}</div>
-                )}
+            {selectedStudent.followUp ? (
+              <div className=" w-full flex flex-col">
+                <span className="text-xl text-black flex font-Playfiar">
+                  Response{" "}
+                  {selectedStudent.response?.length === 0 ? (
+                    ""
+                  ) : (
+                    <div>({selectedStudent.response})</div>
+                  )}
+                </span>
+                <div className="response-container flex flex-wrap gap-2">
+                  {selectedStudent.response?.length === 0 ? (
+                    "No Response Yet."
+                  ) : (
+                    <div>{selectedStudent.remark}</div>
+                  )}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className=" w-full flex flex-col text-green-300 items-end">
+                <p>Issue Solved By Message</p>
+              </div>
+            )}
           </DialogBody>
           <DialogFooter className="space-x-2">
             <Button variant="gradient" onClick={handleClose}>
@@ -166,34 +203,64 @@ function ClassHome() {
           </DialogFooter>
         </Dialog>
 
-        <div className="bg-white rounded-lg overflow-auto p-6 w-[40%] lg:w-[40%] sm:w-[100%]">
-          <h2 className="text-xl text-black font-semibold mb-4">Reports</h2>
+        {/* report container */}
 
-          {/* div to loop , loop each reports here */}
-          {reportData.map((item, index) => {
-            return (
-              <div key={index}>
-                <hr></hr>
-                <div className="flex flex-col mt-2 mb-2">
-                  <div className="flex justify-between">
-                    <span className="text-black text-lg mb-1 font-bold">
-                      <span><p>{item.roll.toUpperCase()} - {item.name.toUpperCase()}</p><p>{formatTimestamp(item)}</p></span>
-                    </span>{" "}
-                    <LuEye
-                      className="text-xl cursor-pointer"
-                      onClick={() => handleOpen(item)}
-                    />
+        <div
+          className={`${
+            openDetailedReport &&
+            "absolute  -translate-x-96 transform duration-1000  h-full  "
+          } bg-white rounded-lg overflow-auto p-6  sm:w-[100%]`}
+          style={{transformOrigin:"right"}}
+        >
+          {!openDetailedReport ? (
+            <>
+              <h2 className="text-xl text-black font-semibold mb-4">Reports</h2>
+              {reportData.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <hr></hr>
+                    <div className="flex flex-col mt-2 mb-2">
+                      <div className="flex justify-between">
+                        <span className="text-black text-sm mb-1 font-bold">
+                          <span>
+                            <p>
+                              {item.roll.toUpperCase()} -{" "}
+                              {item.name.toUpperCase()}
+                            </p>
+                          </span>
+                        </span>{" "}
+                        <span className="flex gap-5">
+                          <p className=" text-md font-caveat">
+                            {formatTimestamp(item.time)}
+                          </p>
+                          <LuEye
+                            className="text-xl cursor-pointer"
+                            onClick={() => handleOpen(item)}
+                          />
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between">
+                        <p className=" capitalize">{item.report.join(", ")}</p>
+                      </div>
+                      <div className="w-full flex justify-end">
+                        <p className=" font-enriq">
+                          <span className=" text-xs">Reported By:</span>{" "}
+                          {item.reportedBy}
+                        </p>
+                      </div>
+                    </div>
+                    <hr></hr>
                   </div>
-                  <div className="flex justify-between">
-                    <p>{item.report.join(", ")}</p>
-                    <p>Reported by : {item.reportedBy}</p>
-                  </div>
-                </div>
-                <hr></hr>
-              </div>
-            );
-          })}
+                );
+              })}
+            </>
+          ) : (
+            <div></div>
+          )}
         </div>
+
+        {/* end of report container */}
       </div>
     </div>
   );

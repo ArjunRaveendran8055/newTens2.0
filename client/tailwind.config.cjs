@@ -12,6 +12,7 @@ module.exports = withMT({
       enriq: ["Enriqueta"],
       sans: ["Graphik", "sans-serif"],
       serif: ["Merriweather", "serif"],
+      caveat:["caveat"]
     },
     screens: {
       sm: "360px",
