@@ -8,7 +8,10 @@ import {
   DialogBody,
   DialogFooter,
   Typography,
+  Select,
+  Option,
 } from "@material-tailwind/react";
+
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
@@ -24,8 +27,10 @@ function ClassHome() {
   const [classData, setClassData] = useState([]);
   const [reportCount, setReportCount] = useState(0);
   const [reportData, setReportData] = useState([]);
+  const [reportDataCopy, setReportDataCopy] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState({});
   const [openDetailedReport, setOpenDetailedReport] = useState(false);
+  const [reportType, setReportType] = useState("");
 
   // function to fetch class details
   const fetchData = async () => {
@@ -39,6 +44,7 @@ function ClassHome() {
       const data = response.data;
       // store report data to loop for preview
       setReportData(responseReports.data.report);
+      setReportDataCopy(responseReports.data.report);
       dispatch(removeLoader());
       // STORE REPORT COUNT TO SHOW ON FRONTEND
       setReportCount(responseReports.data.report.length);
@@ -62,6 +68,21 @@ function ClassHome() {
   };
   const handleClose = () => setOpen(false);
 
+  //report filter using dropdown
+  const filterReportHandler=(e)=>{
+    console.log("value is",e);
+    if(e==="all"){
+      return setReportDataCopy(reportData)
+    } 
+    if(e==="solved"){
+      return setReportDataCopy(reportData.filter(item=> !item.followUp))
+    }
+    if(e==="pending"){
+      return setReportDataCopy(reportData.filter(item=>item.followUp))
+    }
+
+  }
+
   //formatting incoming timestamp
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
@@ -70,9 +91,7 @@ function ClassHome() {
     const minutes = date.getMinutes().toString().padStart(2, "0"); // Ensure 2 digits with leading zero
     return `${hours}:${minutes}`;
   };
-
   console.log(openDetailedReport, "check karo");
-
   return (
     <div className="bg-gray-100 p-8 sm:p-2 min-h-screen">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
@@ -83,15 +102,21 @@ function ClassHome() {
         </div>
       </div>
 
-      <div className="flex w-full relative bg-red-50 lg:flex-row h-[35rem] lg:h-[35rem] sm:h-[70rem] sm:flex-col gap-6 ">
+      <div className="flex w-full  relative lg:flex-row h-[35rem] lg:h-[35rem] sm:h-[70rem] sm:flex-col gap-6 ">
         <div
           className={`${
-            openDetailedReport && "transform duration-300 hidden w-0"
-          } bg-white rounded-lg p-6 lg:w-[60%] sm:w-[100%]`}
+            openDetailedReport && ""
+          } bg-white rounded-lg sm:p-2 md:p-4 lg:p-6 lg:w-[60%] sm:w-[100%]`}
         >
-          <h2 className="text-lg font-semibold mb-4">Class 8</h2>
-          <p className="text-4xl font-bold text-gray-800 mb-2">62</p>
-          <p className="text-sm text-gray-500">Total Students</p>
+          <div className="w-full  flex justify-between">
+            <div>
+              <h2 className="text-lg font-semibold mb-4">Class 8</h2>
+              <p className="text-4xl font-bold text-gray-800 mb-2">62</p>
+              <p className="text-sm text-gray-500">Total Students</p>
+            </div>
+            <div className="text-lg font-semibold">Pending Reports:10</div>
+          </div>
+
           <p className="text-right text-l text-black-500 mb-4">December, 12</p>
           <div className="grid grid-cols-2 gap-4">
             <Link to={`/classreport/${id}`}>
@@ -102,8 +127,13 @@ function ClassHome() {
                 </p>
               </div>
             </Link>
-            <div className="bg-[#90a5f8] rounded-lg p-4 cursor-pointer">
-              <h3 className="text-lg text-black font-semibold">Attendance</h3>
+            <div
+              className="bg-[#90a5f8] rounded-lg p-4 cursor-pointer"
+              onClick={() => setOpenDetailedReport(!openDetailedReport)}
+            >
+              <h3 className="text-lg text-black font-semibold">
+                Class Reports
+              </h3>
               <p className="text-l text-white">Status: uploaded</p>
             </div>
             <div className="bg-[#BFDBFE] rounded-lg p-4 cursor-pointer">
@@ -114,10 +144,7 @@ function ClassHome() {
               <h3 className="text-lg font-semibold text-black">Daily Report</h3>
               <p className="text-l text-black-500">Status: Not updated</p>
             </div>
-            <div
-              className="bg-[#ffbe74] rounded-lg p-4 col-span-2 cursor-pointer"
-              onClick={() => setOpenDetailedReport(!openDetailedReport)}
-            >
+            <div className="bg-[#ffbe74] rounded-lg p-4 col-span-2 cursor-pointer">
               <h3 className="text-lg font-semibold text-black">
                 Detailed Report View
               </h3>
@@ -147,11 +174,10 @@ function ClassHome() {
               </p>
             </Typography>
             <div className=" w-full flex flex-col">
-              <span className="text-xl text-black flex font-Playfiar">
-                Reported Issues
-                <p className=" font-caveat text-gray-700">
-                  {" "}
-                  &nbsp;({selectedStudent.reportedBy})
+              <span className="text-xl text-black flex justify-between font-Playfiar">
+                <p>Reported Issues</p>
+                <p className=" font-extralight capitalize  text-gray-700">
+                  {selectedStudent.reportedBy}
                 </p>
               </span>
               <div className="followupitemscontainer flex flex-wrap gap-2  capitalize">
@@ -205,13 +231,7 @@ function ClassHome() {
 
         {/* report container */}
 
-        <div
-          className={`${
-            openDetailedReport &&
-            "absolute  -translate-x-96 transform duration-1000  h-full  "
-          } bg-white rounded-lg overflow-auto p-6  sm:w-[100%]`}
-          style={{transformOrigin:"right"}}
-        >
+        <div className={` bg-white rounded-lg overflow-auto p-6  sm:w-[100%]`}>
           {!openDetailedReport ? (
             <>
               <h2 className="text-xl text-black font-semibold mb-4">Reports</h2>
@@ -245,8 +265,8 @@ function ClassHome() {
                       </div>
                       <div className="w-full flex justify-end">
                         <p className=" font-enriq">
-                          <span className=" text-xs">Reported By:</span>{" "}
-                          {item.reportedBy}
+                          <span className=" text-xs ">Reported By:</span>{" "}
+                          <span className=" capitalize">{item.reportedBy}</span>
                         </p>
                       </div>
                     </div>
@@ -261,6 +281,95 @@ function ClassHome() {
         </div>
 
         {/* end of report container */}
+
+        {/* all reports in detail starts here */}
+        <div
+          className={`detailed-report-container sm:p-2 md:p-4 lg:p-6 rounded-lg  absolute sm:bottom-0 lg:top-0 lg:right-0 bg-white h-full transition-all  duration-700 ${
+            openDetailedReport
+              ? " opacity-100 w-full ease-in-out"
+              : "opacity-0 sm:w-full lg:w-[40%] sr-only"
+          }`}
+        >
+          <div className={` rounded-lg p-6 w-[100%] relative`}>
+            <div className="absolute sm:right-0 sm:top-0 lg:-top-2 lg:-right-2">
+              {" "}
+              <Button
+                size="sm"
+                className=" bg-gray-900"
+                onClick={() => setOpenDetailedReport(false)}
+              >
+                close
+              </Button>
+            </div>
+            <div>
+              <h2 className="text-xl text-black font-semibold mb-1">Reports</h2>
+            </div>
+            <div className="w-full flex justify-end mb-3">
+              <span className="">
+                <Select
+                  id="sortBy"
+                  label="Sort By"
+                  onChange={(e) => {
+                    filterReportHandler(e)
+                  }}
+                >
+                  <Option value="all">All</Option>
+                  <Option value="pending">Pending</Option>
+                  <Option value="solved">Solved</Option>
+                </Select>
+              </span>
+            </div>
+            <div>
+              {reportDataCopy.map((item, index) => {
+                return (
+                  <div key={index} className="">
+                    <hr></hr>
+                    <div className="flex flex-col mt-2 mb-2">
+                      <div className="flex">
+                        <div className="flex">
+                          <span className="w-20">Roll</span>
+                          <span>{item.roll.toUpperCase()}</span>
+                        </div>
+                        <div className="flex w-full  justify-end gap-2 font-extralight text-sm">
+                          <span>{formatTimestamp(item.time)}</span>
+                        </div>
+                      </div>
+                      <div className="flex">
+                        <span className="w-20">Name</span>
+                        <span>{item.name.toUpperCase()}</span>
+                      </div>
+                      <div className="flex sm:flex-col lg:flex-row">
+                        <span className="w-20 sm:underline lg:no-underline decoration-gray-800 underline-offset-4">
+                          Issues
+                        </span>
+                        <span>{item.report.join(", ")}</span>
+                      </div>
+                      <div className="flex sm:flex-col lg:flex-row">
+                        {item.followUp ? (
+                          <>
+                            <span className="w-20 sm:underline lg:no-underline decoration-gray-800 underline-offset-4">
+                              Response
+                            </span>
+                            {item.response?.length === 0 ? (
+                              <span>Not Response Yet.</span>
+                            ) : (
+                              <span>({item.response})</span>
+                            )}
+                          </>
+                        ) : (
+                          <span className=" text-green-300 text-nowrap">
+                            Issue Solved By Message
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <hr></hr>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
