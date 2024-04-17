@@ -154,3 +154,43 @@ export const TAroutes = [
     ],
   },
 ];
+
+
+export const MENTORroutes = [
+  {
+    layout: "dashboard",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "dashboard",
+        path: "/home",
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "profile",
+        path: "/profile",
+      },
+    ],
+  },
+  {
+    title: "CLASS MANAGEMENT",
+    layout: "class",
+    pages: [
+      {
+        icon: <ServerStackIcon {...icon} />,
+        name: "Search Students",
+        path: "/search",
+      },
+      {
+        icon: <MdClass {...icon} />,
+        name: "Class List",
+        path: "/classes",
+      },
+      {
+        icon: <MdClass {...icon} />,
+        name: "Add Student",
+        path: "/addstudent",
+      },
+    ],
+  },
+];

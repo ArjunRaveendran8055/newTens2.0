@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { LuEye } from "react-icons/lu";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   Dialog,
@@ -17,6 +17,8 @@ import axios from "axios";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 
 function ClassHome() {
+
+  const {user}=useSelector(state=>state.user)
   const dispatch = useDispatch();
 
   // CLASS ID
