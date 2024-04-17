@@ -92,7 +92,7 @@ function ClassHome() {
     const minutes = date.getMinutes().toString().padStart(2, "0"); // Ensure 2 digits with leading zero
     return `${hours}:${minutes}`;
   };
-  console.log(openDetailedReport, "check karo");
+ 
   return (
     <div className="bg-gray-100 p-8 sm:p-2 min-h-screen">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">

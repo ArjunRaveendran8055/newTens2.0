@@ -13,7 +13,7 @@ import { routes, AAroutes, MENTORroutes } from "../../../routes";
 export function Sidenav({ brandName }) {
   const { isOpen } = useSelector((state) => state.sideNav);
   const { user } = useSelector((state) => state.user);
-  console.log(MENTORroutes);
+
   return (
     <>
       <aside
@@ -63,7 +63,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="black"
+                          
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -107,7 +107,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="black"
+                          
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -151,7 +151,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="black"
+                          
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -184,7 +184,7 @@ export function Sidenav({ brandName }) {
       >
         <div className={`relative`}>
           <div className="py-6 px-8 text-center">
-            <Typography variant="h6" color="black">
+            <Typography variant="h6" >
               {brandName}
             </Typography>
           </div>
@@ -225,7 +225,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="black"
+                          
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -269,7 +269,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="black"
+                          
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -313,7 +313,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="black"
+                          
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
