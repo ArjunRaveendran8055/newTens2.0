@@ -78,7 +78,7 @@ const createReportController = asyncWrapper(async (req, res, next) => {
 
 const getReportController = asyncWrapper(async (req, res, next) => {
   const id = req.params.id;
-  const roll = (req.body.roll)?req.query.roll.toUpperCase() : "";
+  const roll = (req.query.roll)?req.query.roll.toUpperCase() : "";
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new AppError(400, "Invalid class Id!");
@@ -104,7 +104,7 @@ const getReportController = asyncWrapper(async (req, res, next) => {
 const getClassStudentDetailsController = asyncWrapper(
   async (req, res, next) => {
     const { id } = req.params;
-    const roll = (req.body.roll)?req.query.roll.toUpperCase() : "";
+    const roll = (req.query.roll)?req.query.roll.toUpperCase() : "";
     let students;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {

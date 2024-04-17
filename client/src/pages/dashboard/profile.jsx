@@ -19,15 +19,15 @@ import {
   PencilIcon,
 } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
-
-
 import MessageCard from "../../widgets/cards/MessageCard";
 import ProfileInfoCard from "../../widgets/cards/ProfileInfoCard";
 import conversationsData from "../../data/conversationsData";
 import platformSettingsData from "../../data/platformSettingsData";
 import projectsData from "../../data/projectsData";
+import { useSelector } from "react-redux";
 
 export function Profile() {
+  const { user } = useSelector(state => state.user);
   return (
     <>
       <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
@@ -46,13 +46,13 @@ export function Profile() {
               />
               <div>
                 <Typography variant="h5" color="blue-gray" className="mb-1">
-                  Richard Davis
+                  {user.firstname.toUpperCase()}{user.lastname.toUpperCase()}
                 </Typography>
                 <Typography
                   variant="small"
                   className="font-normal text-blue-gray-600"
                 >
-                  CEO / Co-Founder
+                  {user.role.toUpperCase()}
                 </Typography>
               </div>
             </div>
