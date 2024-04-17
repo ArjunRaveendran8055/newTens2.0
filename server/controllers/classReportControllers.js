@@ -104,7 +104,7 @@ const getReportController = asyncWrapper(async (req, res, next) => {
 const getClassStudentDetailsController = asyncWrapper(
   async (req, res, next) => {
     const { id } = req.params;
-    const roll = req.query.roll;
+    const roll = req.query.roll.toUpperCase();
     let students;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
