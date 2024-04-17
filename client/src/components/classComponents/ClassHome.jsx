@@ -17,8 +17,7 @@ import axios from "axios";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 
 function ClassHome() {
-
-  const {user}=useSelector(state=>state.user)
+  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   // CLASS ID
@@ -92,7 +91,7 @@ function ClassHome() {
     const minutes = date.getMinutes().toString().padStart(2, "0"); // Ensure 2 digits with leading zero
     return `${hours}:${minutes}`;
   };
- 
+
   return (
     <div className="bg-gray-100 p-8 sm:p-2 min-h-screen">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
