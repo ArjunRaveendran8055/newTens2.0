@@ -69,19 +69,18 @@ function ClassHome() {
   const handleClose = () => setOpen(false);
 
   //report filter using dropdown
-  const filterReportHandler=(e)=>{
-    console.log("value is",e);
-    if(e==="all"){
-      return setReportDataCopy(reportData)
-    } 
-    if(e==="solved"){
-      return setReportDataCopy(reportData.filter(item=> !item.followUp))
+  const filterReportHandler = (e) => {
+    console.log("value is", e);
+    if (e === "all") {
+      return setReportDataCopy(reportData);
     }
-    if(e==="pending"){
-      return setReportDataCopy(reportData.filter(item=>item.followUp))
+    if (e === "solved") {
+      return setReportDataCopy(reportData.filter((item) => !item.followUp));
     }
-
-  }
+    if (e === "pending") {
+      return setReportDataCopy(reportData.filter((item) => item.followUp));
+    }
+  };
 
   //formatting incoming timestamp
   const formatTimestamp = (timestamp) => {
@@ -310,7 +309,7 @@ function ClassHome() {
                   id="sortBy"
                   label="Sort By"
                   onChange={(e) => {
-                    filterReportHandler(e)
+                    filterReportHandler(e);
                   }}
                 >
                   <Option value="all">All</Option>

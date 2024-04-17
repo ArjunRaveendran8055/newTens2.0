@@ -28,7 +28,6 @@ const StudentDetails = () => {
   const [errMsg, setErrMsg] = useState("");
   const [btnLoader, setBtnLoader] = useState(false);
 
-  
   const { id } = useParams();
   useEffect(() => {
     dispatch(setLoader());

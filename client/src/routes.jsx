@@ -79,8 +79,8 @@ export const routes = [
       },
       {
         icon: <TbReportSearch {...icon} />,
-        name: "Reports",
-        path: "/pro",
+        name: "Pending Users",
+        path: "/pendingusers",
       },
     ],
   },
