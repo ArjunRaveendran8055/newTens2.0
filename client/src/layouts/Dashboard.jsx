@@ -66,7 +66,8 @@ export function Dashboard() {
   }, []);
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
-      <Sidenav brandName="NEWTEN'S" brandImg={"/img/logo-ct.png"} />
+      <Sidenav brandName="NEW10'S" brandImg={""} />
+
       <div className="p-4 xl:ml-80">
         <DashboardNavbar />
         <Configurator />
