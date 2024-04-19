@@ -20,6 +20,8 @@ import DisplayClasses from "../components/displayClasses/DisplayClasses";
 import ClassHome from "../components/classComponents/ClassHome";
 import ClassReport from "../components/classComponents/ClassReport";
 import AddStudent from "../components/AddStudent/AddStudent";
+import PrivateRoute from "./PrivateRoute";
+import AccessDenied from "./AccessDenied";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -44,14 +46,19 @@ function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/pendingusers" element={<PendingUsers />} />
           <Route path="/classes" element={<DisplayClasses />} />
+          {/* <Route path="/accessdenied" element={<AccessDenied/>} /> */}
           <Route path="/studentdetails/:id" element={<StudentDetailsPage/>}/>
           <Route path="/classhome/:id" element={<ClassHome/>}/>
           <Route path="/classreport/:id" element={<ClassReport/>}/>
-          <Route path="/addstudent" element={<AddStudent/>}/>
+          {/* private route example */}
+          <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
       </Routes>
     </div>
   );
 }
+
+
+
 
 export default App;
