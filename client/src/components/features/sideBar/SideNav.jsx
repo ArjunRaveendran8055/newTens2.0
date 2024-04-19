@@ -10,6 +10,8 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import { routes, AAroutes, MENTORroutes } from "../../../routes";
+import Logo from '/icons/appleLogo2.png'
+
 export function Sidenav({ brandName }) {
   const { isOpen } = useSelector((state) => state.sideNav);
   const { user } = useSelector((state) => state.user);
@@ -21,10 +23,12 @@ export function Sidenav({ brandName }) {
        fixed inset-0 z-44 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-white`}
       >
         <div className={`relative`}>
-          <div className="py-6 px-8 text-center">
+          <div className="py-6 mt-2 px-8 text-center flex flex-row justify-center items-center gap-2">
+            <img width={"40px"} src={Logo} alt="" srcset="" />
             <Typography variant="h6" color="black">
               {brandName}
             </Typography>
+           
           </div>
           <IconButton
             variant="text"
@@ -36,6 +40,7 @@ export function Sidenav({ brandName }) {
           >
             <XMarkIcon strokeWidth={2.5} className="h-5 w-5 text-white" />
           </IconButton>
+          
         </div>
         <div className="m-4">
           {user.role === "admin" &&
