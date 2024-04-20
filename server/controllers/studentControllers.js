@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 //fetch all students
 const getAllStudentsController = asyncWrapper(async (req, res, next) => {
   const { roll, name, phno } = req.query;
-
   console.log(`roll :${roll}\nname: ${name}\nphone:${phno}`);
   const queryObj = {};
   if (roll) {
@@ -46,13 +45,13 @@ const getStudentDetailsController = asyncWrapper(async (req, res, next) => {
 
 //controller to add a student report
 const addReportController = asyncWrapper(async (req, res, next) => {
-  const { id, callType, reason, response, calledBy } = req.body;
-  console.log(reason);
+  const { id, callType, reason, response, handledBy } = req.body;
+
   const reportObj = {
     callType,
     reason,
     response,
-    callType,
+    handledBy,
     time: new Date(Date.now()),
   };
   const result = await StudentModel.findByIdAndUpdate(id, {

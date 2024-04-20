@@ -94,7 +94,7 @@ const StudentDetails = () => {
         callType: report.type,
         reason: report.reason,
         response: report.response,
-        calledBy: `${user.firstname + " " + user.lastname}`,
+        handledBy: `${user.firstname + " " + user.lastname}`,
       })
       .then((res) => {
         setReport({

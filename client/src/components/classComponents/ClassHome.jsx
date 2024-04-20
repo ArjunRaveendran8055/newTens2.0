@@ -15,7 +15,6 @@ import {
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
-
 function ClassHome() {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -31,7 +30,13 @@ function ClassHome() {
   const [reportDataCopy, setReportDataCopy] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState({});
   const [openDetailedReport, setOpenDetailedReport] = useState(false);
-  const [reportType, setReportType] = useState("");
+  const [ssrReport, setSsrReport] = useState({
+    studentId: "",
+    reason: "",
+    response: "",
+  });
+  const [openSsrReport, setOpenSsrReport] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
 
   // function to fetch class details
   const fetchData = async () => {
@@ -61,6 +66,46 @@ function ClassHome() {
     fetchData();
   }, []);
 
+  const handleOpenSsrReport = () => {
+    setOpenSsrReport((cur) => !cur);
+    setErrMsg("");
+  };
+
+  //response changeHandler
+  const responseChangeHandler = (e) => {
+    setErrMsg("");
+    //trimming whitespace at the end and begining
+    const updatedResponse = e.target.value.trimStart();
+    //trimming enter key and multiple white spaces in between
+    const trimmedResponse = updatedResponse.replace(/\s{2,}|\n{2,}/g, " ");
+    // console.log("final reason is",trimmedResponse)
+    setSsrReport({ ...ssrReport, response: trimmedResponse });
+  };
+
+  console.log(ssrReport.response);
+
+  const onSaveReportHandler = () => {
+    if (ssrReport.response?.length < 10) {
+      return setErrMsg("*(Please Enter a Valid Reponse)");
+    }
+
+    axios
+      .post("/classReport/addMentorResponse", {
+        classId: id,
+        studentId: ssrReport.studentId,
+        callType: "followUpCall",
+        reason: ssrReport.reason,
+        response: ssrReport.response,
+        handledBy: `${user.firstname + " " + user.lastname}`,
+      })
+      .then((res) => {
+        console.log("result is:", res);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  };
+
   //dialogue box handler
   const handleOpen = (item) => {
     setOpen(!open);
@@ -81,6 +126,17 @@ function ClassHome() {
     if (e === "pending") {
       return setReportDataCopy(reportData.filter((item) => item.followUp));
     }
+  };
+
+  //function to handle mentor clicking proceed button
+  const proceedBtnHandler = (item) => {
+    console.log(item);
+    setOpenSsrReport(true);
+    setSsrReport({
+      ...ssrReport,
+      reason: item.report.join(" "),
+      studentId: item.studentId,
+    });
   };
 
   //formatting incoming timestamp
@@ -116,7 +172,6 @@ function ClassHome() {
             </div>
             <div className="text-lg font-semibold">Pending Reports:10</div>
           </div>
-
           <p className="text-right text-l text-black-500 mb-4">December, 12</p>
           <div className="grid grid-cols-2 gap-4">
             <Link to={`/classreport/${id}`}>
@@ -200,19 +255,21 @@ function ClassHome() {
             </div>
             {selectedStudent.followUp ? (
               <div className=" w-full flex flex-col">
-                <span className="text-xl text-black flex font-Playfiar">
-                  Response{" "}
+                <span className="text-xl text-black flex justify-between font-Playfiar">
+                  <span>Response</span>
                   {selectedStudent.response?.length === 0 ? (
                     ""
                   ) : (
-                    <div>({selectedStudent.response})</div>
+                    <span className=" font-extralight capitalize  text-gray-700">
+                      {selectedStudent.respondedBy}
+                    </span>
                   )}
                 </span>
                 <div className="response-container flex flex-wrap gap-2">
                   {selectedStudent.response?.length === 0 ? (
                     "No Response Yet."
                   ) : (
-                    <div>{selectedStudent.remark}</div>
+                    <div>{selectedStudent.response}</div>
                   )}
                 </div>
               </div>
@@ -320,6 +377,72 @@ function ClassHome() {
               </span>
             </div>
             <div>
+              {openSsrReport && (
+                <Dialog
+                  size="md"
+                  open={openSsrReport}
+                  handler={handleOpenSsrReport}
+                  className="shadow-none w-full flex items-center justify-center"
+                >
+                  <div className="relative  add-report flex flex-col bg-white sm:w-full shadow-2xl rounded-lg items-center lg:gap-5">
+                    <div className="text-2xl font-bold text-black heading-container sm:pt-5">
+                      Add Report
+                    </div>
+                    <div className="rea-res-container w-full flex flex-col lg:p-5">
+                      <div className="text-custred w-full flex justify-center">
+                        {errMsg}
+                      </div>
+                      <div className="reason-container w-full flex sm:flex-col lg:flex-row sm:gap-2 lg:gap-0 p-2">
+                        <div className="reasontitle lg:w-[30%] sm:w-full  text-black text-xl font-Playfiar">
+                          Type
+                        </div>
+                        <div className="reasoninput lg:w-[70%] sm:w-full">
+                          <input
+                            type="text"
+                            value="FollowUp"
+                            className={`p-2  w-full border-[1px] border-black font-bold`}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                      <div className="reason-container w-full flex sm:flex-col lg:flex-row sm:gap-2 lg:gap-0 p-2">
+                        <div className="reasontitle lg:w-[30%] sm:w-full  text-black text-xl font-Playfiar">
+                          Reason
+                        </div>
+                        <div className="reasoninput lg:w-[70%] sm:w-full">
+                          <textarea
+                            readOnly
+                            value={ssrReport.reason}
+                            className={`p-2  w-full border-[1px] border-black font-bold`}
+                          ></textarea>
+                        </div>
+                      </div>
+
+                      <div className="response-container w-full flex sm:flex-col lg:flex-row sm:gap-2 lg:gap-0 p-2">
+                        <div className="reposetitle lg:w-[30%] sm:w-full text-black text-xl font-Playfiar">
+                          Reponse
+                        </div>
+                        <div className="responseinput lg:w-[70%] sm:w-full">
+                          <textarea
+                            placeholder={`Enter the response...`}
+                            className={`p-2  w-full border-[1px] border-black rounded-sm font-bold `}
+                            onChange={responseChangeHandler}
+                          ></textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="btncontainer flex w-full items-center justify-center pb-10">
+                      <button
+                        className="py-2 px-4 bg-custblue text-whitesmoke hover:text-white rounded-lg hover:shadow-xl shadow-black hover:scale-105 duration-150"
+                        onClick={onSaveReportHandler}
+                      >
+                        Save Report
+                      </button>
+                    </div>
+                  </div>
+                </Dialog>
+              )}
+
               {reportDataCopy.map((item, index) => {
                 return (
                   <div key={index} className="">
@@ -338,14 +461,64 @@ function ClassHome() {
                         <span className="w-20">Name</span>
                         <span>{item.name.toUpperCase()}</span>
                       </div>
-                      <div className="flex sm:flex-col lg:flex-row">
+                      <div className="flex sm:flex-col lg:flex-row justify-start">
                         <span className="w-20 sm:underline lg:no-underline decoration-gray-800 underline-offset-4">
                           Issues
                         </span>
                         <span>{item.report.join(", ")}</span>
                       </div>
+
+                      <div className="flex sm:flex-col lg:flex-row justify-start">
+                        {item.remark.length === 0 ? (
+                          <>
+                            <span className="w-[87px] sm:underline lg:no-underline decoration-gray-800 underline-offset-4">
+                              Remark
+                            </span>
+                            <span>No Remarks Available</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="w-[87px] sm:underline lg:no-underline decoration-gray-800 underline-offset-4">
+                              Remark
+                            </span>
+                            <span className="w-full">{item.remark}</span>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex">
+                        <span className="w-20">Reported</span>
+                        <span>{item.reportedBy}</span>
+                      </div>
                       <div className="flex sm:flex-col lg:flex-row">
-                        {item.followUp ? (
+                        {user.role === "MENTOR" ? (
+                          <>
+                            {item.followUp ? (
+                              <>
+                                {item.response?.length === 0 ? (
+                                  <span className="w-full flex justify-end sm:mt-2 lg:mt-0">
+                                    <Button
+                                      className=" bg-gray-400 text-gray-700 sm:w-full lg:w-40"
+                                      onClick={() => proceedBtnHandler(item)}
+                                    >
+                                      Proceed
+                                    </Button>
+                                  </span>
+                                ) : (
+                                  <>
+                                    <span className="w-20 sm:underline lg:no-underline decoration-gray-800 underline-offset-4">
+                                      Response
+                                    </span>
+                                    <span>{item.response}</span>
+                                  </>
+                                )}
+                              </>
+                            ) : (
+                              <span className=" text-green-300 text-nowrap">
+                                Issue Solved By Message
+                              </span>
+                            )}
+                          </>
+                        ) : item.followUp ? (
                           <>
                             <span className="w-20 sm:underline lg:no-underline decoration-gray-800 underline-offset-4">
                               Response
@@ -362,6 +535,14 @@ function ClassHome() {
                           </span>
                         )}
                       </div>
+                      {item.response?.length !== 0 ? (
+                        <div className="flex">
+                          <span className="w-20">Called By</span>
+                          <span>{item.respondedBy}</span>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </div>
                     <hr></hr>
                   </div>

@@ -13,7 +13,13 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     classsubject,
   } = req.body;
 
-  if (tutorname == "" || classname == "" || classdate == ""  || classsyllabus == "" || classsubject == "") {
+  if (
+    tutorname == "" ||
+    classname == "" ||
+    classdate == "" ||
+    classsyllabus == "" ||
+    classsubject == ""
+  ) {
     throw new AppError(400, "required all fields!");
   }
 
@@ -28,17 +34,31 @@ const createClassController = asyncWrapper(async (req, res, next) => {
 
   const savedClass = await newClass.save();
 
-  res.status(201).json({success:true, message:"class created sucessfully!" ,savedClass});
+  res
+    .status(201)
+    .json({ success: true, message: "class created sucessfully!", savedClass });
 });
 
 const updateClassController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
-  const { tutorname, classname, classdate, classexam, classsyllabus,classsubject } =
-    req.body;
+  const {
+    tutorname,
+    classname,
+    classdate,
+    classexam,
+    classsyllabus,
+    classsubject,
+  } = req.body;
 
-    if (!tutorname || !classname || !classdate  || !classsyllabus  || !classsubject) {
-      throw new AppError(400, "required all fields!");
-    }
+  if (
+    !tutorname ||
+    !classname ||
+    !classdate ||
+    !classsyllabus ||
+    !classsubject
+  ) {
+    throw new AppError(400, "required all fields!");
+  }
 
   if (!mongoose.Types.ObjectId.isValid(classId)) {
     throw new AppError(400, "invalid Id!");
@@ -46,7 +66,7 @@ const updateClassController = asyncWrapper(async (req, res, next) => {
 
   const updatedClass = await ClassModel.findByIdAndUpdate(
     classId,
-    { tutorname, classname, classdate, classexam, classsyllabus, classsubject, },
+    { tutorname, classname, classdate, classexam, classsyllabus, classsubject },
     { new: true }
   );
 
@@ -54,7 +74,9 @@ const updateClassController = asyncWrapper(async (req, res, next) => {
     throw new AppError(404, "No class found by ID!");
   }
 
-  res.status(200).json({success:true, message:"updated sucessfully!" ,updatedClass});
+  res
+    .status(200)
+    .json({ success: true, message: "updated sucessfully!", updatedClass });
 });
 
 const deleteClassController = asyncWrapper(async (req, res, next) => {
@@ -70,7 +92,9 @@ const deleteClassController = asyncWrapper(async (req, res, next) => {
     throw new AppError(404, "No class found by ID!");
   }
 
-  res.status(200).json({ success:true, message: "Class deleted successfully!" });
+  res
+    .status(200)
+    .json({ success: true, message: "Class deleted successfully!" });
 });
 
 const getAllClassesController = asyncWrapper(async (req, res, next) => {
@@ -78,42 +102,41 @@ const getAllClassesController = asyncWrapper(async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 10;
   const syllabus = req.query.syllabus;
 
-  console.log(syllabus)
+  console.log(syllabus);
 
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
 
   const total = await ClassModel.countDocuments();
-  
-  let  classes;
 
-  if(syllabus){
-     classes = await ClassModel.find({classsyllabus:syllabus}).skip(startIndex).limit(limit);
-  }else{
+  let classes;
+
+  if (syllabus) {
+    classes = await ClassModel.find({ classsyllabus: syllabus })
+      .skip(startIndex)
+      .limit(limit);
+  } else {
     classes = await ClassModel.find().skip(startIndex).limit(limit);
   }
-
-  
 
   const pagination = {};
 
   if (endIndex < total) {
     pagination.next = {
       page: page + 1,
-      limit: limit
+      limit: limit,
     };
   }
 
   if (startIndex > 0) {
     pagination.prev = {
       page: page - 1,
-      limit: limit
+      limit: limit,
     };
   }
 
-  res.status(200).json({ count: classes.length ,classes, pagination });
+  res.status(200).json({ count: classes.length, classes, pagination });
 });
-
 
 const getClassByIdController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
@@ -130,6 +153,8 @@ const getClassByIdController = asyncWrapper(async (req, res, next) => {
 
   res.status(200).json(foundClass);
 });
+
+
 
 module.exports = {
   createClassController,
