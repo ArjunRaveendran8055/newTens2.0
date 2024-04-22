@@ -61,7 +61,7 @@ const activationController = asyncWrapper(async (req, res, next) => {
 
   //checking validity of the token
   const user = actionvationVerify(activationToken);
- // console.log("decoded user is: ", user);
+  // console.log("decoded user is: ", user);
   if (!user) {
     throw new AppError(400, "Token Has Expired.");
   }
@@ -132,8 +132,8 @@ const loginController = asyncWrapper(async (req, res, next) => {
 const verifyUserController = asyncWrapper(async (req, res, next) => {
   //console.log("ippa sheriyakki thara..");
   const cookie = req.headers.cookie;
-  if(!cookie){
-    throw new AppError(400,"Something wrong With Cookie")
+  if (!cookie) {
+    throw new AppError(400, "Something wrong With Cookie");
   }
   const token = cookie.split("=")[1];
   //console.log(token);
@@ -147,8 +147,8 @@ const verifyUserController = asyncWrapper(async (req, res, next) => {
 
 const refreshTokenController = asyncWrapper(async (req, res, next) => {
   const cookie = req.headers.cookie;
-  if(!cookie){
-    throw new AppError(400,"Something wrong With Cookie")
+  if (!cookie) {
+    throw new AppError(400, "Something wrong With Cookie");
   }
   const token = cookie.split("=")[1];
   const user = jwtVerifyToken(token);
@@ -170,11 +170,43 @@ const refreshTokenGenerator = asyncWrapper(async (req, res, next) => {
     dob: user.dob,
   });
   let expDate = new Date(Date.now() + 3600000 * 12);
-  res.status(200).cookie("token",token,{
-    expires:expDate,
-    sameSite:"lax",
-    httpOnly:true
-  }).json({data:user})
+  res
+    .status(200)
+    .cookie("token", token, {
+      expires: expDate,
+      sameSite: "lax",
+      httpOnly: true,
+    })
+    .json({ data: user });
+});
+
+const logOutController = asyncWrapper(async (req, res, next) => {
+  const cookie = req.headers.cookie;
+  if (!cookie) {
+    throw new AppError(400, "Something wrong With Cookie");
+  }
+  const oldToken = cookie.split("=")[1];
+  const user = jwtVerifyToken(oldToken);
+  if (!user) {
+    throw new AppError(400, "something wrong with Authentication");
+  }
+  const token = jwtSign({
+    id: user.id,
+    email: user.email,
+    firstname: user.firstname,
+    lastname: user.lastname,
+    role: user.role,
+    dob: user.dob,
+  });
+  let expDate = new Date(Date.now() + 5);
+  res
+    .status(200)
+    .cookie("token", token, {
+      expires: expDate,
+      sameSite: "lax",
+      httpOnly: true,
+    })
+    .json({ data: user });
 });
 
 module.exports = {
@@ -184,4 +216,5 @@ module.exports = {
   verifyUserController,
   refreshTokenController,
   refreshTokenGenerator,
+  logOutController
 };

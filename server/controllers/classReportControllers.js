@@ -7,8 +7,17 @@ const { StudentModel } = require("../models/StudentModel");
 const createReportController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
 
-  const { roll, name, studentId, report, remark, reportedBy, followUp, response, respondedBy} =
-    req.body;
+  const {
+    roll,
+    name,
+    studentId,
+    report,
+    remark,
+    reportedBy,
+    followUp,
+    response,
+    respondedBy,
+  } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(classId)) {
     throw new AppError(400, "Invalid class Id!");
@@ -28,11 +37,9 @@ const createReportController = asyncWrapper(async (req, res, next) => {
         "classreport.$.remark": remark,
         "classreport.$.reportedBy": reportedBy,
         "classreport.$.followUp": followUp,
-        "classreport.$.response" : response,
-        "classreport.$.respondedBy" : respondedBy,
-        "classreport.$.time" :new Date(Date.now()),
-
-
+        "classreport.$.response": response,
+        "classreport.$.respondedBy": respondedBy,
+        "classreport.$.time": new Date(Date.now()),
       },
     },
     { new: true }
@@ -49,7 +56,7 @@ const createReportController = asyncWrapper(async (req, res, next) => {
       response,
       respondedBy,
       followUp,
-      time:new Date(Date.now())
+      time: new Date(Date.now()),
     };
 
     const updatedReport = await ClassModel.findOneAndUpdate(
@@ -78,7 +85,7 @@ const createReportController = asyncWrapper(async (req, res, next) => {
 
 const getReportController = asyncWrapper(async (req, res, next) => {
   const id = req.params.id;
-  const roll = (req.query.roll)?req.query.roll.toUpperCase() : "";
+  const roll = req.query.roll ? req.query.roll.toUpperCase() : "";
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new AppError(400, "Invalid class Id!");
@@ -104,7 +111,7 @@ const getReportController = asyncWrapper(async (req, res, next) => {
 const getClassStudentDetailsController = asyncWrapper(
   async (req, res, next) => {
     const { id } = req.params;
-    const roll = (req.query.roll)?req.query.roll.toUpperCase() : "";
+    const roll = req.query.roll ? req.query.roll.toUpperCase() : "";
     let students;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -146,8 +153,56 @@ const getClassStudentDetailsController = asyncWrapper(
   }
 );
 
+//add report to ssr report and updating class report
+const addMentorResponseController = asyncWrapper(async (req, res, next) => {
+  const { studentId, classId, callType, reason, response, handledBy } =
+    req.body;
+  // console.log(`${studentId + classId + callType + reason + response}`);
+  if (!mongoose.Types.ObjectId.isValid(classId)) {
+    throw new AppError(400, "Invalid class Id!");
+  }
+  if (!mongoose.Types.ObjectId.isValid(studentId)) {
+    throw new AppError(400, "Invalid class Id!");
+  }
+  const reportObj = {
+    callType,
+    reason,
+    response,
+    handledBy,
+    time: new Date(Date.now()),
+  };
+  const result = await StudentModel.findByIdAndUpdate(
+    { _id: studentId },
+    {
+      $push: { report: reportObj },
+    }
+  );
+  if (!result) {
+    throw new AppError(400, "Report Insertion Failed!");
+  }
+
+  const existingReport = await ClassModel.findOneAndUpdate(
+    { _id: classId, "classreport.studentId": studentId }, // Query to find the document
+    {
+      $set: {
+        "classreport.$.response": response,
+        "classreport.$.respondedBy": handledBy,
+      },
+    },
+    { new: true }
+  );
+  if (!existingReport) {
+    throw new AppError(400, "Report Updation Failed!");
+  }
+  res.status(200).json({
+    ssrReport: result,
+    existingReport,
+  });
+});
+
 module.exports = {
   createReportController,
   getReportController,
   getClassStudentDetailsController,
+  addMentorResponseController,
 };
