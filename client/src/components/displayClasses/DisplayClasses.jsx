@@ -230,7 +230,7 @@ function DisplayClasses() {
         </Card>
       </Dialog>
       {/* LISTING THE CLASSES FETCHED FROM DB */}
-      <div className="flex flex-wrap justify-center">
+      <div className="flex flex-wrap">
         
         {isLoading ? (
           <>
@@ -264,7 +264,7 @@ function DisplayClasses() {
         <button onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))}>Next Page</button>
       </div> */}
 
-      {classes.length>10 &&
+      {classes.length>=10 &&
 
       <div>
         <ButtonGroup variant="outlined">

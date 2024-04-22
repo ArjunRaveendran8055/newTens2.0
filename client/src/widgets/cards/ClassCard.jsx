@@ -12,15 +12,14 @@ const hour12 = hours % 12 || 12; // Convert to 12-hour format
 
 const time12HourFormat = `${hour12}:${minutes < 10 ? '0' : ''}${minutes} ${meridiem}`;
 
-console.log(time12HourFormat); // Output the time in 12-hour format
-
+// console.log(time12HourFormat); // Output the time in 12-hour format
 
   return (
     <>
     <div className="flex-shrink-0 m-6 relative overflow-hidden bg-teal-500 rounded-lg max-w-xs shadow-lg cursor-pointer">
     
     <span className=" bg-white rounded-full ml-6 text-teal-500 text-xs font-bold justify-between px-3 mt-3 py-2 leading-none flex w-[80%] items-center">
-            <p>03/04/2024</p>
+            <p>{classDate.toLocaleDateString()}</p>
            <p className='text-red-500'>{item.classDetail.classexam? "Exam" : "No Exam"}</p> 
           </span>
       <svg
