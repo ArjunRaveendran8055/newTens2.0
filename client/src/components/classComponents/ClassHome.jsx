@@ -82,7 +82,6 @@ function ClassHome() {
     setSsrReport({ ...ssrReport, response: trimmedResponse });
   };
 
-  console.log(ssrReport.response);
 
   const onSaveReportHandler = () => {
     if (ssrReport.response?.length < 10) {
