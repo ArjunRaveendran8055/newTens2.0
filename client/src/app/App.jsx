@@ -22,6 +22,7 @@ import ClassReport from "../components/classComponents/ClassReport";
 import AddStudent from "../components/AddStudent/AddStudent";
 import PrivateRoute from "./PrivateRoute";
 import AccessDenied from "./AccessDenied";
+import RegForm from "../layouts/RegForm";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -38,6 +39,9 @@ function App() {
           path="/activation/:activationToken"
           element={<ActivationPage />}
         />
+        
+        <Route path="/regForm" element={<RegForm></RegForm>} />
+
         <Route path="" element={<Dashboard />}>
           <Route path="/home" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
