@@ -22,6 +22,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setIsOpen } from "../../components/features/sideBar/sideNavSlice";
 import { setOpenConfigurator } from "../../components/features/configurator/configuratorSlice";
+import { Link } from "react-router-dom";
 
 export function DashboardNavbar() {
   const { user } = useSelector((state) => state.user);
@@ -34,12 +35,16 @@ export function DashboardNavbar() {
       fullWidth
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
-        <div className="uppercase font-bold text-black sm:text-sm md:text-md lg:text-2xl">{user.firstname}{user.lastname}&nbsp;-&nbsp;{user.role}</div>
+        <div className="uppercase font-bold text-black sm:text-sm md:text-md lg:text-2xl">
+          {user.firstname}
+          {user.lastname}&nbsp;-&nbsp;{user.role}
+        </div>
         <div className="flex items-between ">
           <div className="search-bar mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
           </div>
-          <a href="#">
+          <Link to="/">
+            
             <Button
               variant="text"
               color="blue-gray"
@@ -55,7 +60,7 @@ export function DashboardNavbar() {
             >
               <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
             </IconButton>
-          </a>
+          </Link>
           <Menu>
             <MenuHandler>
               <IconButton variant="text" color="blue-gray">
@@ -137,7 +142,6 @@ export function DashboardNavbar() {
 
           {/* configarator icon in dashboardNav is hidden due to lack of space in moblie screen */}
 
-          
           {/* <IconButton
             variant="text"
             color="blue-gray"
@@ -145,7 +149,6 @@ export function DashboardNavbar() {
           >
             <Cog6ToothIcon className="h-5 w-5 text-blue-gray-500" />
           </IconButton> */}
-
 
           <IconButton
             variant="text"
@@ -162,7 +165,5 @@ export function DashboardNavbar() {
     </Navbar>
   );
 }
-
-
 
 export default DashboardNavbar;

@@ -376,7 +376,7 @@ function ClassHome() {
                 </Select>
               </span>
             </div>
-            <div>
+            <div className=" overflow-y-scroll no-scrollbar h-[45vh]">
               {openSsrReport && (
                 <Dialog
                   size="md"
