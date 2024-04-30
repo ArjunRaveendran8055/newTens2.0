@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Select, Option, Button } from "@material-tailwind/react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import Stack from '@mui/material/Stack';
+import Stack from "@mui/material/Stack";
+import Axios from "axios";
+
 
 const RegForm = () => {
 
-  const top100Films = ["hai","hhss","dfdfd","ffffffffdf","dfdfd"]
+ 
+
+  const top100Films = ["hai", "hhss", "dfdfd", "ffffffffdf", "dfdfd"];
+
+
   return (
     <div className="max-w-4xl mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
       <div className="flex flex-col items-center">
@@ -80,18 +86,15 @@ const RegForm = () => {
           <div>
             <label htmlFor="class">Class</label>
             <div className="w-50">
-            <Select>
-              <Option value="8">Class 8</Option>
-              <Option value="9">Class 9</Option>
-              <Option value="10">Class 10</Option>
-              <Option value="11">Class 11</Option>
-              <Option value="12">Class 12</Option>
-            </Select>
+              <Select>
+                <Option value="8">Class 8</Option>
+                <Option value="9">Class 9</Option>
+                <Option value="10">Class 10</Option>
+                <Option value="11">Class 11</Option>
+                <Option value="12">Class 12</Option>
+              </Select>
+            </div>
           </div>
-          </div>
-
-         
-
 
           <div>
             <label htmlFor="syllabus">Syllabus</label>
@@ -124,30 +127,26 @@ const RegForm = () => {
               renderInput={(params) => <TextField  {...params} label="Select Your School" />}
             /> */}
 
-
-<Stack spacing={2} sx={{ width: '100%' }}>
-    
-      <Autocomplete
-        freeSolo
-        id="free-solo-2-demo"
-        disableClearable
-        options={top100Films.map((option) => option)}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Select Your School"
-            InputProps={{
-              ...params.InputProps,
-              type: 'search',
-            }}
-          />
-        )}
-      />
-    </Stack>
-
+            <Stack spacing={2} sx={{ width: "100%" }}>
+              <Autocomplete
+                freeSolo
+                id="free-solo-2-demo"
+                disableClearable
+                options={top100Films.map((option) => option)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select Your School"
+                    InputProps={{
+                      ...params.InputProps,
+                      type: "search",
+                    }}
+                  />
+                )}
+              />
+            </Stack>
           </div>
         </div>
-        
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -168,7 +167,7 @@ const RegForm = () => {
             />
           </div>
         </div>
-       
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="district">District</label>
@@ -267,6 +266,56 @@ const RegForm = () => {
               id="centre"
               placeholder="Centre"
             />
+          </div>
+        </div>
+
+        <div className="sibilingparent border-2 p-4 gap border-blue-gray-200 rounded-md">
+          <div className="grid grid-cols-2">
+            <div>
+              <label htmlFor="class">Number of Siblings</label>
+              <div className="w-30">
+                <Select>
+                  <Option value="1">1</Option>
+                  <Option value="2">2</Option>
+                  <Option value="3">3</Option>
+                  <Option value="4">4</Option>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <div className="siblings border-4 rounded-lg p-4 mt-3 ">
+            <div>
+              <div className="grid grid-cols-2  gap-4">
+                <div>
+                  <label htmlFor="siblingname">Name</label>
+                  <input
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="siblingname"
+                    placeholder="Enter Name of Sibling"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="siblingage">Age</label>
+                  <input
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="siblingage"
+                    placeholder="enter age"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1  gap-4">
+                <div>
+                  <label htmlFor="siblingschool">School</label>
+                  <input
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="siblingschool"
+                    placeholder="Enter School Name"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
