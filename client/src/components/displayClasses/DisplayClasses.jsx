@@ -21,6 +21,7 @@ import { Link } from "react-router-dom";
 
 function DisplayClasses() {
   const [open, setOpen] = useState(false);
+  const [load, setLoad] = useState(false);
   const [classDetails, setClassDetails] = useState({
     selectedSyllabus: "",
     selectedClass: "",
@@ -57,11 +58,16 @@ function DisplayClasses() {
     };
 
     fetchData();
-  }, [currentPage, limit, open]);<div className="0"></div>
+  }, [currentPage, limit, load]);<div className="0"></div>
 
   const handleOpen = () => {
     setOpen((cur) => !cur);
   };
+
+  const handleLoad = () => {
+    setLoad((curr) => !curr);
+    handleOpen()
+  }
 
   // HANDLE INPUT FUNCTION
   const handleInputChange = (fieldName, value) => {
@@ -103,7 +109,7 @@ function DisplayClasses() {
       })
       .then((res) => {
         console.log(res.data);
-        handleOpen();
+        handleLoad();
         setClassDetails({
           selectedSyllabus: "",
           selectedClass: "",
@@ -121,7 +127,7 @@ function DisplayClasses() {
     <div className="p-1 flex flex-wrap flex-col items-center mt-7 min-h-screen">
       {/* BUTTON FOR ADDING A NEW CLASS */}
       <button
-        onClick={handleOpen}
+         onClick={handleOpen}
         type="button"
         className="text-white bg-blue-700 hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
       >
