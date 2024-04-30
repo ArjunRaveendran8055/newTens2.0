@@ -22,7 +22,7 @@ export function Sidenav({ brandName }) {
       >
         <div className={`relative`}>
           <div className="py-6 mt-2 px-8 text-center flex flex-row justify-center items-center gap-2">
-            <img width={"40px"} src={Logo} alt=""  />
+            {/* <img width={"40px"} src={Logo} alt=""  /> */}
             <Typography variant="h6" color="black">
               {brandName}
             </Typography>

@@ -113,6 +113,10 @@ const studentSchema = new mongoose.Schema({
       type: String,
       required: [true, "center required"],
     },
+    online: {
+      type: Boolean,
+      required: [true, "Online required"],
+    },
     report: Array,
     active_status: {
       type: Boolean,
