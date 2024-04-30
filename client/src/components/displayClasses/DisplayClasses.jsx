@@ -66,8 +66,8 @@ function DisplayClasses() {
 
   const handleLoad = () => {
     setLoad((curr) => !curr);
-    handleOpen()+
-  };
+    handleOpen()
+  }
 
   // HANDLE INPUT FUNCTION
   const handleInputChange = (fieldName, value) => {
