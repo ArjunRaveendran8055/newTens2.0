@@ -8,8 +8,9 @@ import {
   ChartBarIcon,
 } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
-const AAStatisticsCard = () => {
-  const AAStatisticsCardsData = [
+
+const TeamLeadStatisticsCard = () => {
+  const TeamLeadStatisticsCardsData = [
     {
       color: "gray",
       icon: BanknotesIcon,
@@ -27,6 +28,7 @@ const AAStatisticsCard = () => {
       icon: UserPlusIcon,
       title: "APPROVE USERS",
       value: "Pending list",
+      path:"/pendingusers",
       footer: {
         color: "text-red-500",
         value: "7",
@@ -56,10 +58,9 @@ const AAStatisticsCard = () => {
       },
     },
   ];
-
-  return (
+  return(
     <>
-      {AAStatisticsCardsData.map(({ icon, title, path, footer, ...rest }) => (
+      {TeamLeadStatisticsCardsData.map(({ icon, title, path, footer, ...rest }) => (
         <Link to={path}>
           <StatisticsCard
             key={title}
@@ -78,7 +79,7 @@ const AAStatisticsCard = () => {
         </Link>
       ))}
     </>
-  );
+  )
 };
 
-export default AAStatisticsCard;
+export default TeamLeadStatisticsCard;

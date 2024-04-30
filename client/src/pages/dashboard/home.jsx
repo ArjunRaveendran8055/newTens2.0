@@ -23,13 +23,17 @@ import ordersOverviewData from "../../data/ordersOverviewData";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import AdminStatisticsCard from "../../components/features/user/statisticsCard/AdminStatisticsCard";
+import AAStatisticsCard from "../../components/features/user/statisticsCard/AAStatisticsCard";
+import TeamLeadStatisticsCard from "../../components/features/user/statisticsCard/TeamLeadStatisticsCard";
 
 export function Home() {
-  const { user } = useSelector(state => state.user);
+  const { user } = useSelector((state) => state.user);
   return (
     <div className="mt-12">
       <div className="mb-12 grid cursor-pointer gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
         {user.role === "admin" && <AdminStatisticsCard />}
+        {user.role === "AA" && <AAStatisticsCard />}
+        {user.role ==="TEAMLEAD" && <TeamLeadStatisticsCard/>}
       </div>
       <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         {statisticsChartsData.map((props) => (

@@ -69,7 +69,7 @@ export const routes = [
     ],
   },
   {
-    title: "User Controlls",
+    title: "Manage Staff",
     layout: "user",
     pages: [
       {
@@ -193,4 +193,65 @@ export const MENTORroutes = [
       },
     ],
   },
+];
+
+export const TEAMLEADroutes = [
+  {
+    layout: "dashboard",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "dashboard",
+        path: "/home",
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "profile",
+        path: "/profile",
+      },
+    ],
+  },
+  {
+    title: "STAFF MANAGEMENT",
+    layout: "STAFF",
+    pages: [
+      {
+        icon: <IoSearch {...icon} />,
+        name: "Search Staff",
+        path: "/pendinguser",
+      },
+      {
+        icon: <TbReportSearch {...icon} />,
+        name: "Pending Staff lists",
+        path: "/pendingusers",
+      },
+      {
+        icon: <TbReportSearch {...icon} />,
+        name: "Assign Staff",
+        path: "/assignstaff",
+      },
+    ],
+  },
+  {
+    title: "CLASS MANAGEMENT",
+    layout: "class",
+    pages: [
+      {
+        icon: <ServerStackIcon {...icon} />,
+        name: "Search Students",
+        path: "/search",
+      },
+      {
+        icon: <MdClass {...icon} />,
+        name: "Class List",
+        path: "/classes",
+      },
+      {
+        icon: <MdClass {...icon} />,
+        name: "Add Student",
+        path: "/addstudent",
+      },
+    ],
+  }
+  
 ];
