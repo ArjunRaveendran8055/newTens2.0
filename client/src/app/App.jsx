@@ -14,7 +14,7 @@ import SearchPage from "../pages/dashboard/SearchPage";
 import PendingUsers from "../components/features/user/pendingUsers/PendingUsers";
 import Loader from "../components/features/Loader/Loader";
 
-import Home from "../pages/dashboard/home";
+import Home from "../pages/dashboard/Home";
 import StudentDetailsPage from "../pages/otherPages/StudentDetailsPage";
 import DisplayClasses from "../components/displayClasses/DisplayClasses";
 import ClassHome from "../components/classComponents/ClassHome";
@@ -22,6 +22,8 @@ import ClassReport from "../components/classComponents/ClassReport";
 import AddStudent from "../components/AddStudent/AddStudent";
 import PrivateRoute from "./PrivateRoute";
 import AccessDenied from "./AccessDenied";
+import RegForm from "../layouts/RegForm";
+import AssignStaffPage from "../pages/dashboard/AssignStaffPage";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -38,6 +40,9 @@ function App() {
           path="/activation/:activationToken"
           element={<ActivationPage />}
         />
+        
+        <Route path="/regForm" element={<RegForm></RegForm>} />
+
         <Route path="" element={<Dashboard />}>
           <Route path="/home" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
@@ -50,6 +55,7 @@ function App() {
           <Route path="/studentdetails/:id" element={<StudentDetailsPage/>}/>
           <Route path="/classhome/:id" element={<ClassHome/>}/>
           <Route path="/classreport/:id" element={<ClassReport/>}/>
+          <Route path="/assignstaff" element={<AssignStaffPage/>} />
           {/* private route example */}
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
