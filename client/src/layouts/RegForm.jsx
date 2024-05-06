@@ -1,20 +1,78 @@
 import React, { useEffect, useState } from "react";
 import { Select, Option, Button } from "@material-tailwind/react";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import Stack from "@mui/material/Stack";
-import Axios from "axios";
-
+import axios from "axios";
 
 const RegForm = () => {
+  const [syllabus, setSyllabus] = useState("");
+ 
+  const [schools, setSchools] = useState([]);
+  
+
+
+  const [isOpen, setIsOpen] = useState(false);
+
+
+  const [selectedSchool, setSelectedSchool] = useState([]);
 
  
+  
+  useEffect(() => {
+    const fetchSchool =  async (scl) => {
+      
 
-  const top100Films = ["hai", "hhss", "dfdfd", "ffffffffdf", "dfdfd"];
+         if(scl.length>2){
+        
+        
+         await axios
+        .post('/registration/getschool',{syllabus:syllabus,search:scl})
+        .then((response) => {
+          
+          console.log(response.data.data);
+          setSchools([...response.data.data])
+          
 
+         
+        })
+        .catch((error) => console.log(error));
+
+      
+
+      }else{
+        setSchools([])
+      }
+        
+    
+    
+    
+    };
+
+
+    fetchSchool(selectedSchool)
+
+  }, [syllabus,selectedSchool]);
+
+  const handleSchoolChange = (schoolName) => {
+    console.log(schoolName)
+    
+    setSelectedSchool(schoolName.toLowerCase());
+    setIsOpen(true); // Close the school list after selection
+    // Set the selected school in the input field
+   
+    
+  };
+
+  const handleSchoolChange2 = (schoolName) => {
+    console.log(schoolName)
+    
+    setSelectedSchool(schoolName.toLowerCase());
+    setIsOpen(false); // Close the school list after selection
+    // Set the selected school in the input field
+   
+    
+  };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
+    <div  className="max-w-4xl mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
       <div className="flex flex-col items-center">
         <span className="relative flex shrink-0 overflow-hidden rounded-full h-16 w-16">
           <img
@@ -99,7 +157,7 @@ const RegForm = () => {
           <div>
             <label htmlFor="syllabus">Syllabus</label>
             <div className="w-50">
-              <Select>
+              <Select onChange={(e) => setSyllabus(e)}>
                 <Option value="state">STATE</Option>
                 <Option value="cbse">CBSE</Option>
               </Select>
@@ -127,24 +185,46 @@ const RegForm = () => {
               renderInput={(params) => <TextField  {...params} label="Select Your School" />}
             /> */}
 
-            <Stack spacing={2} sx={{ width: "100%" }}>
-              <Autocomplete
-                freeSolo
-                id="free-solo-2-demo"
-                disableClearable
-                options={top100Films.map((option) => option)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select Your School"
-                    InputProps={{
-                      ...params.InputProps,
-                      type: "search",
-                    }}
-                  />
-                )}
-              />
-            </Stack>
+            {/* <Stack spacing={2} sx={{ width: "100%" }}> */}
+          
+      <div className=" rounded  relative">
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="school">
+            Select Your School
+          </label>
+          <input
+            className="shadow uppercase appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="school"
+            type="search"
+            placeholder="Search for your school"
+             // Open the school list on input focus
+            onChange={(event)=>handleSchoolChange(event.target.value)}
+            value={selectedSchool}
+
+            
+            
+            
+            
+          />
+        </div>
+        {isOpen && (
+          <ul className="border rounded uppercase border-gray-300 overflow-y-auto max-h-40 absolute top-full left-0 right-0 z-10 bg-white">
+            {  schools?.map((school, index) => (
+              <li
+                key={index}
+                className={`cursor-pointer px-4 py-2 hover:bg-gray-100 ${
+                  selectedSchool === school.name ? 'bg-gray-100' : ''
+                }`}
+                onClick={() => handleSchoolChange2(school.name)}
+              >
+                {school.name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+   
+            {/* </Stack> */}
           </div>
         </div>
 
