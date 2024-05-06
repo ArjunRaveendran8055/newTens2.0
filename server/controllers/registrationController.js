@@ -23,6 +23,7 @@ const getSchoolList = asyncWrapper(async (req, res, next) => {
         $project: {
             _id: 0,
             name: 1,
+            location:1,
         }
     });
 
