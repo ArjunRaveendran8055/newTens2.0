@@ -23,7 +23,7 @@ import AddStudent from "../components/AddStudent/AddStudent";
 import PrivateRoute from "./PrivateRoute";
 import AccessDenied from "./AccessDenied";
 import RegForm from "../layouts/RegForm";
-import AddCentre from "../components/CentreandBatches/AddCentre";
+import AllCentres from "../components/CentreandBatches/AllCentres";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -55,7 +55,7 @@ function App() {
           <Route path="/studentdetails/:id" element={<StudentDetailsPage/>}/>
           <Route path="/classhome/:id" element={<ClassHome/>}/>
           <Route path="/classreport/:id" element={<ClassReport/>}/>
-          <Route path="/addcentre" element={<AddCentre/>} />
+          <Route path="/allcentres" element={<AllCentres/>} />
           {/* private route example */}
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
