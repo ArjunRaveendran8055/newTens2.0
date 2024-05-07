@@ -126,7 +126,7 @@ const studentSchema = new mongoose.Schema({
 });
 
 
-const StudentModel=mongoose.model("students",studentSchema)
+const RegisteredStudentModel=mongoose.model("registeredstudents",studentSchema)
 
 
-module.exports={StudentModel}
+module.exports={RegisteredStudentModel}

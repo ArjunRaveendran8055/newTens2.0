@@ -6,23 +6,35 @@ const mongoose = require("mongoose");
 //fetch all students
 const getAllStudentsController = asyncWrapper(async (req, res, next) => {
   const { roll, name, phno } = req.query;
-  console.log(`roll :${roll}\nname: ${name}\nphone:${phno}`);
-  const queryObj = {};
+  
+  const pipeline = [];
+  
+  const matchStage = {};
   if (roll) {
-    queryObj.roll_no = { $regex: `^${roll}`, $options: "i" };
+    matchStage.roll_no = { $regex: `^${roll}`, $options: "i" };
   }
   if (name) {
-    queryObj.student_name = { $regex: `^${name}`, $options: "i" };
+    matchStage.student_name = { $regex: `^${name}`, $options: "i" };
   }
   if (phno) {
-    queryObj.whatsapp_no = { $regex: `^${phno}`, $options: "i" };
+    matchStage.whatsapp_no = { $regex: `^${phno}`, $options: "i" };
   }
+  pipeline.push({ $match: matchStage });
 
-  const result = await StudentModel.find(queryObj);
+  pipeline.push({ $project: {
+    student_name: 1,
+    roll_no: 1,
+    _id: 1,
+    father_no:1
+    } });
+
+  const result = await StudentModel.aggregate(pipeline);
+
   if (result.length === 0) {
     throw new AppError(400, "No Match Found.");
   }
-  res.status(200).json({ data: result, sucess: true });
+  
+  res.status(200).json({ data: result, success: true });
 });
 
 //student details using student id as params
