@@ -212,6 +212,17 @@ export const TEAMLEADroutes = [
     ],
   },
   {
+    title: "CENTRE MANAGEMENT",
+    layout: "CENTRE",
+    pages: [
+      {
+        icon: <RectangleStackIcon {...icon} />,
+        name: "list Centres",
+        path: "/pendinguser",
+      },
+    ],
+  },
+  {
     title: "STAFF MANAGEMENT",
     layout: "STAFF",
     pages: [
