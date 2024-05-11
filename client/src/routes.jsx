@@ -112,6 +112,12 @@ export const AAroutes = [
         path: "/search",
       },
       {
+        icon: <ServerStackIcon {...icon} />,
+        name: "Approve Students",
+        path: "/approvestudents",
+      },
+
+      {
         icon: <MdClass {...icon} />,
         name: "Class List",
         path: "/classes",

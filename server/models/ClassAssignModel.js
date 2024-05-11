@@ -7,19 +7,18 @@ const schema = new mongoose.Schema(
     },
     class: {
       type: String,
-      
     },
     batch: {
       type: String,
-      required: [true, "subject required"],
     },
     mentor_id: {
       type: String,
-      required: [true, "date required"],
     },
     mentor_name: {
       type: String,
-      default: false,
+    },
+    academic_associate: {
+      type: Array,
     },
   },
   {
@@ -27,6 +26,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const MentorAssignModel = mongoose.model("mentorsandbatchs", schema);
+const ClassAssignModel = mongoose.model("classassign", schema);
 
-module.exports = { MentorAssignModel };
+module.exports = { ClassAssignModel };
