@@ -8,6 +8,7 @@ const { studentRoutes } = require("./routes/studentRoutes")
 const { classRoutes } = require("./routes/classRoute")
 const { classReportRoutes } = require("./routes/classReportRoutes")
 const { registrationRoutes } = require("./routes/registrationRoutes")
+const { centreRouter } = require("./routes/centreRoutes")
 const app=express()
 app.use(cors({
     origin:"http://localhost:5173",
@@ -28,6 +29,8 @@ app.use("/class",classRoutes)
 app.use("/classReport",classReportRoutes)
 
 app.use("/registration",registrationRoutes)
+
+app.use("/centre",centreRouter)
 
 app.use(erroHandler)
 
