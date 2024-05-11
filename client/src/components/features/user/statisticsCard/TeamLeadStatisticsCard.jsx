@@ -60,8 +60,8 @@ const TeamLeadStatisticsCard = () => {
   ];
   return(
     <>
-      {TeamLeadStatisticsCardsData.map(({ icon, title, path, footer, ...rest }) => (
-        <Link to={path}>
+      {TeamLeadStatisticsCardsData.map(({ icon, title, path, footer, ...rest },index) => (
+        <Link to={path} key={index}>
           <StatisticsCard
             key={title}
             {...rest}

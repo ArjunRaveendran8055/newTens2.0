@@ -218,7 +218,7 @@ export const TEAMLEADroutes = [
       {
         icon: <RectangleStackIcon {...icon} />,
         name: "list Centres",
-        path: "/pendinguser",
+        path: "/allcentres",
       },
     ],
   },

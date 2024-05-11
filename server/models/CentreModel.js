@@ -4,7 +4,10 @@ const schema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "tutorname required"],
+      required: [true, "centreName required"],
+    },
+    tag:{
+      type:String,
     },
     incharge: {
       type: Array,
