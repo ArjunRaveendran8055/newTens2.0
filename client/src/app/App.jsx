@@ -24,6 +24,7 @@ import PrivateRoute from "./PrivateRoute";
 import AccessDenied from "./AccessDenied";
 import RegForm from "../layouts/RegForm";
 import AllCentres from "../components/CentreandBatches/AllCentres";
+import ApproveStudents from "../components/ApproveStudents/ApproveStudents";
 import Batches from "../components/CentreandBatches/Batches";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
@@ -57,7 +58,6 @@ function App() {
           <Route path="/classhome/:id" element={<ClassHome/>}/>
           <Route path="/classreport/:id" element={<ClassReport/>}/>
           <Route path="/allcentres" element={<AllCentres/>} />
-          <Route path="/batches" element={<Batches/>} />
           {/* private route example */}
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
