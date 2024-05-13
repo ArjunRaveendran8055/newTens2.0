@@ -24,6 +24,8 @@ import PrivateRoute from "./PrivateRoute";
 import AccessDenied from "./AccessDenied";
 import RegForm from "../layouts/RegForm";
 import AllCentres from "../components/CentreandBatches/AllCentres";
+import ApproveStudents from "../components/ApproveStudents/ApproveStudents";
+import Batches from "../components/CentreandBatches/Batches";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;

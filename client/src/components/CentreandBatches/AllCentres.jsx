@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { Dialog } from "@material-tailwind/react";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
+import { Link } from "react-router-dom";
 function AllCentres() {
   const dispatch = useDispatch();
   const [allCentres, setAllCentres] = useState([]);
@@ -42,7 +43,7 @@ function AllCentres() {
           className="text-white bg-blue-700 hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
           onClick={()=>setOpenAddCentre(true)}
         >
-          Add Class
+          Add Centre
         </button>
       </div>
 
@@ -108,7 +109,7 @@ function AllCentres() {
             <button className="py-2 px-4 bg-custblue text-whitesmoke hover:text-white rounded-lg hover:shadow-xl shadow-black hover:scale-105 duration-150"
             
             >
-              Save Report
+              Save
             </button>
           </div>
         </div>
@@ -116,7 +117,7 @@ function AllCentres() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {allCentres.map((item, index) => (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm transform transition-transform hover:scale-105">
+          <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm transform transition-transform hover:scale-105">
             <div className="p-4">
               <div>
                 <h3 className="text-lg font-semibold mb-2 uppercase">
@@ -128,9 +129,11 @@ function AllCentres() {
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-black text-sm">Version 5.0.0</span>
+                <Link key={index} to={`/batches`}>
                 <Button size="sm" variant="outlined" className="rounded-full">
                   Manage
                 </Button>
+                </Link>
               </div>
             </div>
           </div>
