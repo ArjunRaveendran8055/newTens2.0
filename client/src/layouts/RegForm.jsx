@@ -3,6 +3,7 @@ import { Select, Option, Button } from "@material-tailwind/react";
 import axios from "axios";
 import allStates from "./statesdistricts.json"
 import addImg from './addimg.jpg'
+import { array } from "prop-types";
 
 const RegForm = () => {
 
@@ -23,9 +24,37 @@ const RegForm = () => {
   };
 
 
+  const [siblingsList, setsiblingsList] = useState([]);
+
+  
+
+  const sibHandle = (name, i, val) => {
+    const newItem = { idd: i, [name]: val };
+    
+    const index = siblingsList.findIndex(item => item.idd === i);
+    
+    const updatedList = [...siblingsList];
+    
+    if (index !== -1) {
+        updatedList[index] = { ...updatedList[index], [name]: val };
+    } else {
+        updatedList.push(newItem);
+    }
+
+    setFormData({
+      ...formData,
+      siblings: updatedList,
+    });
+
+
+    setsiblingsList(updatedList);
+
+}
 
   
   const [syllabus, setSyllabus] = useState("");
+
+  
 
   const [statesIn, setStatesIn] = useState("");
 
@@ -405,6 +434,14 @@ const RegForm = () => {
                           )
 
                           handleInputChange({target:{name:"schoolLocation",value:school.location}})
+
+                          setFormData({
+                            ...formData,
+                            school: school.name + " " + school.location,
+                            schoolLocation: school.location,
+                          });
+
+                      
                         }
                          
                         }
@@ -602,6 +639,7 @@ const RegForm = () => {
                 </div>
               </div>
             </div>
+            
 
             {[...Array(parseInt(siblingsCount))].map((value, index) => {
               return (
@@ -617,6 +655,7 @@ const RegForm = () => {
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           id="siblingname"
                           placeholder="Enter Name of Sibling"
+                          onChange={(e)=>sibHandle("name",index,e.target.value)}
                         />
                       </div>
                       <div>
@@ -625,6 +664,7 @@ const RegForm = () => {
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           id="siblingclass"
                           placeholder="enter class"
+                          onChange={(e)=>sibHandle("class",index,e.target.value)}
                         />
                       </div>
                     </div>
@@ -636,6 +676,7 @@ const RegForm = () => {
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           id="siblingschool"
                           placeholder="Enter School Name"
+                          onChange={(e)=>sibHandle("school",index,e.target.value)}
                         />
                       </div>
                     </div>
