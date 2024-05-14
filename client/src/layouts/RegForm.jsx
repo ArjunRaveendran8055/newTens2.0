@@ -3,23 +3,34 @@ import { Select, Option, Button } from "@material-tailwind/react";
 import axios from "axios";
 import allStates from "./statesdistricts.json"
 import addImg from './addimg.jpg'
-import { array } from "prop-types";
+
 
 const RegForm = () => {
 
 
 
-
+  
   const [imageUrl, setImageUrl] = useState(addImg);
 
-  const handleImageChange = (e) => {
+  const formDataLast = new FormData();
+
+  const [photo,setPhoto] = useState(null)
+
+
+  const handleImageChange =  (e) => {
     const file = e.target.files[0];  
+  
+    setPhoto(file)
+    
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         setImageUrl(reader.result);
       };
       reader.readAsDataURL(file);
+      
+     formDataLast.append('image',file)
+
     }
   };
 
@@ -54,7 +65,7 @@ const RegForm = () => {
   
   const [syllabus, setSyllabus] = useState("");
 
-  
+
 
   const [statesIn, setStatesIn] = useState("");
 
@@ -145,8 +156,24 @@ const RegForm = () => {
 
   }, [formData.syllabus,selectedSchool]);
 
+
+  useEffect(()=>{
+    formDataLast.append('data',JSON.stringify(formData))
+    
+    formDataLast.append('image', photo)
+
+  },[formData,photo])
+
+
+
+
+
   const handleSub = () =>{
-    console.log(formData)
+    
+    for (let pair of formDataLast.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+    }
+   
   }
 
   const handleSchoolChange = (schoolName) => {
