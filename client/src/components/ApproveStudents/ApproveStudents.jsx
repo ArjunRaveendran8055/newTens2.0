@@ -105,7 +105,9 @@ const ApproveStudents = () => {
   ];
   const dispatch = useDispatch();
   const [allCentre, setAllCentre] = useState([]);
-  const [selectedIndex,setSelectedIndex]=useState(null)
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [selectedStudent, setSelectedStudent] = useState({});
+  const [openPreview, setOpenPreview] = useState(false);
   useEffect(() => {
     dispatch(setLoader());
     axios
@@ -120,9 +122,10 @@ const ApproveStudents = () => {
       });
   }, []);
 
-  const previewHandler = (item,index) => {
-    console.log("index",index)
-    setSelectedIndex(index)
+  const previewHandler = (item, index) => {
+    console.log("index", index);
+    setSelectedIndex(index);
+    setOpenPreview(true)
   };
 
   return (
@@ -147,11 +150,13 @@ const ApproveStudents = () => {
             <div className="w-[20%]">ROLL</div>
             <div className="w-[90%]">NAME</div>
           </div>
-          <div className="studentlistcontainer flex flex-col gap-2 w-full overflow-y-scroll">
+          <div className="studentlistcontainer flex flex-col gap-2 w-full overflow-y-scroll ">
             {studentList.map((item, index) => (
               <div
-                className={` ${selectedIndex === index && 'bg-black text-white'}bg-whitesmoke flex cursor-pointer flex-row w-full font-Playfiar text-xl text-gray-700 rounded-md uppercase p-2`}
-                onClick={()=>previewHandler(item,index)}
+                className={` ${
+                  selectedIndex === index && " bg-blue-gray-900 text-white"
+                } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md uppercase p-2 border-black border-[1px]`}
+                onClick={() => previewHandler(item, index)}
               >
                 <div className="w-[20%]">{item.roll}</div>
                 <div className="w-[90%]">{item.name}</div>
@@ -160,13 +165,19 @@ const ApproveStudents = () => {
           </div>
         </div>
         <div className="vrtline w-[1px] h-full bg-black" />
-        <div className="previewcontainer w-[60%] bg-white rounded-lg  flex h-full pt-4 px-2">
+        <div className="previewcontainer w-[60%] bg-white rounded-lg  flex flex-col h-full pt-4 px-2">
           <div className="previewtitlecontainer flex h-10 w-full justify-center items-center">
             <span className="text-2xl">
-              <h2>Preview</h2>
+              <h2 className=" border-black border-b-2 px-2">Preview</h2>
             </span>
           </div>
-          <div></div>
+          <div className="w-full h-full overflow-y-scroll flex justify-center items-center">
+            {openPreview ? (
+              <div>form will be visible here</div>
+            ) : (
+              <div className="text-xl">No Students Selected for Preview</div>
+            )}
+          </div>
         </div>
       </div>
       <div className="lg:hidden flex h-[75vh] justify-center items-center">

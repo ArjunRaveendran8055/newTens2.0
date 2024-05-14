@@ -58,6 +58,7 @@ function App() {
           <Route path="/classhome/:id" element={<ClassHome/>}/>
           <Route path="/classreport/:id" element={<ClassReport/>}/>
           <Route path="/allcentres" element={<AllCentres/>} />
+          <Route path="/approvestudents" element={<ApproveStudents/>} />
           {/* private route example */}
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
