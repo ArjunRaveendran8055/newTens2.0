@@ -4,6 +4,7 @@ import {
   Card,
   Avatar,
 } from "@material-tailwind/react";
+import { Link } from 'react-router-dom';
 
 function Batches() {
   const [isVisible, setIsVisible] = useState(false);
@@ -18,7 +19,6 @@ function Batches() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">PARAVOOR - CLASS LIST</h1>
       </div>
-
       {/* LOOP CLASSES FROM HERE */}
       <div className={`space-y-4 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}  transition-transform duration-1000`}>
         <Card className="flex flex-col">
@@ -36,9 +36,11 @@ function Batches() {
             <div className="text-lg font-semibold self-end">2732 Students</div>
           </div>
           <div className="flex space-x-2 border-t p-4">
+          <Link to={`/displaybatches`}>
             <Button variant="outlined" className="text-sm" >
               Batches
             </Button>
+          </Link>
           </div>
         </Card> 
       </div>
