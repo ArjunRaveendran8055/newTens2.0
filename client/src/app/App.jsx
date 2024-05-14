@@ -26,6 +26,7 @@ import RegForm from "../layouts/RegForm";
 import AllCentres from "../components/CentreandBatches/AllCentres";
 import ApproveStudents from "../components/ApproveStudents/ApproveStudents";
 import Batches from "../components/CentreandBatches/Batches";
+import DisplayBatches from "../components/CentreandBatches/DisplayBatches";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -58,7 +59,12 @@ function App() {
           <Route path="/classhome/:id" element={<ClassHome/>}/>
           <Route path="/classreport/:id" element={<ClassReport/>}/>
           <Route path="/allcentres" element={<AllCentres/>} />
+<<<<<<< HEAD
           <Route path="/approvestudents" element={<ApproveStudents/>} />
+=======
+          <Route path="/batches" element={<Batches/>} />
+          <Route path="/displaybatches" element={<DisplayBatches/>} />
+>>>>>>> origin/master
           {/* private route example */}
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
