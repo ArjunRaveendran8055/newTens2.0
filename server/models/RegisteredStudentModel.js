@@ -90,7 +90,7 @@ const studentSchema = new mongoose.Schema({
       required: false,
     },
     difficult_subjects: {
-      type: String,
+      type: Array,
       required: false,
     },
     remark: {
