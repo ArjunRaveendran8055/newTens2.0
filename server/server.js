@@ -33,7 +33,7 @@ const createServer = async () => {
   const server = app.listen(port, () => {
     console.log(`Server running at Port : ${port}`);
   });
-
+  setupSocket(server)
 };
 
 createServer();

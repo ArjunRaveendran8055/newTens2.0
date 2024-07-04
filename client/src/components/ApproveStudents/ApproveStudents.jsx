@@ -5,122 +5,56 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import FormView from "./FormView";
+import socket from "../../socket";
 const ApproveStudents = () => {
-  const studentList = [
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-    {
-      roll: "me043",
-      name: "manu",
-    },
-    {
-      roll: "za022",
-      name: "ananthakrishnan",
-    },
-  ];
+  
   const dispatch = useDispatch();
   const [allCentre, setAllCentre] = useState([]);
+  const [studentsList,setStudentsList]=useState([])
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [selectedStudent, setSelectedStudent] = useState({});
   const [openPreview, setOpenPreview] = useState(false);
-  useEffect(() => {
-    dispatch(setLoader());
-    axios
-      .get("/centre/getAllCentres")
-      .then((res) => {
-        setAllCentre(res.data.result);
-        dispatch(removeLoader());
+
+  const socketConnection = () => {
+    socket.connect();
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    //on failed connection
+    socket.on("connect_failed", function () {
+      document.write("Sorry, there seems to be an issue with the connection!");
+    });
+
+    //connection error
+    socket.on("connect_error", (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
+  };
+
+  const fetchStudents= ()=>{
+      dispatch(setLoader());
+      socket.emit("fetchstudents",{})
+      //getting studentList from socket
+      socket.on("students_list",(data)=>{
+        setStudentsList([...data.students])
+        dispatch(removeLoader())
       })
-      .catch((err) => {
-        console.log(err.response);
-        dispatch(removeLoader());
-      });
+
+      //getting noPending response 
+      socket.on("no_pending_students",(msg)=>{
+        console.log(msg)
+      })
+  }
+
+  useEffect(() => {
+    // dispatch(setLoader());
+    socketConnection();
+    fetchStudents()
+
+    return ()=>{
+      socket.off("connect")
+      socket.disconnect()
+    }
   }, []);
 
   const previewHandler = (item, index) => {
@@ -152,7 +86,7 @@ const ApproveStudents = () => {
             <div className="w-[90%]">NAME</div>
           </div>
           <div className="studentlistcontainer flex flex-col gap-2 w-full overflow-y-scroll ">
-            {studentList.map((item, index) => (
+            {studentsList.map((item, index) => (
               <div
                 className={` ${
                   selectedIndex === index && " bg-blue-gray-900 text-white"
@@ -160,8 +94,8 @@ const ApproveStudents = () => {
                 onClick={() => previewHandler(item, index)}
                 key={index}
               >
-                <div className="w-[20%]">{item.roll}</div>
-                <div className="w-[90%]">{item.name}</div>
+                <div className="w-[20%]">{item.roll_no}</div>
+                <div className="w-[90%]">{item.student_name}</div>
               </div>
             ))}
           </div>
@@ -179,7 +113,7 @@ const ApproveStudents = () => {
                 <FormView />
               </div>
             ) : (
-              <div className="text-xl">No Students Selected for Preview</div>
+              <div className="flex items-center justify-center w-full mt-[60%] text-xl">No Students Selected for Preview</div>
             )}
           </div>
         </div>
