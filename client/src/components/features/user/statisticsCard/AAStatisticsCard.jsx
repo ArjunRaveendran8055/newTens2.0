@@ -35,9 +35,10 @@ const AAStatisticsCard = () => {
     },
     {
       color: "gray",
+      path:"/approvestudents",
       icon: ChartBarIcon,
-      title: "Sales",
-      value: "$103,430",
+      title: "APPROVE STUDENTS",
+      value: "SUBMITTED FORMS",
       footer: {
         color: "text-green-500",
         value: "+5%",

@@ -4,6 +4,7 @@ import { Divider } from "@mui/material";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
+import FormView from "./FormView";
 const ApproveStudents = () => {
   const studentList = [
     {
@@ -125,7 +126,7 @@ const ApproveStudents = () => {
   const previewHandler = (item, index) => {
     console.log("index", index);
     setSelectedIndex(index);
-    setOpenPreview(true)
+    setOpenPreview(true);
   };
 
   return (
@@ -137,8 +138,8 @@ const ApproveStudents = () => {
             <div>
               <Select>
                 <Option value="">All</Option>
-                {allCentre?.map((item) => (
-                  <Option className="uppercase" value={item.name}>
+                {allCentre?.map((item, index) => (
+                  <Option key={index} className="uppercase" value={item.name}>
                     {item.name}
                   </Option>
                 ))}
@@ -157,6 +158,7 @@ const ApproveStudents = () => {
                   selectedIndex === index && " bg-blue-gray-900 text-white"
                 } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md uppercase p-2 border-black border-[1px]`}
                 onClick={() => previewHandler(item, index)}
+                key={index}
               >
                 <div className="w-[20%]">{item.roll}</div>
                 <div className="w-[90%]">{item.name}</div>
@@ -164,16 +166,18 @@ const ApproveStudents = () => {
             ))}
           </div>
         </div>
-        <div className="vrtline w-[1px] h-full bg-black" />
-        <div className="previewcontainer w-[60%] bg-white rounded-lg  flex flex-col h-full pt-4 px-2">
+        <div className="vrtline w-[1px]  bg-black" />
+        <div className="previewcontainer w-[60%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">
           <div className="previewtitlecontainer flex h-10 w-full justify-center items-center">
             <span className="text-2xl">
               <h2 className=" border-black border-b-2 px-2">Preview</h2>
             </span>
           </div>
-          <div className="w-full h-full overflow-y-scroll flex justify-center items-center">
+          <div className="">
             {openPreview ? (
-              <div>form will be visible here</div>
+              <div>
+                <FormView />
+              </div>
             ) : (
               <div className="text-xl">No Students Selected for Preview</div>
             )}

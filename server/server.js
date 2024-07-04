@@ -1,5 +1,6 @@
 const { connectMongoDb } = require("./Db/connectDB");
 const { app } = require("./app");
+const setupSocket = require("./routes/socket");
 
 //unhandled exceptional errors
 process.on("uncaughtException", (err) => {
@@ -32,6 +33,7 @@ const createServer = async () => {
   const server = app.listen(port, () => {
     console.log(`Server running at Port : ${port}`);
   });
+
 };
 
 createServer();
