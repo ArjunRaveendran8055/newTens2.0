@@ -119,8 +119,8 @@ const FormView = () => {
   
   useEffect(() => {
 
-    // console.log(addImg)
-    // console.log(fetchDistricts(statesIn))
+    console.log(addImg)
+    console.log(fetchDistricts(statesIn))
     const fetchSchool =  async (scl) => {
       
       
@@ -916,7 +916,7 @@ const FormView = () => {
           </div>
 
           <div className="flex justify-center">
-            <Button onClick={handleSub} className="mt-5">Approve</Button>
+            <Button onClick={handleSub} className="mt-5">App</Button>
           </div>
         </form>
       </div>
