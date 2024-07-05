@@ -3,6 +3,8 @@ import { Select, Option, Button } from "@material-tailwind/react";
 import axios from "axios";
 import allStates from "./statesdistricts.json"
 import addImg from './addimg.jpg'
+import compressImage from 'browser-image-compression';
+
 
 
 const RegForm = () => {
@@ -16,21 +18,34 @@ const RegForm = () => {
 
   const [photo,setPhoto] = useState(null)
 
+  const [errors, setErrors] = useState({});
 
-  const handleImageChange =  (e) => {
-    const file = e.target.files[0];  
-  
-    setPhoto(file)
-    
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+
+    try {
+      const compressedFile = await compressImage(file, {
+        maxSizeMB: 1, // Maximum size in megabytes
+        maxWidthOrHeight: 900, // Maximum width or height
+        useWebWorker: true, // Use web workers for faster compression (optional)
+      });
+
+      // Now you can use the compressedFile for further processing or uploading
+      console.log("Compressed image:", compressedFile);
+      setPhoto(compressedFile);
+    } catch (error) {
+      console.error("Error compressing image:", error);
+    }
+
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         setImageUrl(reader.result);
       };
       reader.readAsDataURL(file);
-      
-     formDataLast.append('image',file)
 
+  
     }
   };
 
@@ -101,6 +116,64 @@ const RegForm = () => {
 
 
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.fullName) newErrors.fullName = "Full name is required";
+    if (!formData.gender) newErrors.gender = "Gender is required";
+    if (!formData.address) newErrors.address = "Address is required";
+    if (!formData.pinCode) {
+      newErrors.pinCode = "Pin code is required";
+    } else if (!/^\d{6}$/.test(formData.pinCode)) {
+      newErrors.pinCode = "Pin code must be 6 digits";
+    }
+    if (!formData.dob) newErrors.dob = "Date of birth is required";
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    if (!formData.class) newErrors.class = "Class is required";
+    if (!formData.syllabus) newErrors.syllabus = "Syllabus is required";
+    if (!formData.school) newErrors.school = "School is required";
+    if (!formData.schoolLocation) newErrors.schoolLocation = "School location is required";
+    if (!formData.medium) newErrors.medium = "Medium is required";
+    if (!formData.state) newErrors.state = "State is required";
+    if (!formData.district) newErrors.district = "District is required";
+    if (!formData.fatherName) newErrors.fatherName = "Father's name is required";
+    if (!formData.motherName) newErrors.motherName = "Mother's name is required";
+    if (!formData.fatherOccupation) newErrors.fatherOccupation = "Father's occupation is required";
+    if (!formData.motherOccupation) newErrors.motherOccupation = "Mother's occupation is required";
+    if (!formData.rollNumber) newErrors.rollNumber = "Roll number is required";
+    else if (!/^[a-zA-Z]{2}\d{3}$/.test(formData.rollNumber)) {
+      newErrors.rollNumber = "Roll number must start with 2 alphabetic characters followed by 3 digits example - AB001";
+    }
+    if (!formData.fatherNumber) {
+      newErrors.fatherNumber = "Father's number is required";
+    } else if (!/^\d{10}$/.test(formData.fatherNumber)) {
+      newErrors.fatherNumber = "Father's number must be 10 digits";
+    }
+    if (!formData.motherNumber) {
+      newErrors.motherNumber = "Mother's number is required";
+    } else if (!/^\d{10}$/.test(formData.motherNumber)) {
+      newErrors.motherNumber = "Mother's number must be 10 digits";
+    }
+    if (!formData.whatsappNumber) {
+      newErrors.whatsappNumber = "WhatsApp number is required";
+    } else if (!/^\d{10}$/.test(formData.whatsappNumber)) {
+      newErrors.whatsappNumber = "WhatsApp number must be 10 digits";
+    }
+    if (!formData.centre) newErrors.centre = "Centre is required";
+    if (!formData.academicStatus) newErrors.academicStatus = "Academic status is required";
+    if (!formData.hearAbout) newErrors.hearAbout = "Please specify how you heard about us";
+
+
+    setErrors(newErrors);
+
+    return newErrors
+  };
+
+
 
  
   const [schools, setSchools] = useState([]);
@@ -158,9 +231,11 @@ const RegForm = () => {
 
 
   useEffect(()=>{
-    formDataLast.append('data',JSON.stringify(formData))
+   formDataLast.append('data',JSON.stringify(formData))
     
     formDataLast.append('image', photo)
+
+    
 
   },[formData,photo])
 
@@ -168,11 +243,50 @@ const RegForm = () => {
 
 
 
-  const handleSub = () =>{
+  const scrollToElement = (name) => {
+    const element = document.getElementsByName(name);
+
     
-    for (let pair of formDataLast.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
+    if (element) {
+      const offset = -250; // Adjust this value to scroll a bit above
+      const topPos = element[0].getBoundingClientRect().top + window.scrollY + offset;
+      window.scrollTo({ top: topPos, behavior: "smooth" });
     }
+  };
+
+
+
+  const handleSub = async () =>{
+
+    
+
+    
+
+    let  errs =  validateForm()
+console.log(errs)
+    
+  if(Object.keys(errs).length>0)
+    {
+       scrollToElement(Object.keys(errs)[0])
+    }
+   
+
+
+   if(Object.entries(errs).length == 0 ){
+
+    await axios.post('/registration/submitStudent', formDataLast )
+    .then(response => {
+     
+      console.log('submitted successfully:', response.data);
+    })
+    .catch(error => {
+     
+      console.error('Error submitting form data:', error);
+    });
+
+   }
+    
+   
    
   }
 
@@ -304,7 +418,11 @@ const RegForm = () => {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleInputChange}
+                
               />
+
+                {errors.fullName && <span className="text-sm text-red-500">{" * "+ errors.fullName}</span>}
+              
             </div>
 
             <div>
@@ -320,6 +438,7 @@ const RegForm = () => {
                   <Option value="female">Female</Option>
                 </Select>
               </div>
+              {errors.gender && <span className="text-sm  text-red-500">{" * "+ errors.gender}</span>}
             </div>
           </div>
 
@@ -337,6 +456,7 @@ const RegForm = () => {
               value={formData.address}
               onChange={handleInputChange}
             />
+            {errors.address && <span className="text-sm  text-red-500">{" * "+ errors.address}</span>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -350,6 +470,7 @@ const RegForm = () => {
                 value={formData.pinCode}
                 onChange={handleInputChange}
               />
+              {errors.pinCode && <span className="text-sm  text-red-500">{" * "+ errors.pinCode}</span>}
             </div>
 
             <div>
@@ -363,6 +484,7 @@ const RegForm = () => {
                 value={formData.dob}
                 onChange={handleInputChange}
               />
+              {errors.dob && <span className="text-sm  text-red-500">{" * "+ errors.dob}</span>}
             </div>
 
             <div></div>
@@ -379,6 +501,7 @@ const RegForm = () => {
               value={formData.email}
               onChange={handleInputChange}
             />
+            {errors.email && <span className="text-sm  text-red-500">{" * "+ errors.email}</span>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -393,6 +516,7 @@ const RegForm = () => {
                   <Option value="12">Class 12</Option>
                 </Select>
               </div>
+              {errors.class && <span className="text-sm  text-red-500">{" * "+ errors.class}</span>}
             </div>
 
             <div>
@@ -403,6 +527,7 @@ const RegForm = () => {
                   <Option value="cbse">CBSE</Option>
                 </Select>
               </div>
+              {errors.syllabus && <span className="text-sm  text-red-500">{" * "+ errors.syllabus}</span>}
             </div>
           </div>
 
@@ -446,6 +571,7 @@ const RegForm = () => {
                     onChange={(event) => handleSchoolChange(event.target.value)}
                     value={selectedSchool}
                   />
+                  {errors.school && <span className="text-sm  text-red-500">{" * "+ errors.school}</span>}
                 </div>
                 {isOpen && (
                   <ul className="border rounded uppercase border-gray-300 overflow-y-auto max-h-40 absolute top-full left-0 right-0 z-10 bg-white">
@@ -494,7 +620,9 @@ const RegForm = () => {
                 placeholder="School location"
                 value={formData.schoolLocation}
                 onChange={handleInputChange}
+                
               />
+              {errors.schoolLocation && <span className="text-sm  text-red-500">{" * "+ errors.schoolLocation}</span>}
             </div>
 
           
@@ -507,6 +635,7 @@ const RegForm = () => {
                   <Option value="malayalam">Malayalam</Option>
                 </Select>
               </div>
+              {errors.medium && <span className="text-sm  text-red-500">{" * "+ errors.medium}</span>}
             </div>
 
           </div>
@@ -523,6 +652,7 @@ const RegForm = () => {
                   ))}
                 </Select>
               </div>
+              {errors.state && <span className="text-sm  text-red-500">{" * "+ errors.state}</span>}
             </div>
 
             <div>
@@ -536,6 +666,7 @@ const RegForm = () => {
                   ))}
                 </Select>
               </div>
+              {errors.district && <span className="text-sm  text-red-500">{" * "+ errors.district}</span>}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -549,6 +680,7 @@ const RegForm = () => {
                 value={formData.fatherName}
                 onChange={handleInputChange}
               />
+              {errors.fatherName && <span className="text-sm  text-red-500">{" * "+ errors.fatherName}</span>}
             </div>
             <div>
               <label htmlFor="mother-name">Mother's Name</label>
@@ -560,6 +692,7 @@ const RegForm = () => {
                 value={formData.motherName}
                 onChange={handleInputChange}
               />
+              {errors.motherName && <span className="text-sm  text-red-500">{" * "+ errors.motherName}</span>}
             </div>
           </div>
 
@@ -574,6 +707,7 @@ const RegForm = () => {
                 value={formData.fatherOccupation}
                 onChange={handleInputChange}
               />
+              {errors.fatherOccupation && <span className="text-sm  text-red-500">{" * "+ errors.fatherOccupation}</span>}
             </div>
             <div>
               <label htmlFor="mother-occupation">Mother's Occupation</label>
@@ -585,11 +719,12 @@ const RegForm = () => {
                 value={formData.motherOccupation}
                 onChange={handleInputChange}
               />
+              {errors.motherOccupation && <span className="text-sm  text-red-500">{" * "+ errors.motherOccupation}</span>}
             </div>
           </div>
 
           <div>
-            <label htmlFor="roll-number">Assign Roll Number (5 digit)</label>
+            <label htmlFor="roll-number">Roll Number</label>
             <input
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="roll-number"
@@ -598,6 +733,7 @@ const RegForm = () => {
               value={formData.rollNumber}
                 onChange={handleInputChange}
             />
+            {errors.rollNumber && <span className="text-sm  text-red-500">{" * "+ errors.rollNumber}</span>}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -610,6 +746,7 @@ const RegForm = () => {
                 value={formData.fatherNumber}
                 onChange={handleInputChange}
               />
+              {errors.fatherNumber && <span className="text-sm  text-red-500">{" * "+ errors.fatherNumber}</span>}
             </div>
             <div>
               <label htmlFor="mother-number">Mother's Number</label>
@@ -622,6 +759,7 @@ const RegForm = () => {
                 onChange={handleInputChange}
 
               />
+              {errors.motherNumber && <span className="text-sm  text-red-500">{" * "+ errors.motherNumber}</span>}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -635,6 +773,7 @@ const RegForm = () => {
                 value={formData.whatsappNumber}
                 onChange={handleInputChange}
               />
+              {errors.whatsappNumber && <span className="text-sm  text-red-500">{" * "+ errors.whatsappNumber}</span>}
             </div>
             <div>
               <label htmlFor="centre">Centre</label>
@@ -646,6 +785,7 @@ const RegForm = () => {
                 value={formData.centre}
                 onChange={handleInputChange}
               />
+              {errors.centre && <span className="text-sm  text-red-500">{" * "+ errors.centre}</span>}
             </div>
           </div>
 
@@ -764,6 +904,7 @@ const RegForm = () => {
                 </label>
               </div>
             </div>
+              {errors.academicStatus && <span className="text-sm text-red-500">{" * "+ errors.academicStatus}</span>}
           </div>
 
           <div>
@@ -839,7 +980,9 @@ const RegForm = () => {
                   <span className="ml-2 text-sm text-gray-900">Others</span>
                 </label>
               </div>
+              
             </div>
+            {errors.hearAbout && <span className="text-sm  text-red-500">{" * "+ errors.hearAbout}</span>}
           </div>
 
           <div>
