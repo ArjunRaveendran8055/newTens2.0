@@ -7,7 +7,7 @@ import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import FormView from "./FormView";
 import socket from "../../socket";
 const ApproveStudents = () => {
-  
+
   const dispatch = useDispatch();
   const [allCentre, setAllCentre] = useState([]);
   const [studentsList,setStudentsList]=useState([])
