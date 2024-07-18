@@ -14,6 +14,39 @@ const ApproveStudents = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [openPreview, setOpenPreview] = useState(false);
 
+  const [formData, setFormData] = useState({
+    fullName: "",
+    gender: "",
+    address: "",
+    pinCode: "",
+    dob: "",
+    email: "",
+    class: "",
+    syllabus: "",
+    school: "",
+    schoolLocation: "",
+    medium: "",
+    state: "",
+    district: "",
+    fatherName: "",
+    motherName: "",
+    fatherOccupation: "",
+    motherOccupation: "",
+    rollNumber: "",
+    fatherNumber: "",
+    motherNumber: "",
+    whatsappNumber: "",
+    centre: "",
+    academicStatus: "",
+    hearAbout: "",
+    difficultSubjects: [],
+    siblings: [],
+  });
+
+  const [selectedSchool, setSelectedSchool] = useState([]);
+  const [syllabus, setSyllabus] = useState("");
+  const [statesIn, setStatesIn] = useState("");
+
   const socketConnection = () => {
     socket.connect();
     socket.on("connect", () => {
@@ -61,7 +94,39 @@ const ApproveStudents = () => {
     console.log("index", index);
     setSelectedIndex(index);
     setOpenPreview(true);
+    console.log(item.student_name);
+    console.log(item);
+    setFormData({
+      fullName: item.student_name,
+      gender: item.gender,
+      address: item.address,
+      pinCode: item.pin_code,
+      dob: item.dob,
+      email: item.email,
+      class: item.class,
+      syllabus: item.syllabus,
+      school: item.school_name,
+      schoolLocation: item.school_location,
+      medium: item.medium,
+      state:"",
+      district: item.district,
+      fatherName: item.father,
+      motherName: item.mother,
+      fatherOccupation:item.fathers_occupation,
+      motherOccupation: item.mothers_occupation,
+      rollNumber: item.roll_no,
+      fatherNumber: item.father_no,
+      motherNumber: item.mother_no,
+      whatsappNumber: item.whatsapp,
+      centre: item.centre,
+
+    })
+    setSelectedSchool(item.school_name)
+    console.log(item.state)
+    setStatesIn(item.state)
+    setSyllabus(item.syllabus)
   };
+
 
   return (
     <div>
@@ -110,7 +175,7 @@ const ApproveStudents = () => {
           <div className="">
             {openPreview ? (
               <div>
-                <FormView />
+                <FormView formData={formData} setFormData={setFormData} selectedSchool={selectedSchool} setSelectedSchool={setSelectedSchool} statesIn={statesIn} setStatesIn={setStatesIn} syllabus={syllabus} setSyllabus={setSyllabus}/>
               </div>
             ) : (
               <div className="flex items-center justify-center w-full mt-[60%] text-xl">No Students Selected for Preview</div>
