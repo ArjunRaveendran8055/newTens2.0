@@ -51,6 +51,7 @@ function DisplayClasses() {
         setIsLoading(false);
         // console.log(data)
         setTotalPages(data.pagination.next?.page);
+        console.log(totalPages);
         
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -270,35 +271,7 @@ function DisplayClasses() {
         <button onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))}>Next Page</button>
       </div> */}
 
-      {classes.length>=10 &&
-
-      <div>
-        <ButtonGroup variant="outlined">
-          <IconButton
-            onClick={() =>
-              setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))
-            }
-          >
-            <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
-          </IconButton>
-          {Array.from({ length: totalPages }, (_, index) => (
-            <IconButton
-              key={index + 1}
-              onClick={() => setCurrentPage(index + 1)}
-            >
-              {index + 1}
-            </IconButton>
-          ))}
-          <IconButton
-            onClick={() =>
-              setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))
-            }
-          >
-            <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
-          </IconButton>
-        </ButtonGroup>
-      </div>
-      }
+      
     </div>
   );
 }

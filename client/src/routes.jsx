@@ -268,6 +268,11 @@ export const TEAMLEADroutes = [
         name: "Add Student",
         path: "/addstudent",
       },
+      {
+        icon: <MdClass {...icon} />,
+        name: "Assign AA",
+        path: "/assignaa",
+      },
     ],
   }
   
