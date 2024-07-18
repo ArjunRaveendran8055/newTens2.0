@@ -27,6 +27,7 @@ import AllCentres from "../components/CentreandBatches/AllCentres";
 import ApproveStudents from "../components/ApproveStudents/ApproveStudents";
 import Batches from "../components/CentreandBatches/Batches";
 import DisplayBatches from "../components/CentreandBatches/DisplayBatches";
+import Asignaa from "../components/classComponents/Asignaa";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -63,6 +64,7 @@ function App() {
           <Route path="/batches" element={<Batches/>} />
           <Route path="/displaybatches" element={<DisplayBatches/>} />
           {/* private route example */}
+          <Route path="/assignaa" element={<Asignaa/>}/>
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
       </Routes>
