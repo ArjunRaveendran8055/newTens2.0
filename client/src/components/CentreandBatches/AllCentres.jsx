@@ -1,14 +1,54 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@material-tailwind/react";
+import {
+  Button,
+  ButtonGroup,
+  Dialog,
+  Card,
+  CardBody,
+  CardFooter,
+  Typography,
+  Checkbox,
+  Input,
+  Select,
+  Option,
+} from "@material-tailwind/react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { Dialog } from "@material-tailwind/react";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import { Link } from "react-router-dom";
 function AllCentres() {
   const dispatch = useDispatch();
   const [allCentres, setAllCentres] = useState([]);
   const [openAddCentre, setOpenAddCentre] = useState(false);
+
+  // state below this is to post to backend
+  const [centreName, setCentreName] = useState('');
+  const [centreTag, setCentreTag] = useState('');
+  const [incharge, setIncharge] = useState(['', '']);
+
+  
+  const handleInchargeChange = (index, value) => {
+    const newIncharge = [...incharge];
+    newIncharge[index] = value;
+    setIncharge(newIncharge);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const centreData = {
+      centrename: centreName.toLowerCase(),
+      tag: centreTag.toLowerCase(),
+      incharge: incharge.filter(name => name !== ''), // Remove empty strings if any
+    };
+
+    try {
+      const response = await axios.post('/centre/createCentre', centreData);
+      console.log('Centre added:', response.data);
+    } catch (error) {
+      console.error('Error adding centre:', error);
+    }
+  };
+
   useEffect(() => {
     dispatch(setLoader());
     axios
@@ -53,66 +93,55 @@ function AllCentres() {
         handler={handleOpenAddCentre}
         className="flex"
       >
-        <div className="relative  add-report flex flex-col bg-white sm:w-full shadow-2xl rounded-lg items-center ">
-          <div className="text-2xl font-bold text-black heading-container sm:pt-5">
-            Add New Centre
-          </div>
-          <div className="text-custred">error message here</div>
-          <div className="pt-5 flex gap-5"></div>
-          <div className="rea-res-container w-full flex flex-col lg:p-5">
-            <div className="reason-container w-full flex sm:flex-col lg:flex-row sm:gap-2 lg:gap-0 p-2">
-              <div className="reasontitle lg:w-[30%] sm:w-full  text-black text-xl font-Playfiar">
-                Centre Name
-              </div>
-              <div className="reasoninput lg:w-[70%] sm:w-full">
-                <input
-                  type="text"
-                  className={`p-2  w-full border-[1px] border-black rounded-sm font-bold `}
-                />
-              </div>
-            </div>
-            <div className="response-container w-full flex sm:flex-col lg:flex-row sm:gap-2 lg:gap-0 p-2">
-              <div className="reposetitle lg:w-[30%] sm:w-full text-black text-xl font-Playfiar">
-                Tag
-              </div>
-              <div className="responseinput lg:w-[70%] sm:w-full">
-                <input
-                  type="text"
-                  className={`p-2  w-full border-[1px] border-black rounded-sm font-bold `}
-                />
-              </div>
-            </div>
+       <Card className="mx-auto w-full">
+          <CardBody className="flex flex-col gap-4">
+            <Typography variant="h4" color="blue-gray">
+              Add Centre
+            </Typography>
 
-            <div className="response-container w-full flex sm:flex-col lg:flex-row sm:gap-2 lg:gap-0 p-2">
-              <div className="reposetitle lg:w-[30%] sm:w-full text-black text-xl font-Playfiar">
-                InCharge
-              </div>
-              <div className="responseinput lg:w-[70%] sm:w-full flex sm:flex-col lg:flex-row sm:gap-2 justify-between">
-                <span className=" flex">
-                  1.{" "}
-                  <input
-                    type="text"
-                    className={`px-2 py-1 border-[1px] border-black rounded-sm sm:w-full`}
-                  />
-                </span>
-                <span className="flex">
-                  2.{" "}
-                  <input
-                    type="text"
-                    className={`px-2 py-1 border-[1px] border-black rounded-sm sm:w-full`}
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="btncontainer flex w-full items-center justify-center pb-10">
-            <button className="py-2 px-4 bg-custblue text-whitesmoke hover:text-white rounded-lg hover:shadow-xl shadow-black hover:scale-105 duration-150"
-            
-            >
-              Save
-            </button>
-          </div>
-        </div>
+            <Typography className="-mb-2" variant="h6">
+              Centre Name
+            </Typography>
+            <Input
+              label="Enter Centre Name"
+              size="lg"
+              value={centreName}
+            onChange={(e) => setCentreName(e.target.value)}
+            />
+
+<Typography className="-mb-2" variant="h6">
+              Centre Tag
+            </Typography>
+            <Input
+              label="Enter Centre Tag"
+              size="lg"
+              value={centreTag}
+            onChange={(e) => setCentreTag(e.target.value)}
+            />
+
+          <Typography className="-mb-2" variant="h6">
+                        Incharge
+                      </Typography>
+                  
+                      <Input
+                        label="Enter First person's Name"
+                        size="lg"
+                        value={incharge[0]}
+            onChange={(e) => handleInchargeChange(0, e.target.value.toLowerCase())}
+                      />
+                       <Input
+                        label="Enter Second person's Name"
+                        size="lg"
+                        value={incharge[1]}
+            onChange={(e) => handleInchargeChange(1, e.target.value.toLowerCase())}
+                      />
+          </CardBody>
+          <CardFooter className="pt-0">
+            <Button variant="gradient" onClick={handleSubmit} fullWidth>
+              Create
+            </Button>
+          </CardFooter>
+        </Card>
       </Dialog>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
