@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  ButtonGroup,
   Dialog,
   Card,
   CardBody,
   CardFooter,
   Typography,
-  Checkbox,
   Input,
-  Select,
-  Option,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -102,15 +98,15 @@ function AllCentres() {
   };
   return (
     <div className="p-6 rounded-lg">
-      <div className="flex items-center justify-between pb-6 mb-6 border-black border-b-[1px]">
-        <div className="relative">
+      <div className="flex items-center justify-center pb-6 mb-6 border-black border-b-[1px]">
+        {/* <div className="relative">
           <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
           <input
             className="bg-white dark:bg-gray-800 pl-10 pr-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:border-gray-700 dark:focus:ring-primary-500 dark:focus:border-primary-500"
             placeholder="Search Centre..."
             type="text"
           />
-        </div>
+        </div> */}
         <button
           type="button"
           className="text-white bg-blue-700 hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
