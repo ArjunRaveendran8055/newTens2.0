@@ -121,7 +121,7 @@ function AllCentres() {
             <div className="p-4">
               <div>
                 <h3 className="text-lg font-semibold mb-2 uppercase">
-                  {item.AllCentresname}
+                  {item.centrename}
                 </h3>
               </div>
               <p className="text-black mb-4 capitalize">
