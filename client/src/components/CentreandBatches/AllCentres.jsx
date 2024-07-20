@@ -25,6 +25,8 @@ function AllCentres() {
   const [centreName, setCentreName] = useState('');
   const [centreTag, setCentreTag] = useState('');
   const [incharge, setIncharge] = useState(['', '']);
+  const [errors, setErrors] = useState({ centreName: '', centreTag: '' });
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
   
   const handleInchargeChange = (index, value) => {
@@ -33,17 +35,45 @@ function AllCentres() {
     setIncharge(newIncharge);
   };
 
+  const validateInputs = () => {
+    let valid = true;
+    const newErrors = { centreName: '', centreTag: '' };
+
+    if (!centreName) {
+      newErrors.centreName = 'Centre Name is required';
+      valid = false;
+    }
+
+    if (!centreTag) {
+      newErrors.centreTag = 'Centre Tag is required';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateInputs()) {
+      return;
+    }
     const centreData = {
       centrename: centreName.toLowerCase(),
       tag: centreTag.toLowerCase(),
-      incharge: incharge.filter(name => name !== ''), // Remove empty strings if any
+      incharge: incharge.filter(name => name !== ''), 
     };
 
     try {
       const response = await axios.post('/centre/createCentre', centreData);
       console.log('Centre added:', response.data);
+      // Reset form fields and errors after successful submission
+      setCentreName('');
+      setCentreTag('');
+      setIncharge(['', '']);
+      setErrors({ centreName: '', centreTag: '' });
+      handleOpenAddCentre()
+      setIsFormSubmitted(true)
     } catch (error) {
       console.error('Error adding centre:', error);
     }
@@ -62,7 +92,10 @@ function AllCentres() {
         console.log(err.response);
         dispatch(removeLoader());
       });
-  }, []);
+      if (isFormSubmitted) {
+        setIsFormSubmitted(false);
+      }
+  }, [isFormSubmitted]);
 
   const handleOpenAddCentre = () => {
     setOpenAddCentre((cur) => !cur);
@@ -107,7 +140,9 @@ function AllCentres() {
               size="lg"
               value={centreName}
             onChange={(e) => setCentreName(e.target.value)}
+            error={!!errors.centreName}
             />
+             {errors.centreName && <span className="text-red-500">{errors.centreName}</span>}
 
 <Typography className="-mb-2" variant="h6">
               Centre Tag
@@ -117,7 +152,9 @@ function AllCentres() {
               size="lg"
               value={centreTag}
             onChange={(e) => setCentreTag(e.target.value)}
+            error={!!errors.centreTag}
             />
+             {errors.centreTag && <span className="text-red-500">{errors.centreTag}</span>}
 
           <Typography className="-mb-2" variant="h6">
                         Incharge
