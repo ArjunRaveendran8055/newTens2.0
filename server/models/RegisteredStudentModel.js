@@ -33,6 +33,10 @@ const studentSchema = new mongoose.Schema({
       type: String,
       required: [true, "gender required"],
     },
+    level: {
+      type: String,
+      required: [true, "level required"],
+    },
     syllabus: {
       type: String,
       required: [true, "syllabus required"],
@@ -40,6 +44,10 @@ const studentSchema = new mongoose.Schema({
     class: {
       type: String,
       required: [true, "class required"],
+    },
+    state: {
+      type: String,
+      required: [true, "state required"],
     },
     medium: {
       type: String,
