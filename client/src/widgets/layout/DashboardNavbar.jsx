@@ -1,3 +1,4 @@
+import axios from "axios"
 import {
   Navbar,
   Typography,
@@ -22,11 +23,24 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setIsOpen } from "../../components/features/sideBar/sideNavSlice";
 import { setOpenConfigurator } from "../../components/features/configurator/configuratorSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function DashboardNavbar() {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+const navigate=useNavigate()
+
+  const logOutHandler=()=>{
+    axios.get("/auth/logout")
+    .then((res)=>{
+      console.log(res.data);
+      navigate("/")
+    })
+    .catch((err)=>{
+      console.log(err);
+      navigate("/")
+    })
+  }
 
   return (
     <Navbar
@@ -43,12 +57,12 @@ export function DashboardNavbar() {
           <div className="search-bar mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
           </div>
-          <Link to="/">
-            
+          <Link >
             <Button
               variant="text"
               color="blue-gray"
               className="hidden items-center gap-1 px-4 xl:flex normal-case"
+              onClick={logOutHandler}
             >
               <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
               Log Out

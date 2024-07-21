@@ -2,12 +2,16 @@ const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema(
   {
-    name: {
+    centrename: {
       type: String,
       required: [true, "centreName required"],
     },
     tag:{
       type:String,
+      required: [true, "Tag required"],
+    },
+    classes:{
+      type:Array,
     },
     incharge: {
       type: Array,

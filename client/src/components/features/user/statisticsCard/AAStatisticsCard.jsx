@@ -60,10 +60,10 @@ const AAStatisticsCard = () => {
 
   return (
     <>
-      {AAStatisticsCardsData.map(({ icon, title, path, footer, ...rest }) => (
-        <Link to={path}>
+      {AAStatisticsCardsData.map(({ icon, title, path, footer, ...rest },key) => (
+        <Link to={path} key={key}>
           <StatisticsCard
-            key={title}
+            
             {...rest}
             title={title}
             icon={React.createElement(icon, {

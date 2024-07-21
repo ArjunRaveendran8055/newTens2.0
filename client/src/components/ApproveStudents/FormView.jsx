@@ -3,41 +3,53 @@ import { Select, Option, Button } from "@material-tailwind/react";
 import axios from "axios";
 import allStates from "../../layouts/statesdistricts.json"
 import addImg from '../../layouts/addimg.jpg'
+import compressImage from 'browser-image-compression';
+
+const FormView = ({formData,setFormData,selectedSchool,setSelectedSchool,statesIn,setStatesIn,syllabus,setSyllabus,}) => {
 
 
-const FormView = () => {
+  console.log(statesIn,syllabus,);
 
-
-
-  
   const [imageUrl, setImageUrl] = useState(addImg);
 
   const formDataLast = new FormData();
 
   const [photo,setPhoto] = useState(null)
 
+  const [errors, setErrors] = useState({});
 
-  const handleImageChange =  (e) => {
-    const file = e.target.files[0];  
-  
-    setPhoto(file)
-    
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+
+    try {
+      const compressedFile = await compressImage(file, {
+        maxSizeMB: 1, // Maximum size in megabytes
+        maxWidthOrHeight: 900, // Maximum width or height
+        useWebWorker: true, // Use web workers for faster compression (optional)
+      });
+
+      // Now you can use the compressedFile for further processing or uploading
+      console.log("Compressed image:", compressedFile);
+      setPhoto(compressedFile);
+    } catch (error) {
+      console.error("Error compressing image:", error);
+    }
+
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         setImageUrl(reader.result);
       };
       reader.readAsDataURL(file);
-      
-     formDataLast.append('image',file)
 
+  
     }
   };
 
 
   const [siblingsList, setsiblingsList] = useState([]);
 
-  
 
   const sibHandle = (name, i, val) => {
     const newItem = { idd: i, [name]: val };
@@ -63,42 +75,66 @@ const FormView = () => {
 }
 
   
-  const [syllabus, setSyllabus] = useState("");
 
 
 
-  const [statesIn, setStatesIn] = useState("");
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    gender: "",
-    address: "",
-    pinCode: "",
-    dob: "",
-    email: "",
-    class: "",
-    syllabus: "",
-    school: "",
-    schoolLocation: "",
-    medium: "",
-    state: "",
-    district: "",
-    fatherName: "",
-    motherName: "",
-    fatherOccupation: "",
-    motherOccupation: "",
-    rollNumber: "",
-    fatherNumber: "",
-    motherNumber: "",
-    whatsappNumber: "",
-    centre: "",
-    academicStatus: "",
-    hearAbout: "",
-    difficultSubjects: [],
-    siblings: [],
-  });
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.fullName) newErrors.fullName = "Full name is required";
+    if (!formData.gender) newErrors.gender = "Gender is required";
+    if (!formData.address) newErrors.address = "Address is required";
+    if (!formData.pinCode) {
+      newErrors.pinCode = "Pin code is required";
+    } else if (!/^\d{6}$/.test(formData.pinCode)) {
+      newErrors.pinCode = "Pin code must be 6 digits";
+    }
+    if (!formData.dob) newErrors.dob = "Date of birth is required";
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    if (!formData.class) newErrors.class = "Class is required";
+    if (!formData.syllabus) newErrors.syllabus = "Syllabus is required";
+    if (!formData.school) newErrors.school = "School is required";
+    if (!formData.schoolLocation) newErrors.schoolLocation = "School location is required";
+    if (!formData.medium) newErrors.medium = "Medium is required";
+    if (!formData.state) newErrors.state = "State is required";
+    if (!formData.district) newErrors.district = "District is required";
+    if (!formData.fatherName) newErrors.fatherName = "Father's name is required";
+    if (!formData.motherName) newErrors.motherName = "Mother's name is required";
+    if (!formData.fatherOccupation) newErrors.fatherOccupation = "Father's occupation is required";
+    if (!formData.motherOccupation) newErrors.motherOccupation = "Mother's occupation is required";
+    if (!formData.rollNumber) newErrors.rollNumber = "Roll number is required";
+    else if (!/^[a-zA-Z]{2}\d{3}$/.test(formData.rollNumber)) {
+      newErrors.rollNumber = "Roll number must start with 2 alphabetic characters followed by 3 digits example - AB001";
+    }
+    if (!formData.fatherNumber) {
+      newErrors.fatherNumber = "Father's number is required";
+    } else if (!/^\d{10}$/.test(formData.fatherNumber)) {
+      newErrors.fatherNumber = "Father's number must be 10 digits";
+    }
+    if (!formData.motherNumber) {
+      newErrors.motherNumber = "Mother's number is required";
+    } else if (!/^\d{10}$/.test(formData.motherNumber)) {
+      newErrors.motherNumber = "Mother's number must be 10 digits";
+    }
+    if (!formData.whatsappNumber) {
+      newErrors.whatsappNumber = "WhatsApp number is required";
+    } else if (!/^\d{10}$/.test(formData.whatsappNumber)) {
+      newErrors.whatsappNumber = "WhatsApp number must be 10 digits";
+    }
+    if (!formData.centre) newErrors.centre = "Centre is required";
+    if (!formData.academicStatus) newErrors.academicStatus = "Academic status is required";
+    if (!formData.hearAbout) newErrors.hearAbout = "Please specify how you heard about us";
 
 
+    setErrors(newErrors);
+
+    return newErrors
+  };
 
 
 
@@ -113,20 +149,18 @@ const FormView = () => {
   const [isOpen, setIsOpen] = useState(false);
 
 
-  const [selectedSchool, setSelectedSchool] = useState([]);
+  
 
  
   
   useEffect(() => {
 
-    console.log(addImg)
+
     console.log(fetchDistricts(statesIn))
     const fetchSchool =  async (scl) => {
       
-      
 
          if(scl.length>2){
-        
         
          await axios
         .post('/registration/getschool',{syllabus:syllabus,search:scl})
@@ -158,9 +192,11 @@ const FormView = () => {
 
 
   useEffect(()=>{
-    formDataLast.append('data',JSON.stringify(formData))
+   formDataLast.append('data',JSON.stringify(formData))
     
     formDataLast.append('image', photo)
+
+    
 
   },[formData,photo])
 
@@ -168,11 +204,50 @@ const FormView = () => {
 
 
 
-  const handleSub = () =>{
+  const scrollToElement = (name) => {
+    const element = document.getElementsByName(name);
+
     
-    for (let pair of formDataLast.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
+    if (element) {
+      const offset = -250; // Adjust this value to scroll a bit above
+      const topPos = element[0].getBoundingClientRect().top + window.scrollY + offset;
+      window.scrollTo({ top: topPos, behavior: "smooth" });
     }
+  };
+
+
+
+  const handleSub = async () =>{
+
+    
+
+    
+
+    let  errs =  validateForm()
+console.log(errs)
+    
+  if(Object.keys(errs).length>0)
+    {
+       scrollToElement(Object.keys(errs)[0])
+    }
+   
+
+
+   if(Object.entries(errs).length == 0 ){
+
+    await axios.post('/registration/submitStudent', formDataLast )
+    .then(response => {
+     
+      console.log('submitted successfully:', response.data);
+    })
+    .catch(error => {
+     
+      console.error('Error submitting form data:', error);
+    });
+
+   }
+    
+   
    
   }
 
@@ -263,12 +338,12 @@ const FormView = () => {
 
   return (
     <>
-      <div className=" mx-auto p-4 bg-white rounded-lg shadow-lg">
-        <form className="mt-6 space-y-4 relative">
+      <div className="max-w-4xl mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
+        <form className="mt-6 space-y-4">
           <label htmlFor="imageUpload">
             <div className="w-52 p-2 mx-auto  rounded ">
               <div className="avatar-upload">
-                <div className="avatar-edit">
+                <div className="avatar-edit relative">
                   <input
                     type="file"
                     id="imageUpload"
@@ -304,7 +379,11 @@ const FormView = () => {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleInputChange}
+                
               />
+
+                {errors.fullName && <span className="text-sm text-red-500">{" * "+ errors.fullName}</span>}
+              
             </div>
 
             <div>
@@ -320,6 +399,7 @@ const FormView = () => {
                   <Option value="female">Female</Option>
                 </Select>
               </div>
+              {errors.gender && <span className="text-sm  text-red-500">{" * "+ errors.gender}</span>}
             </div>
           </div>
 
@@ -337,6 +417,7 @@ const FormView = () => {
               value={formData.address}
               onChange={handleInputChange}
             />
+            {errors.address && <span className="text-sm  text-red-500">{" * "+ errors.address}</span>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -350,6 +431,7 @@ const FormView = () => {
                 value={formData.pinCode}
                 onChange={handleInputChange}
               />
+              {errors.pinCode && <span className="text-sm  text-red-500">{" * "+ errors.pinCode}</span>}
             </div>
 
             <div>
@@ -363,6 +445,7 @@ const FormView = () => {
                 value={formData.dob}
                 onChange={handleInputChange}
               />
+              {errors.dob && <span className="text-sm  text-red-500">{" * "+ errors.dob}</span>}
             </div>
 
             <div></div>
@@ -379,6 +462,7 @@ const FormView = () => {
               value={formData.email}
               onChange={handleInputChange}
             />
+            {errors.email && <span className="text-sm  text-red-500">{" * "+ errors.email}</span>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -393,16 +477,18 @@ const FormView = () => {
                   <Option value="12">Class 12</Option>
                 </Select>
               </div>
+              {errors.class && <span className="text-sm  text-red-500">{" * "+ errors.class}</span>}
             </div>
 
             <div>
               <label htmlFor="syllabus">Syllabus</label>
               <div className="w-50">
-                <Select name="syllabus" onChange={(e) => {  setSyllabus(e) ; handleInputChange({target:{name:"syllabus",value:e}}) } }>
+                <Select name="syllabus" value={syllabus} onChange={(e) => {  setSyllabus(e) ; handleInputChange({target:{name:"syllabus",value:e}}) } }>
                   <Option value="state">STATE</Option>
                   <Option value="cbse">CBSE</Option>
                 </Select>
               </div>
+              {errors.syllabus && <span className="text-sm  text-red-500">{" * "+ errors.syllabus}</span>}
             </div>
           </div>
 
@@ -436,6 +522,7 @@ const FormView = () => {
                   >
                     Select Your School
                   </label>
+                  
                   <input
                   name="school"
                     className="shadow uppercase appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -446,6 +533,7 @@ const FormView = () => {
                     onChange={(event) => handleSchoolChange(event.target.value)}
                     value={selectedSchool}
                   />
+                  {errors.school && <span className="text-sm  text-red-500">{" * "+ errors.school}</span>}
                 </div>
                 {isOpen && (
                   <ul className="border rounded uppercase border-gray-300 overflow-y-auto max-h-40 absolute top-full left-0 right-0 z-10 bg-white">
@@ -494,7 +582,9 @@ const FormView = () => {
                 placeholder="School location"
                 value={formData.schoolLocation}
                 onChange={handleInputChange}
+                
               />
+              {errors.schoolLocation && <span className="text-sm  text-red-500">{" * "+ errors.schoolLocation}</span>}
             </div>
 
           
@@ -507,6 +597,7 @@ const FormView = () => {
                   <Option value="malayalam">Malayalam</Option>
                 </Select>
               </div>
+              {errors.medium && <span className="text-sm  text-red-500">{" * "+ errors.medium}</span>}
             </div>
 
           </div>
@@ -515,7 +606,7 @@ const FormView = () => {
             <div>
               <label htmlFor="state">State</label>
               <div className="w-50">
-                <Select name="state" onChange={(e) => { setStatesIn(e); handleInputChange({target:{name:"state",value:e}}) } } placeholder="State">
+                <Select name="state" value={statesIn} onChange={(e) => { setStatesIn(e); handleInputChange({target:{name:"state",value:e}}) } } placeholder="State">
                   {allStates?.states?.map((value, index) => (
                     <Option key={index} value={value.state}>
                       {value.state}
@@ -523,6 +614,7 @@ const FormView = () => {
                   ))}
                 </Select>
               </div>
+              {errors.state && <span className="text-sm  text-red-500">{" * "+ errors.state}</span>}
             </div>
 
             <div>
@@ -536,6 +628,7 @@ const FormView = () => {
                   ))}
                 </Select>
               </div>
+              {errors.district && <span className="text-sm  text-red-500">{" * "+ errors.district}</span>}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -549,6 +642,7 @@ const FormView = () => {
                 value={formData.fatherName}
                 onChange={handleInputChange}
               />
+              {errors.fatherName && <span className="text-sm  text-red-500">{" * "+ errors.fatherName}</span>}
             </div>
             <div>
               <label htmlFor="mother-name">Mother's Name</label>
@@ -560,6 +654,7 @@ const FormView = () => {
                 value={formData.motherName}
                 onChange={handleInputChange}
               />
+              {errors.motherName && <span className="text-sm  text-red-500">{" * "+ errors.motherName}</span>}
             </div>
           </div>
 
@@ -574,6 +669,7 @@ const FormView = () => {
                 value={formData.fatherOccupation}
                 onChange={handleInputChange}
               />
+              {errors.fatherOccupation && <span className="text-sm  text-red-500">{" * "+ errors.fatherOccupation}</span>}
             </div>
             <div>
               <label htmlFor="mother-occupation">Mother's Occupation</label>
@@ -585,11 +681,12 @@ const FormView = () => {
                 value={formData.motherOccupation}
                 onChange={handleInputChange}
               />
+              {errors.motherOccupation && <span className="text-sm  text-red-500">{" * "+ errors.motherOccupation}</span>}
             </div>
           </div>
 
           <div>
-            <label htmlFor="roll-number">Assign Roll Number (5 digit)</label>
+            <label htmlFor="roll-number">Roll Number</label>
             <input
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="roll-number"
@@ -598,6 +695,7 @@ const FormView = () => {
               value={formData.rollNumber}
                 onChange={handleInputChange}
             />
+            {errors.rollNumber && <span className="text-sm  text-red-500">{" * "+ errors.rollNumber}</span>}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -610,6 +708,7 @@ const FormView = () => {
                 value={formData.fatherNumber}
                 onChange={handleInputChange}
               />
+              {errors.fatherNumber && <span className="text-sm  text-red-500">{" * "+ errors.fatherNumber}</span>}
             </div>
             <div>
               <label htmlFor="mother-number">Mother's Number</label>
@@ -622,6 +721,7 @@ const FormView = () => {
                 onChange={handleInputChange}
 
               />
+              {errors.motherNumber && <span className="text-sm  text-red-500">{" * "+ errors.motherNumber}</span>}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -635,6 +735,7 @@ const FormView = () => {
                 value={formData.whatsappNumber}
                 onChange={handleInputChange}
               />
+              {errors.whatsappNumber && <span className="text-sm  text-red-500">{" * "+ errors.whatsappNumber}</span>}
             </div>
             <div>
               <label htmlFor="centre">Centre</label>
@@ -646,277 +747,12 @@ const FormView = () => {
                 value={formData.centre}
                 onChange={handleInputChange}
               />
-            </div>
-          </div>
-
-          <div className="sibilingparent border-2 p-4 gap border-blue-gray-200 rounded-md">
-            <div className="grid grid-cols-2">
-              <div>
-                <label htmlFor="class">Number of Siblings</label>
-                <div className="w-30">
-                  <Select
-                    value={siblingsCount}
-                    onChange={(event) => setSiblingsCount(event)}
-                  >
-                    <Option value="1">1</Option>
-                    <Option value="2">2</Option>
-                    <Option value="3">3</Option>
-                    <Option value="4">4</Option>
-                  </Select>
-                </div>
-              </div>
-            </div>
-            
-
-            {[...Array(parseInt(siblingsCount))].map((value, index) => {
-              return (
-                <div
-                  key={index}
-                  className="siblings border-4 rounded-lg p-4 mt-3 "
-                >
-                  <div className="bottom-2">
-                    <div className="grid grid-cols-2  gap-4">
-                      <div>
-                        <label htmlFor="siblingname">Name</label>
-                        <input
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          id="siblingname"
-                          placeholder="Enter Name of Sibling"
-                          onChange={(e)=>sibHandle("name",index,e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="siblingage">Class</label>
-                        <input
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          id="siblingclass"
-                          placeholder="enter class"
-                          onChange={(e)=>sibHandle("class",index,e.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1  gap-4">
-                      <div>
-                        <label htmlFor="siblingschool">School</label>
-                        <input
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          id="siblingschool"
-                          placeholder="Enter School Name"
-                          onChange={(e)=>sibHandle("school",index,e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <br />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Academic Status
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="academicStatus"
-                    value="Below Average"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">
-                    Below Average
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="academicStatus"
-                    value="Average"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Average</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="academicStatus"
-                    value="Good"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Good</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="academicStatus"
-                    value="Excellent"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Excellent</span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                How did you hear about new10s?
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <label className="flex items-center">
-                  <input
-                     onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="calling executive"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">
-                    Calling Executive
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="contact method"
-                    value="hearAbout"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">
-                    Marketing Executive
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                     onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="relatives"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Relatives</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                       onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="social-media"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">
-                    Social Media
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                       onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="friends"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Friends</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                       onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="others"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Others</span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Difficult Subjects
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <label className="flex items-center">
-                  <input
-                    onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Maths"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Maths</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                  onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="English"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">English</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                  onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Malayalam"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Malayalam</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                  onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Hindi"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Hindi</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                  onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Physics"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Physics</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                  onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Chemistry"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Chemistry</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                  onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Biology"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Biology</span>
-                </label>
-              </div>
+              {errors.centre && <span className="text-sm  text-red-500">{" * "+ errors.centre}</span>}
             </div>
           </div>
 
           <div className="flex justify-center">
-            <Button onClick={handleSub} className="mt-5">App</Button>
+            <Button onClick={handleSub} className="mt-5">Register</Button>
           </div>
         </form>
       </div>
