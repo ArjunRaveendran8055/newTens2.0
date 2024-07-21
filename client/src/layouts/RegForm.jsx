@@ -7,6 +7,10 @@ import compressImage from "browser-image-compression";
 import allSyllabus from "./syllabus.json";
 
 const RegForm = () => {
+
+
+
+
   const [imageUrl, setImageUrl] = useState(addImg);
 
   const formDataLast = new FormData();

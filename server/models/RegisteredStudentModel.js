@@ -1,3 +1,4 @@
+const { response } = require("express");
 const mongoose = require("mongoose");
 
 const studentSchema = new mongoose.Schema({
@@ -120,6 +121,10 @@ const studentSchema = new mongoose.Schema({
     centre: {
       type: String,
       required: [true, "center required"],
+    },
+    responseId: {
+      type: String,
+      required: [true, "responseId required"],
     },
     report: Array,
     active_status: {

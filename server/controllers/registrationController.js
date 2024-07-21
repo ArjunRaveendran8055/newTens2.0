@@ -5,6 +5,20 @@ const mongoose = require("mongoose");
 
 const {RegisteredStudentModel} = require("../models/RegisteredStudentModel");
 
+
+
+
+const generateUniqueId = () => {
+  const randomLetters = Array.from({ length: 3 }, () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('');
+  const baseNumber = Math.floor(Date.now() / 1000);
+  const randomNum = Math.floor(Math.random() * 1000);
+  const numericPart = (baseNumber + randomNum).toString().slice(-7);
+  return randomLetters + numericPart;
+};
+
+
+
+
 const getSchoolList = asyncWrapper(async (req, res, next) => {
   const { search, syllabus, abroad } = req.body;
   const regex = new RegExp(search, "i");
@@ -44,6 +58,12 @@ const SubmitStudentController = asyncWrapper(async (req, res, next) => {
 
   console.log(req.file.filename);
 
+  
+  
+  let resId = generateUniqueId()
+  
+  
+
   let final = {
     roll_no: recData.rollNumber,
     admission_no: null, // optional field
@@ -78,6 +98,7 @@ const SubmitStudentController = asyncWrapper(async (req, res, next) => {
     report: [], // optional field, empty array by default
     active_status: false, // default value
     student_status: false, // default value
+    responseId : resId
   };
 
   console.log(final)
