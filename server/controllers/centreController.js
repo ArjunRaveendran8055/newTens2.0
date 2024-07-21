@@ -31,8 +31,9 @@ const createCentreController = asyncWrapper(async (req,res)=>{
   const savedCentre = await newCentre.save();
   res.status(201).json(savedCentre);
   
-
 })
+
+
 
 const deleteCentreController = asyncWrapper(async (req,res)=>{
   const centre = await CentreModel.findByIdAndDelete(req.params.id);
@@ -42,8 +43,29 @@ const deleteCentreController = asyncWrapper(async (req,res)=>{
     res.json({ message: 'Centre deleted successfully' });
 })
 
+
+const createClassController = asyncWrapper(async (req,res)=>{
+  const centreId = req.params.id;
+  const { class: classStandard, stream } = req.body;
+  try {
+    const updatedCentre = await CentreModel.findByIdAndUpdate(
+      centreId,
+      { $push: { classes: { class: classStandard, stream } } },
+      { new: true }
+    );
+    if (!updatedCentre) {
+      return res.status(404).json({ message: 'Centre not found' });
+    }
+
+    res.json(updatedCentre);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+})
+
 module.exports = {
   getAllCentresController,
   createCentreController,
-  deleteCentreController
+  deleteCentreController,
+  createClassController
 };

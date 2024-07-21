@@ -222,7 +222,7 @@ function AllCentres() {
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-black text-sm">Version 5.0.0</span>
-                <Link key={index} to={`/batches`}>
+                <Link key={index} to={`/batches/${item._id}`}>
                 <Button size="sm" variant="outlined" className="rounded-full">
                   Manage
                 </Button>

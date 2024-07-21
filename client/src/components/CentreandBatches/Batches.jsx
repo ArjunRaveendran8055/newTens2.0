@@ -10,7 +10,8 @@ import {
   Select,
   Option
 } from "@material-tailwind/react";
-import { Link } from 'react-router-dom';
+import { Link ,useParams} from 'react-router-dom';
+import axios from 'axios';
 
 function Batches() {
   const [isVisible, setIsVisible] = useState(false);
@@ -18,6 +19,9 @@ function Batches() {
   const [classStandard, setClassStandard] = useState('');
   const [stream, setStream] = useState('');
   const [error, setError] = useState('');
+
+    // centre ID
+    const { id } = useParams();
 
   useEffect(() => {
     // Set visibility to true after component mounts to trigger transition
@@ -38,11 +42,23 @@ function Batches() {
     setOpenAddClass((cur) => !cur);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (classStandard <= 12) {
-      // Perform the create action
-      console.log('Class:', classStandard, 'Stream:', stream);
-      // Close the dialog or reset the form here if needed
+      const classData = {
+        class: classStandard,
+        stream: stream
+      };
+
+      try {
+        const response = await axios.put(`/centre/addClass/${id}`, classData);
+        console.log('Updated Centre:', response.data);
+        // Close the dialog or reset the form here if needed
+        setClassStandard('');
+        setStream('');
+        handleOpenAddClass(); // Close the dialog
+      } catch (error) {
+        console.error('Error adding class:', error);
+      }
     } else {
       setError('Class (Standard) should not be greater than 12');
     }

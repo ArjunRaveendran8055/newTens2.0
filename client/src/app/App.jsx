@@ -61,7 +61,7 @@ function App() {
           <Route path="/classreport/:id" element={<ClassReport/>}/>
           <Route path="/allcentres" element={<AllCentres/>} />
           <Route path="/approvestudents" element={<ApproveStudents/>} />
-          <Route path="/batches" element={<Batches/>} />
+          <Route path="/batches/:id" element={<Batches/>} />
           <Route path="/displaybatches" element={<DisplayBatches/>} />
           {/* private route example */}
           <Route path="/assignaa" element={<Asignaa/>}/>
