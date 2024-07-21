@@ -34,7 +34,16 @@ const createCentreController = asyncWrapper(async (req,res)=>{
 
 })
 
+const deleteCentreController = asyncWrapper(async (req,res)=>{
+  const centre = await CentreModel.findByIdAndDelete(req.params.id);
+    if (!centre) {
+      return res.status(404).json({ message: 'Centre not found' });
+    }
+    res.json({ message: 'Centre deleted successfully' });
+})
+
 module.exports = {
   getAllCentresController,
   createCentreController,
+  deleteCentreController
 };
