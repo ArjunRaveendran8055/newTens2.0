@@ -73,12 +73,28 @@ const getAllClassController = asyncWrapper(async (req,res)=>{
   res.json(centre.classes);
 })
 
+//to delete a specific class from a centre
+const deleteClassController = asyncWrapper(async (req,res)=>{
+  const centreId = req.params.id;
+  const { class: classStandard, stream } = req.body;
 
+  const updatedCentre = await CentreModel.findByIdAndUpdate(
+    centreId,
+    { $pull: { classes: { class: classStandard, stream: stream } } },
+    { new: true }
+  );
+
+    if (!updatedCentre) {
+      return res.status(404).json({ message: 'Centre not found' });
+    }
+    res.json(updatedCentre.classes);
+})
 
 module.exports = {
   getAllCentresController,
   createCentreController,
   deleteCentreController,
   createClassController,
-  getAllClassController
+  getAllClassController,
+  deleteClassController
 };

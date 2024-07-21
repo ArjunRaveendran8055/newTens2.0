@@ -11,6 +11,7 @@ import {
   Option
 } from "@material-tailwind/react";
 import { Link ,useParams} from 'react-router-dom';
+import { MdDelete } from "react-icons/md";
 import axios from 'axios';
 
 function Batches() {
@@ -21,9 +22,22 @@ function Batches() {
   const [error, setError] = useState('');
   const [classes, setClasses] = useState([]);
   const [error2, setError2] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
     // centre ID
     const { id } = useParams();
+
+    const openModal = (item) => {
+      setItemToDelete(item);
+      setIsModalOpen(true);
+    };
+    const closeModal = () => {
+      setIsModalOpen(false);
+      setItemToDelete(null);
+    };
+  
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -37,8 +51,10 @@ function Batches() {
     };
     fetchClasses();
     // Set visibility to true after component mounts to trigger transition
+    setIsFormSubmitted(false)
+    console.log("hi");
     setIsVisible(true);
-  }, []);
+  }, [isFormSubmitted]);
 
   const handleClassChange = (e) => {
     const value = e.target.value;
@@ -65,6 +81,7 @@ function Batches() {
         const response = await axios.put(`/centre/addClass/${id}`, classData);
         // console.log('Updated Centre:', response.data);
         // Close the dialog or reset the form here if needed
+        setIsFormSubmitted(true)
         setClassStandard('');
         setStream('');
         handleOpenAddClass(); // Close the dialog
@@ -76,6 +93,19 @@ function Batches() {
     }
   };
 
+
+  const deleteClass = async (classStandard,stream) => {
+    try {
+      const response = await axios.delete(`/centre/deleteCentreClass/${id}`, {
+        data: { class: classStandard, stream: stream }
+      });
+      setClasses(response.data);
+      setIsModalOpen(false);
+    } catch (error) {
+      setError('Error deleting class');
+      console.error('Error deleting class:', error);
+    }
+  };
   
 
   return (
@@ -164,17 +194,35 @@ function Batches() {
             </div>
             <div className="text-lg font-semibold self-end">2732 Students</div>
           </div>
-          <div className="flex space-x-2 border-t p-4">
+          <div className="flex justify-between items-center space-x-2 border-t p-4">
           <Link to={`/displaybatches`}>
             <Button variant="outlined" className="text-sm" >
               Batches
             </Button>
           </Link>
+          <MdDelete color="red"  onClick={() => openModal(cls)} size={25} className="cursor-pointer" />
           </div>
         </Card> 
       </div>
 
 ))}
+
+{isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6">
+            <h2 className="text-xl mb-4">Delete Confirmation</h2>
+            <p>Are you sure you want to delete {itemToDelete?.class +" ("+ itemToDelete?.stream + ")"} ?</p>
+            <div className="flex justify-end mt-4">
+              <button className="bg-red-500 text-white px-4 py-2 rounded mr-2" onClick={()=>deleteClass(itemToDelete.class,itemToDelete.stream)}>
+                Yes, Delete
+              </button>
+              <button className="bg-gray-300 px-4 py-2 rounded" onClick={closeModal}>
+                No, Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
     </div>
