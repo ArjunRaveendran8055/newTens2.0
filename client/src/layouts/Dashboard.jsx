@@ -64,6 +64,19 @@ export function Dashboard() {
       clearInterval(interval);
     };
   }, []);
+
+  useEffect(() => {
+    const clearLocalStorage = () => {
+      localStorage.clear();
+    };
+  
+    window.addEventListener('unload', clearLocalStorage);
+  
+    return () => {
+      window.removeEventListener('unload', clearLocalStorage);
+    };
+  }, []);
+  
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
       <Sidenav brandName="NEW10'S" brandImg={""} />
