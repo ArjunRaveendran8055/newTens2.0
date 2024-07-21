@@ -1,4 +1,4 @@
-const { getAllCentresController, createCentreController, deleteCentreController,createClassController,getAllClassController} = require("../controllers/centreController")
+const { getAllCentresController, createCentreController, deleteCentreController,createClassController,getAllClassController,deleteClassController} = require("../controllers/centreController")
 
 const centreRouter=require("express").Router()
 
@@ -8,6 +8,7 @@ const centreRouter=require("express").Router()
  centreRouter.put("/addClass/:id",createClassController)
 
  centreRouter.get("/getAllClass/:id",getAllClassController)
+ centreRouter.delete("/deleteCentreClass/:id",deleteClassController)
 
 
  module.exports={
