@@ -43,6 +43,7 @@ const deleteCentreController = asyncWrapper(async (req,res)=>{
     res.json({ message: 'Centre deleted successfully' });
 })
 
+// class actions here
 
 const createClassController = asyncWrapper(async (req,res)=>{
   const centreId = req.params.id;
@@ -63,9 +64,21 @@ const createClassController = asyncWrapper(async (req,res)=>{
   }
 })
 
+const getAllClassController = asyncWrapper(async (req,res)=>{
+  const centreId = req.params.id;
+  const centre = await CentreModel.findById(centreId);
+  if (!centre) {
+    return res.status(404).json({ message: 'Centre not found' });
+  }
+  res.json(centre.classes);
+})
+
+
+
 module.exports = {
   getAllCentresController,
   createCentreController,
   deleteCentreController,
-  createClassController
+  createClassController,
+  getAllClassController
 };

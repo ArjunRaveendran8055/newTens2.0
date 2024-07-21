@@ -19,11 +19,23 @@ function Batches() {
   const [classStandard, setClassStandard] = useState('');
   const [stream, setStream] = useState('');
   const [error, setError] = useState('');
+  const [classes, setClasses] = useState([]);
+  const [error2, setError2] = useState('');
 
     // centre ID
     const { id } = useParams();
 
   useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const response = await axios.get(`/centre/getAllClass/${id}`);
+        setClasses(response.data);
+      } catch (error) {
+        setError2('Error fetching classes');
+        console.error('Error fetching classes:', error);
+      }
+    };
+    fetchClasses();
     // Set visibility to true after component mounts to trigger transition
     setIsVisible(true);
   }, []);
@@ -51,7 +63,7 @@ function Batches() {
 
       try {
         const response = await axios.put(`/centre/addClass/${id}`, classData);
-        console.log('Updated Centre:', response.data);
+        // console.log('Updated Centre:', response.data);
         // Close the dialog or reset the form here if needed
         setClassStandard('');
         setStream('');
@@ -70,6 +82,7 @@ function Batches() {
     <div className="max-w-4xl mx-auto my-8 flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">PARAVOOR - CLASS LIST</h1>
+        {error2 && <p style={{ color: 'red' }}>{error2}</p>}
         
       </div>
       <div className="flex items-center justify-center pb-6 mb-6 border-black border-b-[1px]">
@@ -122,7 +135,7 @@ function Batches() {
             onChange={(value) => setStream(value)}
               >
                 <Option value="hs">Higher Secondary (HS)</Option>
-                <Option value="cbse">Upper Primary (UP)</Option>
+                <Option value="up">Upper Primary (UP)</Option>
               </Select>
           </CardBody>
           <CardFooter className="pt-0">
@@ -134,13 +147,14 @@ function Batches() {
       </Dialog>
 
       {/* LOOP CLASSES FROM HERE */}
+      {classes.map((cls, index) => (
       
-      <div className={`space-y-4 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}  transition-transform duration-1000`}>
+      <div key={index} className={`space-y-4 mt-5 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}  transition-transform duration-1000`}>
         <Card className="flex flex-col">
           <div className="flex items-start space-x-4 p-4">
             <div className="flex flex-col flex-grow">
               <div className="flex justify-between items-center">
-                <h2 className="text-xl text-black font-semibold">Class 10</h2>
+                <h2 className="text-xl text-black font-semibold">Class {cls.class} ({cls.stream})</h2>
               </div>
               <p className="text-sm mt-3 text-muted-foreground">Accessing classes made easy. Track, analyse and execute!</p>
               <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-1">                                                                                 
@@ -160,51 +174,9 @@ function Batches() {
         </Card> 
       </div>
 
-      <div className={`space-y-4 mt-5 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}  transition-transform duration-1000`}>
-        <Card className="flex flex-col">
-          <div className="flex items-start space-x-4 p-4">
-            <div className="flex flex-col flex-grow">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl text-black font-semibold">Class 9</h2>
-              </div>
-              <p className="text-sm mt-3 text-muted-foreground">Accessing classes made easy. Track, analyse and execute!</p>
-              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-1">
-                <span>#new10s</span>
-                <span>#analytics</span>
-              </div>
-            </div>
-            <div className="text-lg font-semibold self-end">732 Students</div>
-          </div>
-          <div className="flex space-x-2 border-t p-4">
-            <Button variant="outlined" className="text-sm" >
-              Batches
-            </Button>
-          </div>
-        </Card> 
-      </div>
+))}
 
-      <div className={`space-y-4 mt-5 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}  transition-transform duration-1000`}>
-        <Card className="flex flex-col">
-          <div className="flex items-start space-x-4 p-4">
-            <div className="flex flex-col flex-grow">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl text-black font-semibold">Class 8</h2>
-              </div>
-              <p className="text-sm mt-3 text-muted-foreground">Accessing classes made easy. Track, analyse and execute!</p>
-              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-1">
-                <span>#new10s</span>
-                <span>#analytics</span>
-              </div>
-            </div>
-            <div className="text-lg font-semibold self-end">620 Students</div>
-          </div>
-          <div className="flex space-x-2 border-t p-4">
-            <Button variant="outlined" className="text-sm" >
-              Batches
-            </Button>
-          </div>
-        </Card> 
-      </div>
+
     </div>
   );
 }
