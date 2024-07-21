@@ -51,6 +51,8 @@ const SubmitStudentController = asyncWrapper(async (req, res, next) => {
     dob: new Date(recData.dob), // Date type, use `new Date()` for current date or `null`
     address: recData.address,
     pin_code: recData.pinCode,
+    state : recData.state,
+    level : recData.level,
     district: recData.district,
     gender: recData.gender,
     syllabus: recData.syllabus,
