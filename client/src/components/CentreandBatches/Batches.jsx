@@ -24,6 +24,8 @@ function Batches() {
   const [error2, setError2] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+
     // centre ID
     const { id } = useParams();
 
@@ -49,8 +51,10 @@ function Batches() {
     };
     fetchClasses();
     // Set visibility to true after component mounts to trigger transition
+    setIsFormSubmitted(false)
+    console.log("hi");
     setIsVisible(true);
-  }, []);
+  }, [isFormSubmitted]);
 
   const handleClassChange = (e) => {
     const value = e.target.value;
@@ -77,6 +81,7 @@ function Batches() {
         const response = await axios.put(`/centre/addClass/${id}`, classData);
         // console.log('Updated Centre:', response.data);
         // Close the dialog or reset the form here if needed
+        setIsFormSubmitted(true)
         setClassStandard('');
         setStream('');
         handleOpenAddClass(); // Close the dialog
@@ -95,6 +100,7 @@ function Batches() {
         data: { class: classStandard, stream: stream }
       });
       setClasses(response.data);
+      setIsModalOpen(false);
     } catch (error) {
       setError('Error deleting class');
       console.error('Error deleting class:', error);
@@ -205,7 +211,7 @@ function Batches() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6">
             <h2 className="text-xl mb-4">Delete Confirmation</h2>
-            <p>Are you sure you want to delete {itemToDelete?.centrename} Centre?</p>
+            <p>Are you sure you want to delete {itemToDelete?.class +" ("+ itemToDelete?.stream + ")"} ?</p>
             <div className="flex justify-end mt-4">
               <button className="bg-red-500 text-white px-4 py-2 rounded mr-2" onClick={()=>deleteClass(itemToDelete.class,itemToDelete.stream)}>
                 Yes, Delete
