@@ -10,6 +10,31 @@ const getAllCentresController = asyncWrapper(async (req, res) => {
   res.status(200).json({ result, success: true });
 });
 
+const createCentreController = asyncWrapper(async (req,res)=>{
+  console.log(req.body);
+  const {
+    centrename,
+    tag,
+    incharge,
+  } = req.body;
+
+  if (!centrename || !tag) {
+    return res.status(400).json({ message: "centreName and Tag are required" });
+  }
+
+  const newCentre = new CentreModel({
+    centrename,
+    tag,
+    incharge,
+  });
+
+  const savedCentre = await newCentre.save();
+  res.status(201).json(savedCentre);
+  
+
+})
+
 module.exports = {
   getAllCentresController,
+  createCentreController,
 };

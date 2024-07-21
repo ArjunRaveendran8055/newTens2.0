@@ -1,14 +1,80 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@material-tailwind/react";
+import {
+  Button,
+  Dialog,
+  Card,
+  CardBody,
+  CardFooter,
+  Typography,
+  Input,
+} from "@material-tailwind/react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { Dialog } from "@material-tailwind/react";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import { Link } from "react-router-dom";
 function AllCentres() {
   const dispatch = useDispatch();
   const [allCentres, setAllCentres] = useState([]);
   const [openAddCentre, setOpenAddCentre] = useState(false);
+
+  // state below this is to post to backend
+  const [centreName, setCentreName] = useState('');
+  const [centreTag, setCentreTag] = useState('');
+  const [incharge, setIncharge] = useState(['', '']);
+  const [errors, setErrors] = useState({ centreName: '', centreTag: '' });
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+
+  
+  const handleInchargeChange = (index, value) => {
+    const newIncharge = [...incharge];
+    newIncharge[index] = value;
+    setIncharge(newIncharge);
+  };
+
+  const validateInputs = () => {
+    let valid = true;
+    const newErrors = { centreName: '', centreTag: '' };
+
+    if (!centreName) {
+      newErrors.centreName = 'Centre Name is required';
+      valid = false;
+    }
+
+    if (!centreTag) {
+      newErrors.centreTag = 'Centre Tag is required';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateInputs()) {
+      return;
+    }
+    const centreData = {
+      centrename: centreName.toLowerCase(),
+      tag: centreTag.toLowerCase(),
+      incharge: incharge.filter(name => name !== ''), 
+    };
+
+    try {
+      const response = await axios.post('/centre/createCentre', centreData);
+      console.log('Centre added:', response.data);
+      // Reset form fields and errors after successful submission
+      setCentreName('');
+      setCentreTag('');
+      setIncharge(['', '']);
+      setErrors({ centreName: '', centreTag: '' });
+      handleOpenAddCentre()
+      setIsFormSubmitted(true)
+    } catch (error) {
+      console.error('Error adding centre:', error);
+    }
+  };
+
   useEffect(() => {
     dispatch(setLoader());
     axios
@@ -22,22 +88,25 @@ function AllCentres() {
         console.log(err.response);
         dispatch(removeLoader());
       });
-  }, []);
+      if (isFormSubmitted) {
+        setIsFormSubmitted(false);
+      }
+  }, [isFormSubmitted]);
 
   const handleOpenAddCentre = () => {
     setOpenAddCentre((cur) => !cur);
   };
   return (
     <div className="p-6 rounded-lg">
-      <div className="flex items-center justify-between pb-6 mb-6 border-black border-b-[1px]">
-        <div className="relative">
+      <div className="flex items-center justify-center pb-6 mb-6 border-black border-b-[1px]">
+        {/* <div className="relative">
           <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
           <input
             className="bg-white dark:bg-gray-800 pl-10 pr-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:border-gray-700 dark:focus:ring-primary-500 dark:focus:border-primary-500"
             placeholder="Search Centre..."
             type="text"
           />
-        </div>
+        </div> */}
         <button
           type="button"
           className="text-white bg-blue-700 hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
@@ -53,66 +122,59 @@ function AllCentres() {
         handler={handleOpenAddCentre}
         className="flex"
       >
-        <div className="relative  add-report flex flex-col bg-white sm:w-full shadow-2xl rounded-lg items-center ">
-          <div className="text-2xl font-bold text-black heading-container sm:pt-5">
-            Add New Centre
-          </div>
-          <div className="text-custred">error message here</div>
-          <div className="pt-5 flex gap-5"></div>
-          <div className="rea-res-container w-full flex flex-col lg:p-5">
-            <div className="reason-container w-full flex sm:flex-col lg:flex-row sm:gap-2 lg:gap-0 p-2">
-              <div className="reasontitle lg:w-[30%] sm:w-full  text-black text-xl font-Playfiar">
-                Centre Name
-              </div>
-              <div className="reasoninput lg:w-[70%] sm:w-full">
-                <input
-                  type="text"
-                  className={`p-2  w-full border-[1px] border-black rounded-sm font-bold `}
-                />
-              </div>
-            </div>
-            <div className="response-container w-full flex sm:flex-col lg:flex-row sm:gap-2 lg:gap-0 p-2">
-              <div className="reposetitle lg:w-[30%] sm:w-full text-black text-xl font-Playfiar">
-                Tag
-              </div>
-              <div className="responseinput lg:w-[70%] sm:w-full">
-                <input
-                  type="text"
-                  className={`p-2  w-full border-[1px] border-black rounded-sm font-bold `}
-                />
-              </div>
-            </div>
+       <Card className="mx-auto w-full">
+          <CardBody className="flex flex-col gap-4">
+            <Typography variant="h4" color="blue-gray">
+              Add Centre
+            </Typography>
 
-            <div className="response-container w-full flex sm:flex-col lg:flex-row sm:gap-2 lg:gap-0 p-2">
-              <div className="reposetitle lg:w-[30%] sm:w-full text-black text-xl font-Playfiar">
-                InCharge
-              </div>
-              <div className="responseinput lg:w-[70%] sm:w-full flex sm:flex-col lg:flex-row sm:gap-2 justify-between">
-                <span className=" flex">
-                  1.{" "}
-                  <input
-                    type="text"
-                    className={`px-2 py-1 border-[1px] border-black rounded-sm sm:w-full`}
-                  />
-                </span>
-                <span className="flex">
-                  2.{" "}
-                  <input
-                    type="text"
-                    className={`px-2 py-1 border-[1px] border-black rounded-sm sm:w-full`}
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="btncontainer flex w-full items-center justify-center pb-10">
-            <button className="py-2 px-4 bg-custblue text-whitesmoke hover:text-white rounded-lg hover:shadow-xl shadow-black hover:scale-105 duration-150"
-            
-            >
-              Save
-            </button>
-          </div>
-        </div>
+            <Typography className="-mb-2" variant="h6">
+              Centre Name
+            </Typography>
+            <Input
+              label="Enter Centre Name"
+              size="lg"
+              value={centreName}
+            onChange={(e) => setCentreName(e.target.value)}
+            error={!!errors.centreName}
+            />
+             {errors.centreName && <span className="text-red-500">{errors.centreName}</span>}
+
+<Typography className="-mb-2" variant="h6">
+              Centre Tag
+            </Typography>
+            <Input
+              label="Enter Centre Tag"
+              size="lg"
+              value={centreTag}
+            onChange={(e) => setCentreTag(e.target.value)}
+            error={!!errors.centreTag}
+            />
+             {errors.centreTag && <span className="text-red-500">{errors.centreTag}</span>}
+
+          <Typography className="-mb-2" variant="h6">
+                        Incharge
+                      </Typography>
+                  
+                      <Input
+                        label="Enter First person's Name"
+                        size="lg"
+                        value={incharge[0]}
+            onChange={(e) => handleInchargeChange(0, e.target.value.toLowerCase())}
+                      />
+                       <Input
+                        label="Enter Second person's Name"
+                        size="lg"
+                        value={incharge[1]}
+            onChange={(e) => handleInchargeChange(1, e.target.value.toLowerCase())}
+                      />
+          </CardBody>
+          <CardFooter className="pt-0">
+            <Button variant="gradient" onClick={handleSubmit} fullWidth>
+              Create
+            </Button>
+          </CardFooter>
+        </Card>
       </Dialog>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -121,7 +183,7 @@ function AllCentres() {
             <div className="p-4">
               <div>
                 <h3 className="text-lg font-semibold mb-2 uppercase">
-                  {item.name}
+                  {item.centrename}
                 </h3>
               </div>
               <p className="text-black mb-4 capitalize">
