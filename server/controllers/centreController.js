@@ -90,6 +90,9 @@ const deleteClassController = asyncWrapper(async (req,res)=>{
     res.json(updatedCentre.classes);
 })
 
+
+
+
 module.exports = {
   getAllCentresController,
   createCentreController,
