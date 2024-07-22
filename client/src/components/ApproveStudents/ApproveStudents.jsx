@@ -6,12 +6,15 @@ import { useDispatch } from "react-redux";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import FormView from "./FormView";
 import socket from "../../socket";
+import { CgSandClock } from "react-icons/cg";
+
 const ApproveStudents = () => {
+  
   const dispatch = useDispatch();
   const [allCentre, setAllCentre] = useState([]);
   const [studentsList, setStudentsList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [selectedIndices,setSelectedIndices]=useState([])
+  const [selectedIndices, setSelectedIndices] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -127,10 +130,10 @@ const ApproveStudents = () => {
     //socket to show a student is selected for approval process
 
     socket.emit("student_selected", { index });
-    socket.on("student_indices",(student)=>{
+    socket.on("student_indices", (student) => {
       console.log(student.indAr);
-      setSelectedIndices(student.indAr)
-    })
+      setSelectedIndices(student.indAr);
+    });
   };
 
   return (
@@ -159,7 +162,8 @@ const ApproveStudents = () => {
             {studentsList.map((item, index) => (
               <button
                 className={` ${
-                  selectedIndex === index && " bg-blue-gray-900 text-white"
+                  selectedIndex === index &&
+                  " bg-blue-gray-900 text-white relative"
                 } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md uppercase p-2 border-black border-[1px]`}
                 onClick={() => previewHandler(item, index)}
                 key={index}
@@ -167,6 +171,11 @@ const ApproveStudents = () => {
               >
                 <div className="w-[20%]">{item.roll_no}</div>
                 <div className="w-[90%]">{item.student_name}</div>
+                {selectedIndices.includes(index) && (
+                  <div className="absolute ">
+                    <CgSandClock color="red"/>
+                  </div>
+                )}
               </button>
             ))}
           </div>
