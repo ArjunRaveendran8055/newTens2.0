@@ -94,9 +94,9 @@ const getAllAAController = asyncWrapper(async (req, res) => {
   if ((!aaUsers || aaUsers.length === 0) && (!mentorUsers || mentorUsers.length === 0)) {
     throw new AppError(404, "No users found!");
   } else {
-    // Map the results to return only the names
-    const aaUserNames = aaUsers.map(user => ({ name: `${user.firstname} ${user.lastname}` }));
-    const mentorUserNames = mentorUsers.map(user => ({ name: `${user.firstname} ${user.lastname}` }));
+    // Map the results to return the ids and names
+    const aaUserNames = aaUsers.map(user => ({ id: user._id, name: `${user.firstname} ${user.lastname}` }));
+    const mentorUserNames = mentorUsers.map(user => ({ id: user._id, name: `${user.firstname} ${user.lastname}` }));
     
     // Send both arrays to the frontend
     res.status(200).json({ 
@@ -108,6 +108,7 @@ const getAllAAController = asyncWrapper(async (req, res) => {
     });
   }
 });
+
 
 
 module.exports = {
