@@ -6,14 +6,16 @@ import { useDispatch } from "react-redux";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import FormView from "./FormView";
 import socket from "../../socket";
-const ApproveStudents = () => {
+import { CgSandClock } from "react-icons/cg";
 
+const ApproveStudents = () => {
+  
   const dispatch = useDispatch();
   const [allCentre, setAllCentre] = useState([]);
-  const [studentsList,setStudentsList]=useState([])
+  const [studentsList, setStudentsList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [selectedIndices, setSelectedIndices] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
-
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "",
@@ -64,38 +66,38 @@ const ApproveStudents = () => {
     });
   };
 
-  const fetchStudents= ()=>{
-      dispatch(setLoader());
-      socket.emit("fetchstudents",{})
-      //getting studentList from socket
-      socket.on("students_list",(data)=>{
-        setStudentsList([...data.students])
-        dispatch(removeLoader())
-      })
+  const fetchStudents = () => {
+    dispatch(setLoader());
+    socket.emit("fetchstudents", {});
+    //getting studentList from socket
+    socket.on("students_list", (data) => {
+      setStudentsList([...data.students]);
+      dispatch(removeLoader());
+    });
 
-      //getting noPending response 
-      socket.on("no_pending_students",(msg)=>{
-        console.log(msg)
-      })
-  }
+    //getting noPending response
+    socket.on("no_pending_students", (msg) => {
+      console.log(msg);
+    });
+  };
 
   useEffect(() => {
     // dispatch(setLoader());
     socketConnection();
-    fetchStudents()
+    fetchStudents();
 
-    return ()=>{
-      socket.off("connect")
-      socket.disconnect()
-    }
+    return () => {
+      socket.off("connect");
+      socket.disconnect();
+    };
   }, []);
 
   const previewHandler = (item, index) => {
     console.log("index", index);
     setSelectedIndex(index);
     setOpenPreview(true);
-    console.log(item.student_name);
-    console.log(item);
+    // console.log(item.student_name);
+    // console.log(item);
     setFormData({
       fullName: item.student_name,
       gender: item.gender,
@@ -108,25 +110,31 @@ const ApproveStudents = () => {
       school: item.school_name,
       schoolLocation: item.school_location,
       medium: item.medium,
-      state:"",
+      state: "",
       district: item.district,
       fatherName: item.father,
       motherName: item.mother,
-      fatherOccupation:item.fathers_occupation,
+      fatherOccupation: item.fathers_occupation,
       motherOccupation: item.mothers_occupation,
       rollNumber: item.roll_no,
       fatherNumber: item.father_no,
       motherNumber: item.mother_no,
       whatsappNumber: item.whatsapp,
       centre: item.centre,
+    });
+    setSelectedSchool(item.school_name);
+    // console.log(item.state)
+    setStatesIn(item.state);
+    setSyllabus(item.syllabus);
 
-    })
-    setSelectedSchool(item.school_name)
-    console.log(item.state)
-    setStatesIn(item.state)
-    setSyllabus(item.syllabus)
+    //socket to show a student is selected for approval process
+
+    socket.emit("student_selected", { index });
+    socket.on("student_indices", (student) => {
+      console.log(student.indAr);
+      setSelectedIndices(student.indAr);
+    });
   };
-
 
   return (
     <div>
@@ -152,16 +160,23 @@ const ApproveStudents = () => {
           </div>
           <div className="studentlistcontainer flex flex-col gap-2 w-full overflow-y-scroll ">
             {studentsList.map((item, index) => (
-              <div
+              <button
                 className={` ${
-                  selectedIndex === index && " bg-blue-gray-900 text-white"
+                  selectedIndex === index &&
+                  " bg-blue-gray-900 text-white relative"
                 } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md uppercase p-2 border-black border-[1px]`}
                 onClick={() => previewHandler(item, index)}
                 key={index}
+                disabled={selectedIndices.includes(index)}
               >
                 <div className="w-[20%]">{item.roll_no}</div>
                 <div className="w-[90%]">{item.student_name}</div>
-              </div>
+                {selectedIndices.includes(index) && (
+                  <div className="absolute ">
+                    <CgSandClock color="red"/>
+                  </div>
+                )}
+              </button>
             ))}
           </div>
         </div>
@@ -175,10 +190,21 @@ const ApproveStudents = () => {
           <div className="">
             {openPreview ? (
               <div>
-                <FormView formData={formData} setFormData={setFormData} selectedSchool={selectedSchool} setSelectedSchool={setSelectedSchool} statesIn={statesIn} setStatesIn={setStatesIn} syllabus={syllabus} setSyllabus={setSyllabus}/>
+                <FormView
+                  formData={formData}
+                  setFormData={setFormData}
+                  selectedSchool={selectedSchool}
+                  setSelectedSchool={setSelectedSchool}
+                  statesIn={statesIn}
+                  setStatesIn={setStatesIn}
+                  syllabus={syllabus}
+                  setSyllabus={setSyllabus}
+                />
               </div>
             ) : (
-              <div className="flex items-center justify-center w-full mt-[60%] text-xl">No Students Selected for Preview</div>
+              <div className="flex items-center justify-center w-full mt-[60%] text-xl">
+                No Students Selected for Preview
+              </div>
             )}
           </div>
         </div>

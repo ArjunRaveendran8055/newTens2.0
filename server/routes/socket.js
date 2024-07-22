@@ -9,14 +9,16 @@ const setupSocket = (server) => {
     },
   });
 
+  let indices=[]
+
   io.on("connection", (socket) => {
-    console.log("Connection established");
+    console.log("Connection established",socket.id);
 
     socket.on("fetchstudents",async (data)=>{
       console.log("receiving fetchStudent request...");
       try {
         const students= await RegisteredStudentModel.find({student_status:false})
-        console.log(students)
+        // console.log(students)
         if(students.length===0){
           return io.emit("no_pending_students",{msg:"No Students for In Pending list"})
         }
@@ -26,7 +28,37 @@ const setupSocket = (server) => {
       }
     })
 
+    //socket for emiting selected student info for other users
+    socket.on("student_selected",(student)=>{
+      console.log(student.index)
+      const match=indices.some(obj=>obj.id===socket.id)
+      const objInd=indices.findIndex(obj=>obj.id===socket.id)
+      if(!match){
+        indices.push({id:socket.id,index:student.index})
+        const indAr=indices.map(obj=> obj.index)
+        console.log("ind array is",indAr);      
+        io.emit("student_indices",{indAr})
+      }
+      else{
+        console.log("dum")
+        if(objInd !==-1){
+          indices[objInd].index=student.index
+          const indAr=indices.map(obj=> obj.index)
+          console.log("ind array is",indAr);
+          io.emit("student_indices",{indAr})
+        }
+      }
+
+      console.log(indices)
+    })
+
+    //on socket connection discontinued
     socket.on("disconnect", () => {
+      const updatedIndices = indices.filter(obj => obj.id !== socket.id);
+      const indAr=updatedIndices.map(obj=> obj.index)
+      console.log("ind array is",indAr);
+      io.emit("student_indices",{indAr})
+      
       console.log("Disconnected");
     });
   });

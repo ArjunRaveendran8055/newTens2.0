@@ -8,7 +8,7 @@ import compressImage from 'browser-image-compression';
 const FormView = ({formData,setFormData,selectedSchool,setSelectedSchool,statesIn,setStatesIn,syllabus,setSyllabus,}) => {
 
 
-  console.log(statesIn,syllabus,);
+  // console.log(statesIn,syllabus,);
 
   const [imageUrl, setImageUrl] = useState(addImg);
 
@@ -156,23 +156,23 @@ const FormView = ({formData,setFormData,selectedSchool,setSelectedSchool,statesI
   useEffect(() => {
 
 
-    console.log(fetchDistricts(statesIn))
+    //console.log(fetchDistricts(statesIn))
     const fetchSchool =  async (scl) => {
       
 
          if(scl.length>2){
         
-         await axios
-        .post('/registration/getschool',{syllabus:syllabus,search:scl})
-        .then((response) => {
+        //  await axios
+        // .post('/registration/getschool',{syllabus:syllabus,search:scl})
+        // .then((response) => {
           
-          console.log(response.data.data);
-          setSchools([...response.data.data])
+        //   console.log(response.data.data);
+        //   setSchools([...response.data.data])
           
 
          
-        })
-        .catch((error) => console.log(error));
+        // })
+        // .catch((error) => console.log(error));
 
       
 
