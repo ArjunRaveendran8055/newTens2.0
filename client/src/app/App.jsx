@@ -28,6 +28,7 @@ import ApproveStudents from "../components/ApproveStudents/ApproveStudents";
 import Batches from "../components/CentreandBatches/Batches";
 import DisplayBatches from "../components/CentreandBatches/DisplayBatches";
 import Asignaa from "../components/classComponents/Asignaa";
+import SubmitSuccess from "../layouts/SubmitSuccess";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -46,6 +47,7 @@ function App() {
         />
         
         <Route path="/regForm" element={<RegForm></RegForm>} />
+        <Route path="/SubmitSuccess/:resid" element={<SubmitSuccess></SubmitSuccess>} />
 
         <Route path="" element={<Dashboard />}>
           <Route path="/home" element={<Home />} />
