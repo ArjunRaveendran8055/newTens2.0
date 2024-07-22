@@ -28,6 +28,7 @@ import ApproveStudents from "../components/ApproveStudents/ApproveStudents";
 import Batches from "../components/CentreandBatches/Batches";
 import DisplayBatches from "../components/CentreandBatches/DisplayBatches";
 import Asignaa from "../components/classComponents/Asignaa";
+import SubmitSuccess from "../layouts/SubmitSuccess";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -46,6 +47,7 @@ function App() {
         />
         
         <Route path="/regForm" element={<RegForm></RegForm>} />
+        <Route path="/SubmitSuccess/:resid" element={<SubmitSuccess></SubmitSuccess>} />
 
         <Route path="" element={<Dashboard />}>
           <Route path="/home" element={<Home />} />
@@ -62,7 +64,7 @@ function App() {
           <Route path="/allcentres" element={<AllCentres/>} />
           <Route path="/approvestudents" element={<ApproveStudents/>} />
           <Route path="/batches/:id" element={<Batches/>} />
-          <Route path="/displaybatches" element={<DisplayBatches/>} />
+          <Route path="/displaybatches/:id" element={<DisplayBatches/>} />
           {/* private route example */}
           <Route path="/assignaa" element={<Asignaa/>}/>
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>

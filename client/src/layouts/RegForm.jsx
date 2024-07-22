@@ -5,11 +5,13 @@ import allStates from "./statesdistricts.json";
 import addImg from "./addimg.jpg";
 import compressImage from "browser-image-compression";
 import allSyllabus from "./syllabus.json";
+import { useNavigate } from "react-router-dom";
+
 
 const RegForm = () => {
 
 
-
+  const navigate = useNavigate();
 
   const [imageUrl, setImageUrl] = useState(addImg);
 
@@ -225,6 +227,9 @@ const RegForm = () => {
         .post("/registration/submitStudent", formDataLast)
         .then((response) => {
           console.log("submitted successfully:", response.data);
+          console.log(response.data.data,"aiii")
+          navigate(`/SubmitSuccess/${response.data.data.responseId}`)
+
         })
         .catch((error) => {
           console.error("Error submitting form data:", error);
@@ -496,27 +501,7 @@ const RegForm = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="class">Class</label>
-              <div className="w-50">
-                <Select
-                  name="class"
-                  disabled={!formData.level}
-                  onChange={(e) =>
-                    handleInputChange({ target: { name: "class", value: parseInt(e) } })
-                  }
-                >
-                  {classList?.map((data,i)=>(<Option key={i} value={data.cls+''}>
-                      {data.txt}
-                    </Option>))}
-                </Select>
-              </div>
-              {errors.class && (
-                <span className="text-sm  text-red-500">
-                  {" * " + errors.class}
-                </span>
-              )}
-            </div>
+            
 
             <div>
               <label htmlFor="syllabus">Syllabus</label>
@@ -540,9 +525,7 @@ const RegForm = () => {
                 </span>
               )}
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="class">Level Of Education</label>
               <div className="w-50">
@@ -561,6 +544,40 @@ const RegForm = () => {
               </div>
               {/* {errors.class && <span className="text-sm  text-red-500">{" * "+ errors.class}</span>} */}
             </div>
+
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+
+              
+            <div>
+              <label htmlFor="class">Class</label>
+              <div className="w-50">
+                <Select
+                  name="class"
+                  disabled={!formData.level}
+                  onChange={(e) =>
+                    handleInputChange({ target: { name: "class", value: parseInt(e) } })
+                  }
+                >
+                  {classList?.map((data,i)=>(<Option key={i} value={data.cls+''}>
+                      {data.txt}
+                    </Option>))}
+                </Select>
+              </div>
+              {errors.class && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.class}
+                </span>
+              )}
+            </div>
+
+
+
+          
+
+
           </div>
 
           <div className="">
