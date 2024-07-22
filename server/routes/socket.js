@@ -58,6 +58,7 @@ const setupSocket = (server) => {
       const indAr=updatedIndices.map(obj=> obj.index)
       console.log("ind array is",indAr);
       io.emit("student_indices",{indAr})
+      
       console.log("Disconnected");
     });
   });
