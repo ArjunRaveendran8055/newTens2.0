@@ -85,10 +85,36 @@ const deleteUserByIdController = asyncWrapper(async (req, res, next) => {
   }
 });
 
+const getAllAAController = asyncWrapper(async (req, res) => {
+  // Fetch users with role 'AA'
+  const aaUsers = await UserModel.find({ role: 'AA' }, 'firstname lastname');
+  // Fetch users with role 'MENTOR'
+  const mentorUsers = await UserModel.find({ role: 'MENTOR' }, 'firstname lastname');
+
+  if ((!aaUsers || aaUsers.length === 0) && (!mentorUsers || mentorUsers.length === 0)) {
+    throw new AppError(404, "No users found!");
+  } else {
+    // Map the results to return only the names
+    const aaUserNames = aaUsers.map(user => ({ name: `${user.firstname} ${user.lastname}` }));
+    const mentorUserNames = mentorUsers.map(user => ({ name: `${user.firstname} ${user.lastname}` }));
+    
+    // Send both arrays to the frontend
+    res.status(200).json({ 
+      success: true, 
+      data: {
+        aaUsers: aaUserNames,
+        mentorUsers: mentorUserNames
+      }
+    });
+  }
+});
+
+
 module.exports = {
   pendingUserController,
   allUserController,
   oneUserController,
   approveUserController,
   deleteUserByIdController,
+  getAllAAController
 };
