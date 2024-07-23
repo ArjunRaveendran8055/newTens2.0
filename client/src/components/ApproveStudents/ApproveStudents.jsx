@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Select, Option, Button } from "@material-tailwind/react";
+import { Select, Option, Button, useSelect } from "@material-tailwind/react";
 import { Divider } from "@mui/material";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import FormView from "./FormView";
 import socket from "../../socket";
 import { CgSandClock } from "react-icons/cg";
 
 const ApproveStudents = () => {
-  
+  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [allCentre, setAllCentre] = useState([]);
   const [studentsList, setStudentsList] = useState([]);
@@ -53,6 +53,10 @@ const ApproveStudents = () => {
     socket.connect();
     socket.on("connect", () => {
       console.log("Connected to server");
+    });
+
+    socket.on("initialindex", (student) => {
+      setSelectedIndices(student.indAr);
     });
 
     //on failed connection
@@ -126,15 +130,15 @@ const ApproveStudents = () => {
     // console.log(item.state)
     setStatesIn(item.state);
     setSyllabus(item.syllabus);
-
     //socket to show a student is selected for approval process
-
-    socket.emit("student_selected", { index });
-    socket.on("student_indices", (student) => {
-      console.log(student.indAr);
-      setSelectedIndices(student.indAr);
-    });
+    socket.emit("student_selected", { index, id: user.id });
   };
+
+  //receiving the selected index from the backend
+  socket.on("student_indices", (student) => {
+    console.log("ind array on selection", student.indAr);
+    setSelectedIndices(student.indAr);
+  });
 
   return (
     <div>
@@ -172,8 +176,8 @@ const ApproveStudents = () => {
                 <div className="w-[20%]">{item.roll_no}</div>
                 <div className="w-[90%]">{item.student_name}</div>
                 {selectedIndices.includes(index) && (
-                  <div className="absolute ">
-                    <CgSandClock color="red"/>
+                  <div className="absolute top-0 right-2 top-2">
+                    <CgSandClock color="white" />
                   </div>
                 )}
               </button>

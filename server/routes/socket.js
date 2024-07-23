@@ -13,7 +13,8 @@ const setupSocket = (server) => {
 
   io.on("connection", (socket) => {
     console.log("Connection established",socket.id);
-
+    const indAr=indices.map(obj=> obj.index)
+    io.emit("initialindex",{indAr})
     socket.on("fetchstudents",async (data)=>{
       console.log("receiving fetchStudent request...");
       try {
@@ -31,10 +32,10 @@ const setupSocket = (server) => {
     //socket for emiting selected student info for other users
     socket.on("student_selected",(student)=>{
       console.log(student.index)
-      const match=indices.some(obj=>obj.id===socket.id)
-      const objInd=indices.findIndex(obj=>obj.id===socket.id)
+      const match=indices.some(obj=>obj.id===student.id)
+      const objInd=indices.findIndex(obj=>obj.id===student.id)
       if(!match){
-        indices.push({id:socket.id,index:student.index})
+        indices.push({id:student.id,index:student.index,socketId:socket.id})
         const indAr=indices.map(obj=> obj.index)
         console.log("ind array is",indAr);      
         io.emit("student_indices",{indAr})
@@ -54,8 +55,10 @@ const setupSocket = (server) => {
 
     //on socket connection discontinued
     socket.on("disconnect", () => {
-      const updatedIndices = indices.filter(obj => obj.id !== socket.id);
+      const updatedIndices = indices.filter(obj => obj.socketId !== socket.id);
+      indices=[...updatedIndices]
       const indAr=updatedIndices.map(obj=> obj.index)
+      console.log(updatedIndices);
       console.log("ind array is",indAr);
       io.emit("student_indices",{indAr})
       
