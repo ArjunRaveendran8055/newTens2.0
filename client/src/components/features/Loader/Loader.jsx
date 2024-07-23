@@ -7,7 +7,7 @@ const Loader = () => {
     <div
       className={`${
         loader ? "" : "hidden "
-      } h-screen w-full fixed backdrop-blur-md flex justify-center items-center z-50`}
+      } h-screen w-full fixed backdrop-blur-3xl bg-white flex justify-center items-center z-50`}
     >
       <div className=" relative rounded-full flex justify-center items-center">
         <div className="backdrop:blur-md">

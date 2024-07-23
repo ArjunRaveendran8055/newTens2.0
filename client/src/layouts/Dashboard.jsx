@@ -12,28 +12,30 @@ import Footer from "../widgets/layout/footer";
 import { routes } from "../routes";
 import { setToastView } from "../components/features/toast/toastSlice";
 import { setUser } from "../components/features/user/userSlice";
+import { removeLoader, setLoader } from "../components/features/Loader/loaderSlice";
 
 export function Dashboard() {
   const { user } = useSelector((state) => state.user);
   let flag = false;
-  const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   //Api to verify user using cookie
-  const verifyUser = () => {
-    axios
+  const verifyUser = async () => {
+   await axios
       .get("/auth/verifyUser")
       .then((res) => {
         const { data } = res.data;
         //console.log("user is", data);
-        return dispatch(setUser(data));
+        dispatch(setUser(data));
+        return dispatch(removeLoader())
       })
       .catch((err) => {
         const { error } = err.response.data;
         //console.log(error);
         dispatch(setToastView({ type: "error", msg: error }));
-        return navigate("/");
+        navigate("/");
+        return dispatch(removeLoader())
       });
   };
   //api to genarate refreshToken
@@ -51,9 +53,9 @@ export function Dashboard() {
         return navigate("/");
       });
   };
-
   useEffect(() => {
     if (!flag) {
+      dispatch(setLoader())
       flag = true;
       verifyUser();
     }
@@ -76,6 +78,15 @@ export function Dashboard() {
       window.removeEventListener('unload', clearLocalStorage);
     };
   }, []);
+
+  // useEffect(()=>{
+  //   dispatch(setLoader())
+  //   const timer = setTimeout(() => {
+  //     dispatch(removeLoader())
+  // }, 1000);
+  // // Cleanup the timer if the component unmounts
+  // return () => clearTimeout(timer);
+  // })
   
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
