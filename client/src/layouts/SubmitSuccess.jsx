@@ -7,6 +7,7 @@ function SubmitSuccess() {
     
     useEffect(() => {
       
+      
     console.log(resid)
      
     }, [])

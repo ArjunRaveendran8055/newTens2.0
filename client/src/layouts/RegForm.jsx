@@ -26,7 +26,7 @@ const RegForm = () => {
 
     try {
       const compressedFile = await compressImage(file, {
-        maxSizeMB: 1, // Maximum size in megabytes
+        maxSizeMB: 0.25, // Maximum size in megabytes
         maxWidthOrHeight: 900, // Maximum width or height
         useWebWorker: true, // Use web workers for faster compression (optional)
       });
@@ -351,8 +351,10 @@ const RegForm = () => {
     <>
       <div className="max-w-4xl mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
         <form className="mt-6 space-y-4">
-          <label htmlFor="imageUpload">
             <div className="w-52 p-2 mx-auto  rounded ">
+          <label htmlFor="imageUpload">
+
+
               <div className="avatar-upload">
                 <div className="avatar-edit">
                   <input
@@ -377,8 +379,10 @@ const RegForm = () => {
                   ></div>
                 </div>
               </div>
-            </div>
+
+
           </label>
+            </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
