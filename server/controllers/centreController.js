@@ -90,36 +90,8 @@ const deleteClassController = asyncWrapper(async (req,res)=>{
     res.json(updatedCentre.classes);
 })
 
-// const addBatchController = asyncWrapper(async (req,res)=>{
-//   try{
-//   const { id, className2, stream, batch } = req.body;
-//   const document = await CentreModel.findById(id);
-//   if (!document) {
-//     return res.status(404).json({ message: 'Document not found' });
-//   }
-//   const classToUpdate = document.classes.find(c => c.class === className2 && c.stream === stream);
-//   if (classToUpdate) {
-//     if (!classToUpdate.batches) {
-//       classToUpdate.batches = [];
-//     }
 
-//     // Add the batch to the array if it does not already exist
-//     if (!classToUpdate.batches.includes(batch)) {
-//       classToUpdate.batches.push(batch);
-//     }
-//     document.markModified('classes');
-//     // Save the updated document
-    
-//     return res.status(200).json({ message: 'Batch added successfully', document });
-//   } else {
-//     return res.status(404).json({ message: 'Class not found' });
-//   }
-// }
-//   catch (error) {
-//     console.error('Error:', error);
-//     return res.status(500).json({ message: 'Server error' });
-//   }
-// })
+// to add a batch inside a selected class
 
 const addBatchController = asyncWrapper(async (req, res) => {
   try {
@@ -164,6 +136,34 @@ const addBatchController = asyncWrapper(async (req, res) => {
 });
 
 
+const getBatchController = asyncWrapper(async (req, res) => {
+  console.log(req.body);
+  const { id, class: className, stream } = req.body;
+  try {
+    // Find the centre by ID
+    const centre = await CentreModel.findById(id);
+
+    if (!centre) {
+      return res.status(404).json({ message: "Centre not found" });
+    }
+
+    // Find the matching class within the classes array
+    const matchingClass = centre.classes.find(
+      (cls) => cls.class === className && cls.stream === stream
+    );
+
+    if (!matchingClass) {
+      return res.status(404).json({ message: "Class not found" });
+    }
+
+    // Return the batches array
+    return res.json({ batches: matchingClass.batches });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+})
+
 
 module.exports = {
   getAllCentresController,
@@ -172,5 +172,6 @@ module.exports = {
   createClassController,
   getAllClassController,
   deleteClassController,
-  addBatchController
+  addBatchController,
+  getBatchController
 };

@@ -37,25 +37,50 @@ function DisplayBatches() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
   const [className2, setClassName] = useState(className); // Replace with actual className if needed
-  const [batch, setBatch] = useState('');
+  const [batch, setBatch] = useState(''); 
+
+  // to import batches from db
+  const [batches, setBatches] = useState([]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('/user/getAllAA');
+      setUsers(response.data.data.aaUsers);
+    } catch (error) {
+      setError(error);
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchBatches = async () => {
+    try {
+      const response = await axios.post('/centre/getBatch', {
+        id: id,
+        class: className2,
+        stream: stream,
+      });
+      setBatches(response.data.batches);
+      setError('');
+    } catch (err) {
+      setError(err.response ? err.response.data.message : 'Error fetching data');
+      setBatches([]);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get('/user/getAllAA');
-        setUsers(response.data.data.aaUsers);
-      } catch (error) {
-        setError(error);
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUsers();
-  }, []);
+    fetchBatches();
+    if (isFormSubmitted) {
+      setIsFormSubmitted(false);
+    }
+    console.log("hii");
+  }, [isFormSubmitted]);
+ 
 
   const handleOpen = () => {
     setOpen((cur) => !cur);
@@ -71,6 +96,8 @@ function DisplayBatches() {
         stream,
         batch
       });
+      setIsFormSubmitted(true)
+      setOpen(false)
       console.log('Batch created:', response.data);
     } catch (error) {
       console.error('Error creating batch:', error);
@@ -177,16 +204,22 @@ function DisplayBatches() {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-          <tr className="hover:bg-gray-50 dark:hover:bg-gray-850">
-            <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{className} ({stream})</td>
-            <td className="px-4 py-3 text-gray-800 dark:text-gray-200">A</td>
+        {batches?.map((batch, index) => (
+          <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-850">
             <td className="px-4 py-3 text-gray-800 dark:text-gray-200">
-
+              {className} ({stream})
+            </td>
+            <td className="px-4 py-3 text-gray-800 dark:text-gray-200">
+              {batch.name}
+            </td>
+            <td className="px-4 py-3 text-gray-800 dark:text-gray-200">
+              hi
             </td>
             <td>
-              <Button>Update</Button>
+              <Button className="button">Update</Button>
             </td>
           </tr>
+        ))}
         </tbody>
       </table>
     </div>
