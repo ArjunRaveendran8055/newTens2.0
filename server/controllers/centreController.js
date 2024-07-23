@@ -91,6 +91,78 @@ const deleteClassController = asyncWrapper(async (req,res)=>{
 })
 
 
+// to add a batch inside a selected class
+
+const addBatchController = asyncWrapper(async (req, res) => {
+  try {
+    const { id, className2, stream, batch } = req.body;
+
+    // Find the document by _id
+    const document = await CentreModel.findById(id);
+
+    if (!document) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+
+    // Find the class to update
+    const classToUpdate = document.classes.find(c => c.class === className2 && c.stream === stream);
+
+    if (classToUpdate) {
+      if (!classToUpdate.batches) {
+        classToUpdate.batches = [];
+      }
+
+      // Check if the batch already exists
+      const batchExists = classToUpdate.batches.some(b => b.name === batch);
+
+      if (batchExists) {
+        return res.status(400).json({ message: 'Batch already exists' });
+      }
+
+      // Add the new batch
+      classToUpdate.batches.push({ name: batch });
+      document.markModified('classes');
+      await document.save();
+      // Save the updated document
+      await document.save();
+      return res.status(200).json({ message: 'Batch added successfully', document });
+    } else {
+      return res.status(404).json({ message: 'Class not found' });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+const getBatchController = asyncWrapper(async (req, res) => {
+  console.log(req.body);
+  const { id, class: className, stream } = req.body;
+  try {
+    // Find the centre by ID
+    const centre = await CentreModel.findById(id);
+
+    if (!centre) {
+      return res.status(404).json({ message: "Centre not found" });
+    }
+
+    // Find the matching class within the classes array
+    const matchingClass = centre.classes.find(
+      (cls) => cls.class === className && cls.stream === stream
+    );
+
+    if (!matchingClass) {
+      return res.status(404).json({ message: "Class not found" });
+    }
+
+    // Return the batches array
+    return res.json({ batches: matchingClass.batches });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+})
 
 
 module.exports = {
@@ -99,5 +171,7 @@ module.exports = {
   deleteCentreController,
   createClassController,
   getAllClassController,
-  deleteClassController
+  deleteClassController,
+  addBatchController,
+  getBatchController
 };

@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Select, Option, Button } from "@material-tailwind/react";
+import { Select, Option, Button, useSelect } from "@material-tailwind/react";
 import { Divider } from "@mui/material";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import FormView from "./FormView";
 import socket from "../../socket";
 import { CgSandClock } from "react-icons/cg";
 
 const ApproveStudents = () => {
-  
+  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [allCentre, setAllCentre] = useState([]);
   const [studentsList, setStudentsList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [selectedIndices, setSelectedIndices] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -94,6 +94,7 @@ const ApproveStudents = () => {
 
   const previewHandler = (item, index) => {
     console.log("index", index);
+    console.log("selected student is:",item._id)
     setSelectedIndex(index);
     setOpenPreview(true);
     // console.log(item.student_name);
@@ -122,19 +123,27 @@ const ApproveStudents = () => {
       whatsappNumber: item.whatsapp,
       centre: item.centre,
     });
+
     setSelectedSchool(item.school_name);
     // console.log(item.state)
     setStatesIn(item.state);
     setSyllabus(item.syllabus);
 
     //socket to show a student is selected for approval process
-
-    socket.emit("student_selected", { index });
-    socket.on("student_indices", (student) => {
-      console.log(student.indAr);
-      setSelectedIndices(student.indAr);
-    });
+    socket.emit("student_selected", {userId: user.id,studentId:item._id });
   };
+
+  //receiving the selected studentIds from the backend
+  socket.on("student_ids", (student) => {
+    console.log("ids array on selection", student.studentIds);
+    setSelectedStudents(student.studentIds);
+  });
+
+  //getting initial students array
+  socket.on("initial_students", (student) => {
+    console.log("initial selected students",selectedStudents)
+    setSelectedStudents(student.studentIds);
+  });
 
   return (
     <div>
@@ -158,25 +167,26 @@ const ApproveStudents = () => {
             <div className="w-[20%]">ROLL</div>
             <div className="w-[90%]">NAME</div>
           </div>
-          <div className="studentlistcontainer flex flex-col gap-2 w-full overflow-y-scroll ">
+          <div className="studentlistcontainer flex flex-col gap-2 w-full overflow-y-scroll relative">
             {studentsList.map((item, index) => (
-              <button
-                className={` ${
-                  selectedIndex === index &&
-                  " bg-blue-gray-900 text-white relative"
-                } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md uppercase p-2 border-black border-[1px]`}
-                onClick={() => previewHandler(item, index)}
-                key={index}
-                disabled={selectedIndices.includes(index)}
-              >
-                <div className="w-[20%]">{item.roll_no}</div>
-                <div className="w-[90%]">{item.student_name}</div>
-                {selectedIndices.includes(index) && (
-                  <div className="absolute ">
-                    <CgSandClock color="red"/>
-                  </div>
-                )}
-              </button>
+              <div className="relative" key={index}>
+                <button
+                  className={` ${
+                    selectedIndex === index && " bg-blue-gray-900 text-white"
+                  } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md uppercase p-2 border-black border-[1px]`}
+                  onClick={() => previewHandler(item, index)}
+                  key={index}
+                  disabled={selectedStudents.includes(item._id)}
+                >
+                  <div className="w-[20%]">{item.roll_no}</div>
+                  <div className="w-[90%]">{item.student_name}</div>
+                  {selectedStudents.includes(item._id) && (
+                    <div className="absolute right-5">
+                      <CgSandClock color="red" />
+                    </div>
+                  )}
+                </button>
+              </div>
             ))}
           </div>
         </div>
