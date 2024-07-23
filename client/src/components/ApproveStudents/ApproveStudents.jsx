@@ -88,7 +88,14 @@ const ApproveStudents = () => {
 
     return () => {
       socket.off("connect");
+      socket.off("students_list")
+      socket.off("connect_failed")
+      socket.off("connect_error")
+      socket.off("no_pending_students")
+      socket.off("student_ids")
+      socket.off("initial_students")
       socket.disconnect();
+      
     };
   }, []);
 
