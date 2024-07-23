@@ -1,4 +1,4 @@
-const { getAllCentresController, createCentreController, deleteCentreController,createClassController,getAllClassController,deleteClassController,addBatchController} = require("../controllers/centreController")
+const { getAllCentresController, createCentreController, deleteCentreController,createClassController,getAllClassController,deleteClassController,addBatchController,getBatchController} = require("../controllers/centreController")
 
 const centreRouter=require("express").Router()
 
@@ -11,6 +11,7 @@ const centreRouter=require("express").Router()
  centreRouter.delete("/deleteCentreClass/:id",deleteClassController)
 
  centreRouter.post("/addBatch", addBatchController)
+ centreRouter.post("/getBatch", getBatchController)
 
 
  module.exports={
