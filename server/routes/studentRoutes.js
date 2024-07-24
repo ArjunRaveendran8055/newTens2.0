@@ -6,13 +6,15 @@ const {
   fetchStudentReportsController,
 } = require("../controllers/studentControllers");
 
-studentRoutes.get("/getAllStudents", getAllStudentsController);
+const { authorizeGenuinity }=require("../middleware/authorizeGenuinity")
 
-studentRoutes.get("/getStudentDetails/:id", getStudentDetailsController);
+studentRoutes.get("/getAllStudents",authorizeGenuinity ,getAllStudentsController);
 
-studentRoutes.post("/addReport", addReportController);
+studentRoutes.get("/getStudentDetails/:id",authorizeGenuinity, getStudentDetailsController);
 
-studentRoutes.get("/fetchStudentReports/:id", fetchStudentReportsController);
+studentRoutes.post("/addReport",authorizeGenuinity, addReportController);
+
+studentRoutes.get("/fetchStudentReports/:id",authorizeGenuinity, fetchStudentReportsController);
 
 module.exports = {
   studentRoutes,

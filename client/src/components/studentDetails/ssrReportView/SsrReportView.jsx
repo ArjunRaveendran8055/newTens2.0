@@ -27,8 +27,6 @@ function Icon({ id, open }) {
   );
 }
 
-
-
 export function SsrReportView({ id }) {
   const [open, setOpen] = React.useState(0);
   const [ssrReport, setSsrReports] = useState([]);
@@ -46,7 +44,6 @@ export function SsrReportView({ id }) {
       });
   }, []);
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
-
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     const day = date.getDate().toString().padStart(2, "0");
