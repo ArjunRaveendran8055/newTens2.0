@@ -130,7 +130,7 @@ const loginController = asyncWrapper(async (req, res, next) => {
 
 //cookieUserVerificationController
 const verifyUserController = asyncWrapper(async (req, res, next) => {
-  //console.log("ippa sheriyakki thara..");
+  //getting cookie from request headers
   const cookie = req.headers.cookie;
   if (!cookie) {
     throw new AppError(400, "Something wrong With Cookie");
