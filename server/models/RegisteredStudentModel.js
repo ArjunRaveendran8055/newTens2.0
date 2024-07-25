@@ -134,9 +134,15 @@ const studentSchema = new mongoose.Schema({
     student_status: {
       type: Boolean,
       default: false,
-    },
+    }
   
-});
+},
+{
+  timestamps: true // This adds `createdAt` and `updatedAt` fields
+}
+
+
+);
 
 
 const RegisteredStudentModel=mongoose.model("registeredstudents",studentSchema)

@@ -1066,8 +1066,8 @@ const RegForm = () => {
                     onChange={handleInputChange}
                     type="radio"
                     className="form-radio h-4 w-4 text-blue-600"
-                    name="contact method"
-                    value="hearAbout"
+                    name="hearAbout"
+                    value="Marketing Executive"
                   />
                   <span className="ml-2 text-sm text-gray-900">
                     Marketing Executive
