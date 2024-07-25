@@ -41,6 +41,7 @@ function DisplayBatches() {
 
   const [className2, setClassName] = useState(className); // Replace with actual className if needed
   const [batch, setBatch] = useState(''); 
+  const [isChanged, setIsChanged] = useState(false);
 
   // to import batches from db
   const [batches, setBatches] = useState([]);
@@ -50,18 +51,12 @@ function DisplayBatches() {
     class: className2,
     stream: stream
   });
-  const [aaNames, setAaNames] = useState([]);
+  const [aaNames, setAaNames] = useState(null);
 
 
-  // state to update AA to collection
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  
-  const handleSelectionChange = (event, value) => {
-    const selectedUsers = value.map(user => ({
-      id: user.id,
-      name: user.name
-    }));
-    setSelectedUsers(selectedUsers);
+  const handleSelectionChange = (event, newValue) => {
+    setAaNames(newValue);
+    setIsChanged(true);
   };
 
   const fetchAANames = async () => {
@@ -111,9 +106,10 @@ function DisplayBatches() {
         id,
         className2,
         stream,
-        selectedUsers,
+        aaNames,
       });
       console.log('Update successful:', response.data);
+      setIsChanged(false);
     } catch (error) {
       console.error('Update failed:', error);
     }
@@ -151,6 +147,7 @@ function DisplayBatches() {
     }
   };
 
+
   return (
 
     <div className="flex flex-col items-center gap-10 justify-center my-8">
@@ -160,32 +157,72 @@ function DisplayBatches() {
           <tr className='flex justify-center items-center'>
       <th className="px-4 py-3 text-left font-bold text-black dark:text-gray-300"></th>
       <th className="px-4 py-3 text-left font-bold text-black dark:text-gray-300">
-        <Autocomplete
-          multiple
-          id="checkboxes-tags-demo"
-          options={users}
-          disableCloseOnSelect
-          getOptionLabel={(option) => option.name}
-          onChange={handleSelectionChange}
-          renderOption={(props, option, { selected }) => (
-            <li {...props}>
-              <Checkbox
-                icon={icon}
-                checkedIcon={checkedIcon}
-                style={{ marginRight: 8 }}
-                checked={selected}
-              />
-              {option.name}
-            </li>
-          )}
-          style={{ width: 300 }}
-          renderInput={(params) => (
-            <TextField {...params} label="Select" placeholder="Add More" />
-          )}
-        />
+        
+{
+  aaNames &&(
+    <Autocomplete
+        multiple
+        id="checkboxes-tags-demo"
+        options={users}
+        disableCloseOnSelect
+        getOptionLabel={(option) => option.name}
+        onChange={handleSelectionChange}
+        value={aaNames}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        renderOption={(props, option, { selected }) => (
+          <li {...props}>
+            <Checkbox
+              icon={<span />}
+              checkedIcon={<span />}
+              style={{ marginRight: 8 }}
+              checked={selected}
+            />
+            {option.name}
+          </li>
+        )}
+        style={{ width: 300 }}
+        renderInput={(params) => (
+          <TextField {...params} label="Select" placeholder="Add More" />
+        )}
+      />
+  )
+}
+{!aaNames &&
+  <Autocomplete
+        multiple
+        id="checkboxes-tags-demo"
+        options={users}
+        disableCloseOnSelect
+        getOptionLabel={(option) => option.name}
+        onChange={handleSelectionChange}
+
+        renderOption={(props, option, { selected }) => (
+          <li {...props}>
+            <Checkbox
+              icon={<span />}
+              checkedIcon={<span />}
+              style={{ marginRight: 8 }}
+              checked={selected}
+            />
+            {option.name}
+          </li>
+        )}
+        style={{ width: 300 }}
+        renderInput={(params) => (
+          <TextField {...params} label="Select" placeholder="Add More" />
+        )}
+      />
+}
+
+        
       </th>
       <th>
-        <Button onClick={handleUpdate}>Update</Button>
+      <Button
+        onClick={handleUpdate}
+        disabled={!isChanged}
+      >
+        Update
+      </Button>
       </th>
     </tr>
         </thead>

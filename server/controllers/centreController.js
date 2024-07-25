@@ -165,11 +165,11 @@ const getBatchController = asyncWrapper(async (req, res) => {
 })
 
 const addAAcontroller = asyncWrapper(async (req, res) => {
-  const { id, className2, stream, selectedUsers } = req.body;
+  const { id, className2, stream, aaNames } = req.body;
 
   const updateKey = 'classes.$.AANames';
   const updateObject = {};
-  updateObject[updateKey] = selectedUsers;
+  updateObject[updateKey] = aaNames;
 
   const result = await CentreModel.updateOne(
     { _id: id, 'classes.class': className2, 'classes.stream': stream },
