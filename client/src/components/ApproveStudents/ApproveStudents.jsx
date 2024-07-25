@@ -10,12 +10,16 @@ import { CgSandClock } from "react-icons/cg";
 
 const ApproveStudents = () => {
   const { user } = useSelector((state) => state.user);
+
   const dispatch = useDispatch();
+  const [emptyList, setEmptyList] = useState(true);
   const [allCentre, setAllCentre] = useState([]);
   const [studentsList, setStudentsList] = useState([]);
+  const [displayingStudentList, setDisplayingStudentList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
+  const [refId, setRefId] = useState("");
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "",
@@ -72,7 +76,13 @@ const ApproveStudents = () => {
     //getting studentList from socket
     socket.on("students_list", (data) => {
       setStudentsList([...data.students]);
-      dispatch(removeLoader());
+      setEmptyList(false);
+      setDisplayingStudentList([...data.students]);
+    });
+    //getting noPending response
+    socket.on("no_pending_students", (msg) => {
+      console.log(msg);
+      setEmptyList(true);
     });
   };
 
@@ -86,11 +96,6 @@ const ApproveStudents = () => {
       .catch((err) => {
         console.log(err.message);
       });
-
-    //getting noPending response
-    socket.on("no_pending_students", (msg) => {
-      console.log(msg);
-    });
   };
 
   useEffect(() => {
@@ -111,10 +116,10 @@ const ApproveStudents = () => {
     };
   }, []);
 
-  console.log("all centres are", allCentre);
+  // console.log("all centres are", allCentre);
   const previewHandler = (item, index) => {
-    console.log("index", index);
-    console.log("selected student is:", item._id);
+    //console.log("index", index);
+    //console.log("selected student is:", item._id);
     setSelectedIndex(index);
     setOpenPreview(true);
     // console.log(item.student_name);
@@ -161,9 +166,20 @@ const ApproveStudents = () => {
 
   //getting initial students array
   socket.on("initial_students", (student) => {
-    console.log("initial selected students", selectedStudents);
+    // console.log("initial selected students", selectedStudents);
     setSelectedStudents(student.studentIds);
   });
+
+  //on changing ref Id in the refid input box
+  const refIdChangeHandler = (e) => {
+    console.log("changing ref is:", e.target.value);
+    setDisplayingStudentList(() =>
+      studentsList.filter((student) =>
+        student.responseId.includes(e.target.value)
+      )
+    );
+  };
+  //console.log("updated display classes", displayingStudentList);
 
   return (
     <div>
@@ -175,6 +191,7 @@ const ApproveStudents = () => {
                 type="text"
                 placeholder="Referance Id"
                 className="p-2 border-[1px] border-gray-300 rounded-md outline-none"
+                onChange={refIdChangeHandler}
               />
               <button className="bg-blue-400 hover:bg-blue-700 transition-colors duration-100 py-2 px-3 rounded-r-md font-enriq text-white">
                 Go
@@ -188,45 +205,56 @@ const ApproveStudents = () => {
               <select
                 name=""
                 id=""
-                className="h-7 border-[1px] border-gray-500 rounded-md"
+                className="h-7 w-32 border-[1px] border-gray-500 rounded-md"
               >
-                <option value="" selected>
-                  all
+                <option value="" defaultValue>
+                  All
                 </option>
                 {allCentre.map((item, index) => (
-                  <option key={index} value={`${item.centre}`}>{item.tag}</option>
+                  <option key={index} value={`${item.centre}`}>
+                    {item.tag}
+                  </option>
                 ))}
               </select>
             </span>
           </div>
-          <div className="flex flex-row w-full p-2 text-black gap-2">
-            <div className="w-[20%] flex justify-center">Roll</div>
-            <div className="w-[80%] flex ">Name</div>
-          </div>
-          <div className="studentlistcontainer flex flex-col gap-2 w-full overflow-y-scroll relative">
-            {studentsList.map((item, index) => (
-              <div className="relative" key={index}>
-                <button
-                  className={` ${
-                    selectedIndex === index && " bg-blue-gray-900 text-white"
-                  } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md p-2 border-black border-[1px] gap-2`}
-                  onClick={() => previewHandler(item, index)}
-                  key={index}
-                  disabled={selectedStudents.includes(item._id)}
-                >
-                  <div className="w-[20%] uppercase">{item.roll_no}</div>
-                  <div className="w-[80%] capitalize flex">
-                    {item.student_name}
-                  </div>
-                  {selectedStudents.includes(item._id) && (
-                    <div className="absolute right-5">
-                      <CgSandClock color="red" />
-                    </div>
-                  )}
-                </button>
+          {emptyList ? (
+            <div className="w-full h-full text-gray-700 flex justify-center items-center">
+              <span>No users in Pending</span>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-row w-full p-2 text-black gap-2">
+                <div className="w-[20%] flex justify-center">Roll</div>
+                <div className="w-[80%] flex ">Name</div>
               </div>
-            ))}
-          </div>
+              <div className="studentlistcontainer flex flex-col gap-2 w-full overflow-y-scroll relative">
+                {displayingStudentList.map((item, index) => (
+                  <div className="relative" key={index}>
+                    <button
+                      className={` ${
+                        selectedIndex === index &&
+                        " bg-blue-gray-900 text-white"
+                      } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md p-2 border-black border-[1px] gap-2`}
+                      onClick={() => previewHandler(item, index)}
+                      key={index}
+                      disabled={selectedStudents.includes(item._id)}
+                    >
+                      <div className="w-[20%] uppercase">{item.roll_no}</div>
+                      <div className="w-[80%] capitalize flex">
+                        {item.student_name}
+                      </div>
+                      {selectedStudents.includes(item._id) && (
+                        <div className="absolute right-5">
+                          <CgSandClock color="red" />
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
         <div className="vrtline w-[1px]  bg-black" />
         <div className="previewcontainer w-[60%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">

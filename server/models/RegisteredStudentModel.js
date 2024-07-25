@@ -134,6 +134,10 @@ const studentSchema = new mongoose.Schema({
     student_status: {
       type: Boolean,
       default: false,
+    },
+    approveStatus:{
+      type:Boolean,
+      default:false
     }
   
 },
