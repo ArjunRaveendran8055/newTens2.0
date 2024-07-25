@@ -1,4 +1,4 @@
-const { getAllCentresController, createCentreController, deleteCentreController,createClassController,getAllClassController,deleteClassController,addBatchController,getBatchController,addAAcontroller} = require("../controllers/centreController")
+const { getAllCentresController, createCentreController, deleteCentreController,createClassController,getAllClassController,deleteClassController,addBatchController,getBatchController,addAAcontroller,getAAcontroller} = require("../controllers/centreController")
 const { authorizeGenuinity } = require("../middleware/authorizeGenuinity")
 
 const centreRouter=require("express").Router()
@@ -14,6 +14,7 @@ const centreRouter=require("express").Router()
  centreRouter.post("/addBatch", addBatchController)
  centreRouter.post("/getBatch", getBatchController)
  centreRouter.post('/addAAtoClass', addAAcontroller)
+ centreRouter.post('/getAAtoClass', getAAcontroller)
 
 
  module.exports={

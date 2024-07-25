@@ -184,6 +184,28 @@ const addAAcontroller = asyncWrapper(async (req, res) => {
 
 })
 
+const getAAcontroller = asyncWrapper(async (req, res) => {
+  const { id, class: className, stream } = req.body;
+  try {
+    const centre = await CentreModel.findById(id);
+    if (!centre) {
+      return res.status(404).send({ error: 'Centre not found' });
+    }
+
+    const classInfo = centre.classes.find(
+      (c) => c.class === className && c.stream === stream
+    );
+
+    if (!classInfo) {
+      return res.status(404).send({ error: 'Class or Stream not found' });
+    }
+
+    res.send({ AANames: classInfo.AANames });
+  } catch (error) {
+    res.status(500).send({ error: 'Server error' });
+  }
+})
+
 
 module.exports = {
   getAllCentresController,
@@ -194,5 +216,6 @@ module.exports = {
   deleteClassController,
   addBatchController,
   getBatchController,
-  addAAcontroller
+  addAAcontroller,
+  getAAcontroller
 };

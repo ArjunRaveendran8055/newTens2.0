@@ -45,8 +45,17 @@ function DisplayBatches() {
   // to import batches from db
   const [batches, setBatches] = useState([]);
 
+  const [classInfo, setClassInfo] = useState({
+    id: id,
+    class: className2,
+    stream: stream
+  });
+  const [aaNames, setAaNames] = useState([]);
+
+
   // state to update AA to collection
   const [selectedUsers, setSelectedUsers] = useState([]);
+  
   const handleSelectionChange = (event, value) => {
     const selectedUsers = value.map(user => ({
       id: user.id,
@@ -54,6 +63,19 @@ function DisplayBatches() {
     }));
     setSelectedUsers(selectedUsers);
   };
+
+  const fetchAANames = async () => {
+    try {
+      const response = await axios.post('/centre/getAAtoClass', classInfo);
+      setAaNames(response.data.AANames);
+      setError('');
+    } catch (error) {
+      console.error('Error fetching AA names:', error);
+      setError('Failed to fetch AA names');
+    }
+  };
+
+
 
   const fetchUsers = async () => {
     try {
@@ -100,6 +122,7 @@ function DisplayBatches() {
   useEffect(() => {
     fetchUsers();
     fetchBatches();
+    fetchAANames();
     if (isFormSubmitted) {
       setIsFormSubmitted(false);
     }
@@ -109,7 +132,7 @@ function DisplayBatches() {
   const handleOpen = () => {
     setOpen((cur) => !cur);
   };
-
+  console.log(aaNames,"fetched aa");
   const handleSubmit = async (e) => {
     e.preventDefault(); // 
 
