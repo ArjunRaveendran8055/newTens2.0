@@ -10,7 +10,7 @@ function PrivateRoute(props) {
     <>
     
     {value && props.comp}
-    {!value && <AccessDenied></AccessDenied>}
+    {!value && <AccessDenied/>}
     </>
   )
 }

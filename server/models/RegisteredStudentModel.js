@@ -134,8 +134,23 @@ const studentSchema = new mongoose.Schema({
     student_status: {
       type: Boolean,
       default: false,
-    },
+    }
   
+},
+{
+  timestamps: true // This adds `createdAt` and `updatedAt` fields
+}
+
+
+);
+
+studentSchema.pre('save', function (next) {
+  for (let key in this._doc) {
+    if (typeof this._doc[key] === 'string') {
+      this._doc[key] = this._doc[key].toLowerCase();
+    }
+  }
+  next();
 });
 
 

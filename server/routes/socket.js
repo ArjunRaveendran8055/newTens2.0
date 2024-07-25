@@ -20,9 +20,20 @@ const setupSocket = (server) => {
     socket.on("fetchstudents", async (data) => {
       console.log("receiving fetchStudent request...");
       try {
-        const students = await RegisteredStudentModel.find({
-          student_status: false,
-        });
+        const pipeLine=[
+          {
+            $match:{
+              student_status:false
+            }
+          },
+          {
+            $sort:{
+              createdAt:-1
+            }
+          }
+
+        ]
+        const students = await RegisteredStudentModel.aggregate(pipeLine)
         // console.log(students)
         if (students.length === 0) {
           return io.emit("no_pending_students", {

@@ -10,6 +10,24 @@ const getAllCentresController = asyncWrapper(async (req, res) => {
   res.status(200).json({ result, success: true });
 });
 
+//get centre tag of all the available centres
+const getCentreTagsController=asyncWrapper(
+  async(req,res,next)=>{
+    
+    const pipeLine=[
+      {
+        $project:{
+          _id:0,
+          "tag":"$tag",
+          "centre":"$centrename"
+        }
+      }
+    ]
+    const result=await CentreModel.aggregate(pipeLine)
+    res.status(200).json({data:result})
+  }
+)
+
 const createCentreController = asyncWrapper(async (req,res)=>{
   console.log(req.body);
   const {
@@ -32,8 +50,6 @@ const createCentreController = asyncWrapper(async (req,res)=>{
   res.status(201).json(savedCentre);
   
 })
-
-
 
 const deleteCentreController = asyncWrapper(async (req,res)=>{
   const centre = await CentreModel.findByIdAndDelete(req.params.id);
@@ -217,5 +233,6 @@ module.exports = {
   addBatchController,
   getBatchController,
   addAAcontroller,
-  getAAcontroller
+  getAAcontroller,
+  getCentreTagsController
 };

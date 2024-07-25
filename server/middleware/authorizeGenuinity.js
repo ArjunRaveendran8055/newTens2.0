@@ -10,7 +10,7 @@ const authorizeGenuinity = asyncWrapper(async (req, res, next) => {
   const token = cookie.split("=")[1];
   const user = jwtVerifyToken(token);
   if (!user) {
-    throw new AppError(401, "Please Login and Try Again");
+    throw new AppError(401, "Access Denied");
   }
   next();
 });
