@@ -54,6 +54,7 @@ function DisplayBatches() {
   const [aaNames, setAaNames] = useState(null);
   const [mentroNames, setMentorNames] = useState([]);
   const [selectedMentor, setSelectedMentor] = useState(null);
+  const [selectedBatch, setSelectedBatch] = useState(null);
 
   // selection change for AA selection
   const handleSelectionChange = (event, newValue) => {
@@ -68,11 +69,25 @@ function DisplayBatches() {
     setSelectedMentor(mentor || null);
   };
 
-  const handleUpdateClick = () => {
-    if (selectedMentor) {
-      console.log('Selected Mentor:', selectedMentor);
-    } else {
-      console.log('No mentor selected.');
+  const handleUpdateClick = async(batchname) => {
+    // if (selectedMentor) {
+    //   console.log('Selected Mentor:', selectedMentor);
+    // } else {
+    //   console.log('No mentor selected.');
+    // }
+    try {
+      console.log(batchname);
+      const response = await axios.post('/centre/updateMentor', {
+        id,
+        class: className2,
+        stream,
+        batch:batchname,
+        selectedMentor,
+      });
+
+      console.log('Response:', response.data);
+    } catch (error) {
+      console.error('Error updating mentor:', error);
     }
   };
 
@@ -124,6 +139,7 @@ function DisplayBatches() {
         id,
         className2,
         stream,
+        batch,
         aaNames,
       });
       console.log('Update successful:', response.data);
@@ -337,7 +353,9 @@ function DisplayBatches() {
                 </div>
               </td>
               <td>
-                <Button  onClick={handleUpdateClick} className="button">Update</Button>
+              <Button onClick={() => {// Set the selected batch
+                handleUpdateClick(batch.name); // Call the update function
+              }} className="button">Update</Button>
               </td>
             </tr>
           ))}

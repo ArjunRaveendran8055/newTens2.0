@@ -222,6 +222,57 @@ const getAAcontroller = asyncWrapper(async (req, res) => {
   }
 })
 
+const updateMentorController = asyncWrapper(async (req, res) => {
+  const { id, class: className2, stream, batch, selectedMentor } = req.body;
+  try {
+    // Find the document by ID
+    const centre = await CentreModel.findById(id);
+
+    if (!centre) {
+      return res.status(404).json({ message: 'Centre not found' });
+    }
+
+    // Find the class object matching the class and stream
+    const classObj = centre.classes.find(c => c.class === className2 && c.stream === stream);
+
+    if (!classObj) {
+      return res.status(404).json({ message: 'Class not found' });
+    }
+    console.log(classObj);
+
+    // Find the batch object to update
+    const batchObj = await classObj.batches.find(b => b.name === batch);
+
+    if (!batchObj) {
+      return res.status(404).json({ message: 'Batch not found' });
+    }
+
+    // Check if mentor is already added to the batch
+    const mentorExists = batchObj.mentors && batchObj.mentors.some(m => m.id === selectedMentor.id);
+
+    console.log(selectedMentor);
+
+    if (!mentorExists) {
+      // Initialize mentors array if it does not exist
+      if (!batchObj.mentors) {
+        batchObj.mentors = [];
+      }
+
+      // Add the mentor to the batch
+      batchObj.mentors.push(selectedMentor);
+    }
+
+    centre.markModified('classes');
+    // Save the updated document
+    await centre.save();
+
+    res.status(200).json({ message: 'Mentor added successfully', centre });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+})
+
 
 module.exports = {
   getAllCentresController,
@@ -234,5 +285,6 @@ module.exports = {
   getBatchController,
   addAAcontroller,
   getAAcontroller,
-  getCentreTagsController
+  getCentreTagsController,
+  updateMentorController
 };
