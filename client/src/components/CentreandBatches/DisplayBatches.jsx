@@ -45,6 +45,16 @@ function DisplayBatches() {
   // to import batches from db
   const [batches, setBatches] = useState([]);
 
+  // state to update AA to collection
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const handleSelectionChange = (event, value) => {
+    const selectedUsers = value.map(user => ({
+      id: user.id,
+      name: user.name
+    }));
+    setSelectedUsers(selectedUsers);
+  };
+
   const fetchUsers = async () => {
     try {
       const response = await axios.get('/user/getAllAA');
@@ -56,6 +66,7 @@ function DisplayBatches() {
       setLoading(false);
     }
   };
+
 
   const fetchBatches = async () => {
     try {
@@ -72,13 +83,26 @@ function DisplayBatches() {
     }
   };
 
+  const handleUpdate = async () => {
+    try {
+      const response = await axios.post('/centre/addAAtoClass', {
+        id,
+        className2,
+        stream,
+        selectedUsers,
+      });
+      console.log('Update successful:', response.data);
+    } catch (error) {
+      console.error('Update failed:', error);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
     fetchBatches();
     if (isFormSubmitted) {
       setIsFormSubmitted(false);
     }
-    console.log("hii");
   }, [isFormSubmitted]);
  
 
@@ -111,35 +135,36 @@ function DisplayBatches() {
         <thead className="bg-gray-100 dark:bg-gray-800">
           <tr className='px-4 py-3 text-left font-bold text-black dark:text-gray-100 flex justify-center'><p>Choose Academic Associate</p></tr>
           <tr className='flex justify-center items-center'>
-            <th className="px-4 py-3 text-left font-bold text-black dark:text-gray-300"></th>
-            <th className="px-4 py-3 text-left font-bold text-black dark:text-gray-300">
-              <Autocomplete
-                multiple
-                id="checkboxes-tags-demo"
-                options={users}
-                disableCloseOnSelect
-                getOptionLabel={(option) => option.name}
-                renderOption={(props, option, { selected }) => (
-                  <li {...props}>
-                    <Checkbox
-                      icon={icon}
-                      checkedIcon={checkedIcon}
-                      style={{ marginRight: 8 }}
-                      checked={selected}
-                    />
-                    {option.name}
-                  </li>
-                )}
-                style={{ width: 300 }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Select" placeholder="Add More" />
-                )}
+      <th className="px-4 py-3 text-left font-bold text-black dark:text-gray-300"></th>
+      <th className="px-4 py-3 text-left font-bold text-black dark:text-gray-300">
+        <Autocomplete
+          multiple
+          id="checkboxes-tags-demo"
+          options={users}
+          disableCloseOnSelect
+          getOptionLabel={(option) => option.name}
+          onChange={handleSelectionChange}
+          renderOption={(props, option, { selected }) => (
+            <li {...props}>
+              <Checkbox
+                icon={icon}
+                checkedIcon={checkedIcon}
+                style={{ marginRight: 8 }}
+                checked={selected}
               />
-            </th>
-            <th>
-              <Button>Update</Button>
-            </th>
-          </tr>
+              {option.name}
+            </li>
+          )}
+          style={{ width: 300 }}
+          renderInput={(params) => (
+            <TextField {...params} label="Select" placeholder="Add More" />
+          )}
+        />
+      </th>
+      <th>
+        <Button onClick={handleUpdate}>Update</Button>
+      </th>
+    </tr>
         </thead>
       </table>
 

@@ -164,6 +164,26 @@ const getBatchController = asyncWrapper(async (req, res) => {
   }
 })
 
+const addAAcontroller = asyncWrapper(async (req, res) => {
+  const { id, className2, stream, selectedUsers } = req.body;
+
+  const updateKey = 'classes.$.AANames';
+  const updateObject = {};
+  updateObject[updateKey] = selectedUsers;
+
+  const result = await CentreModel.updateOne(
+    { _id: id, 'classes.class': className2, 'classes.stream': stream },
+    { $set: updateObject }
+  );
+
+  if (result.nModified === 0) {
+    return res.status(404).send('Class not found or no changes made.');
+  }
+
+  res.send('Update successful.');
+
+})
+
 
 module.exports = {
   getAllCentresController,
@@ -173,5 +193,6 @@ module.exports = {
   getAllClassController,
   deleteClassController,
   addBatchController,
-  getBatchController
+  getBatchController,
+  addAAcontroller
 };
