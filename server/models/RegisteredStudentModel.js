@@ -144,6 +144,15 @@ const studentSchema = new mongoose.Schema({
 
 );
 
+studentSchema.pre('save', function (next) {
+  for (let key in this._doc) {
+    if (typeof this._doc[key] === 'string') {
+      this._doc[key] = this._doc[key].toLowerCase();
+    }
+  }
+  next();
+});
+
 
 const RegisteredStudentModel=mongoose.model("registeredstudents",studentSchema)
 

@@ -22,12 +22,12 @@ function SubmitSuccess() {
         </h1>
         <p className="mt-4 text-muted-foreground">Your form has been submitted. Here's your response code:</p>
         <div className="mt-4 flex items-center justify-center rounded-md bg-muted px-4 py-2 text-2xl font-medium text-foreground">
-          <span>{resid}</span>
+          <span className="uppercase">{resid}</span>
           <button
             className="ml-2 rounded-md border border-muted-foreground/20 p-1 hover:bg-muted-foreground/10"
             onClick={() => {
               navigator.clipboard.writeText(resid);
-              alert("Copied response code to clipboard!");
+              // alert("Copied response code to clipboard!");
             }}
           >
             <CopyIcon className="h-5 w-5" />
