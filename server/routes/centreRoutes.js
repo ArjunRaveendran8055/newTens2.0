@@ -1,21 +1,38 @@
-const { getAllCentresController, createCentreController, deleteCentreController,createClassController,getAllClassController,deleteClassController,addBatchController,getBatchController,addAAcontroller} = require("../controllers/centreController")
-const { authorizeGenuinity } = require("../middleware/authorizeGenuinity")
+const {
+  getAllCentresController,
+  createCentreController,
+  deleteCentreController,
+  createClassController,
+  getAllClassController,
+  deleteClassController,
+  addBatchController,
+  getBatchController,
+  getCentreTagsController,
+} = require("../controllers/centreController");
+const { authorizeGenuinity } = require("../middleware/authorizeGenuinity");
 
-const centreRouter=require("express").Router()
+const centreRouter = require("express").Router();
 
- centreRouter.get("/getAllCentres",authorizeGenuinity,getAllCentresController)
- centreRouter.post("/createCentre",authorizeGenuinity, createCentreController)
- centreRouter.delete("/deleteCentre/:id",authorizeGenuinity,deleteCentreController)
- centreRouter.put("/addClass/:id",authorizeGenuinity,createClassController)
+centreRouter.get("/getAllCentres", authorizeGenuinity, getAllCentresController);
+centreRouter.post("/createCentre", authorizeGenuinity, createCentreController);
+centreRouter.delete(
+  "/deleteCentre/:id",
+  authorizeGenuinity,
+  deleteCentreController
+);
+centreRouter.get("/getCentreTags", getCentreTagsController);
 
- centreRouter.get("/getAllClass/:id",authorizeGenuinity,getAllClassController)
- centreRouter.delete("/deleteCentreClass/:id",authorizeGenuinity,deleteClassController)
+centreRouter.put("/addClass/:id", authorizeGenuinity, createClassController);
+centreRouter.get("/getAllClass/:id", authorizeGenuinity, getAllClassController);
+centreRouter.delete(
+  "/deleteCentreClass/:id",
+  authorizeGenuinity,
+  deleteClassController
+);
 
- centreRouter.post("/addBatch", addBatchController)
- centreRouter.post("/getBatch", getBatchController)
- centreRouter.post('/addAAtoClass', addAAcontroller)
+centreRouter.post("/addBatch", authorizeGenuinity, addBatchController);
+centreRouter.post("/getBatch", authorizeGenuinity, getBatchController);
 
-
- module.exports={
-    centreRouter
- }
+module.exports = {
+  centreRouter,
+};
