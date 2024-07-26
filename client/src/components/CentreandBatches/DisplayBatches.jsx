@@ -33,28 +33,29 @@ function DisplayBatches() {
   const stream = queryParams.get('stream');
   const id = location.pathname.split('/').pop();
 
+  // state to store the details of AA and Mentors intialy
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-
-  const [className2, setClassName] = useState(className); // Replace with actual className if needed
+  const [className2, setClassName] = useState(className);
   const [batch, setBatch] = useState('');
   const [isChanged, setIsChanged] = useState(false);
-
   // to import batches from db
   const [batches, setBatches] = useState([]);
-
+    //  state used to store class details as object and send through body to server
   const [classInfo, setClassInfo] = useState({
     id: id,
     class: className2,
     stream: stream
   });
+  // store updated AA names 
   const [aaNames, setAaNames] = useState(null);
+  // store All fetched mentor names from DB
   const [mentroNames, setMentorNames] = useState([]);
   const [selectedMentor, setSelectedMentor] = useState(null);
-  const [selectedBatch, setSelectedBatch] = useState(null);
+
 
   // selection change for AA selection
   const handleSelectionChange = (event, newValue) => {
@@ -74,12 +75,8 @@ function DisplayBatches() {
     }
   };
 
+  // Handle update function for mentor update section
   const handleUpdateClick = async (batchname) => {
-    // if (selectedMentor) {
-    //   console.log('Selected Mentor:', selectedMentor);
-    // } else {
-    //   console.log('No mentor selected.');
-    // }
     try {
       console.log(batchname);
       const response = await axios.post('/centre/updateMentor', {
@@ -96,6 +93,7 @@ function DisplayBatches() {
     }
   };
 
+  // Fetch corresponing AA asociated with the class
   const fetchAANames = async () => {
     try {
       const response = await axios.post('/centre/getAAtoClass', classInfo);
@@ -108,7 +106,7 @@ function DisplayBatches() {
   };
 
 
-
+// fetch all AA users and Mentor users
   const fetchUsers = async () => {
     try {
       const response = await axios.get('/user/getAllAA');
@@ -122,7 +120,7 @@ function DisplayBatches() {
     }
   };
 
-
+  // Fetch all Batches Associated with this class
   const fetchBatches = async () => {
     try {
       const response = await axios.post('/centre/getBatch', {
@@ -138,6 +136,7 @@ function DisplayBatches() {
     }
   };
 
+  // update AA to db
   const handleUpdate = async () => {
     try {
       const response = await axios.post('/centre/addAAtoClass', {
@@ -169,6 +168,7 @@ function DisplayBatches() {
     setOpen((cur) => !cur);
   };
 
+  // ADD batch to associated class
   const handleSubmit = async (e) => {
     e.preventDefault(); // 
 
