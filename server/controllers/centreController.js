@@ -182,23 +182,38 @@ const getBatchController = asyncWrapper(async (req, res) => {
 
 const addAAcontroller = asyncWrapper(async (req, res) => {
   const { id, className2, stream, aaNames } = req.body;
+  console.log(req.body);
 
-  const updateKey = 'classes.$.AANames';
-  const updateObject = {};
-  updateObject[updateKey] = aaNames;
+  try {
+    // Find the document by ID
+    const centre = await CentreModel.findById(id);
 
-  const result = await CentreModel.updateOne(
-    { _id: id, 'classes.class': className2, 'classes.stream': stream },
-    { $set: updateObject }
-  );
+    if (!centre) {
+      return res.status(404).json({ message: 'Centre not found' });
+    }
 
-  if (result.nModified === 0) {
-    return res.status(404).send('Class not found or no changes made.');
+    // Find the class object matching the class and stream
+    const classObj = centre.classes.find(c => c.class === className2 && c.stream === stream);
+
+    if (!classObj) {
+      return res.status(404).json({ message: 'Class not found' });
+    }
+
+    // Update the AANames
+    classObj.AANames = aaNames;
+
+    // Mark the classes array as modified
+    centre.markModified('classes');
+
+    // Save the updated document
+    await centre.save();
+
+    res.send('Update successful.');
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
-
-  res.send('Update successful.');
-
-})
+});
 
 const getAAcontroller = asyncWrapper(async (req, res) => {
   const { id, class: className, stream } = req.body;
@@ -238,31 +253,20 @@ const updateMentorController = asyncWrapper(async (req, res) => {
     if (!classObj) {
       return res.status(404).json({ message: 'Class not found' });
     }
-    console.log(classObj);
 
     // Find the batch object to update
-    const batchObj = await classObj.batches.find(b => b.name === batch);
+    const batchObj = classObj.batches.find(b => b.name === batch);
 
     if (!batchObj) {
       return res.status(404).json({ message: 'Batch not found' });
     }
 
-    // Check if mentor is already added to the batch
-    const mentorExists = batchObj.mentors && batchObj.mentors.some(m => m.id === selectedMentor.id);
+    // Initialize mentors array if it does not exist or replace existing mentor with the new one
+    batchObj.mentors = [selectedMentor];
 
-    console.log(selectedMentor);
-
-    if (!mentorExists) {
-      // Initialize mentors array if it does not exist
-      if (!batchObj.mentors) {
-        batchObj.mentors = [];
-      }
-
-      // Add the mentor to the batch
-      batchObj.mentors.push(selectedMentor);
-    }
-
+    // Mark classes as modified
     centre.markModified('classes');
+    
     // Save the updated document
     await centre.save();
 
@@ -271,7 +275,7 @@ const updateMentorController = asyncWrapper(async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
-})
+});
 
 
 module.exports = {
