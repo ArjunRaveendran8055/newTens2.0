@@ -193,8 +193,8 @@ function DisplayBatches() {
     <div className="flex flex-col items-center gap-10 justify-center my-8">
       <table className="w-full max-w-3xl border-collapse border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-lg dark:shadow-gray-800">
         <thead className="bg-gray-100 dark:bg-gray-800">
-          <tr className='px-4 py-3 text-left font-bold text-black dark:text-gray-100 flex justify-center'><p>Choose Academic Associate</p></tr>
-          <tr className='flex justify-center items-center'>
+          <tr className='px-4 py-3 text-left font-bold text-black dark:text-gray-100 flex justify-center'><td>Choose Academic Associate</td></tr>
+          <tr className="flex flex-col md:flex-row justify-center items-center">
             <th className="px-4 py-3 text-left font-bold text-black dark:text-gray-300"></th>
             <th className="px-4 py-3 text-left font-bold text-black dark:text-gray-300">
 
@@ -319,7 +319,7 @@ function DisplayBatches() {
         </Card>
       </Dialog>
 
-      <table className="w-full max-w-3xl border-collapse border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-lg dark:shadow-gray-800">
+      <table className="w-full lg:max-w-3xl md:max-w-sm border-collapse border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-lg dark:shadow-gray-800">
         <thead className="bg-gray-100 dark:bg-gray-800">
           <tr>
             <th className="px-4 py-3 text-left font-bold text-black dark:text-gray-300">Class</th>
