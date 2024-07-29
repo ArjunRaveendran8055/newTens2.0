@@ -53,7 +53,7 @@ function App() {
           <Route path="/pendingusers" element={<PendingUsers />} />
           <Route path="/classes" element={<DisplayClasses />} />
           {/* <Route path="/accessdenied" element={<AccessDenied/>} /> */}
-          <Route path="/studentdetails/:id" element={<StudentDetailsPage/>}/>
+          <Route path="/search/studentdetails/:id" element={<StudentDetailsPage/>}/>
           <Route path="/classhome/:id" element={<ClassHome/>}/>
           <Route path="/classreport/:id" element={<ClassReport/>}/>
           <Route path="/allcentres" element={<AllCentres/>} />

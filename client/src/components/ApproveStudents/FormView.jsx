@@ -8,7 +8,6 @@ import allSyllabus from "./syllabus.json";
 import { useNavigate } from "react-router-dom";
 
 const FormView = () => {
-
   const navigate = useNavigate();
 
   const [imageUrl, setImageUrl] = useState(addImg);
@@ -19,19 +18,17 @@ const FormView = () => {
 
   const [errors, setErrors] = useState({});
 
+  const requiredKeys = ["idd", "name", "class", "school"];
 
-  const requiredKeys = ['idd', 'name', 'class', 'school'];
-
-  const  standardizeObjects = (arr, keys, defaultValue = null) => {
-    return arr.map(obj => {
-        const standardizedObj = {};
-        keys.forEach(key => {
-            standardizedObj[key] = obj[key] !== undefined ? obj[key] : defaultValue;
-        });
-        return standardizedObj;
+  const standardizeObjects = (arr, keys, defaultValue = null) => {
+    return arr.map((obj) => {
+      const standardizedObj = {};
+      keys.forEach((key) => {
+        standardizedObj[key] = obj[key] !== undefined ? obj[key] : defaultValue;
+      });
+      return standardizedObj;
     });
-}
-
+  };
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -59,35 +56,8 @@ const FormView = () => {
     }
   };
 
-  const [siblingsList, setsiblingsList] = useState([]);
-
-  const sibHandle = (name, i, val) => {
-    const newItem = { idd: i, [name]: val };
-
-    const index = siblingsList.findIndex((item) => item.idd === i);
-
-    let updatedList = [...siblingsList];
-
-    if (index !== -1) {
-      updatedList[index] = { ...updatedList[index], [name]: val };
-    } else {
-      updatedList.push(newItem);
-    }
-
-    let finalList = standardizeObjects([...updatedList], requiredKeys);
-
-    console.log(finalList)
-
-    setFormData({
-      ...formData,
-      siblings: finalList,
-    });
-
-    setsiblingsList(finalList);
-  };
 
   const [syllabus, setSyllabus] = useState("");
-
 
   const [statesIn, setStatesIn] = useState("");
 
@@ -98,13 +68,13 @@ const FormView = () => {
     pinCode: "",
     dob: "",
     email: "",
-    class: "",
     syllabus: "",
-    level:"",
+    level: "",
+    class: "",
+    country: "",
     school: "",
     schoolLocation: "",
     medium: "",
-    country: "",
     state: "",
     district: "",
     fatherName: "",
@@ -116,15 +86,10 @@ const FormView = () => {
     motherNumber: "",
     whatsappNumber: "",
     centre: "",
-    academicStatus: "",
-    hearAbout: "",
-    difficultSubjects: [],
-    siblings: [],
   });
 
   const validateForm = () => {
     const newErrors = {};
-    
     if (!photo) newErrors.photo = "photo is required";
     if (!formData.fullName) newErrors.fullName = "Full name is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
@@ -184,13 +149,10 @@ const FormView = () => {
       newErrors.hearAbout = "Please specify how you heard about us";
 
     setErrors(newErrors);
-
     return newErrors;
   };
 
   const [schools, setSchools] = useState([]);
-
-  const [siblingsCount, setSiblingsCount] = useState("0");
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -212,14 +174,12 @@ const FormView = () => {
         setSchools([]);
       }
     };
-
     fetchSchool(selectedSchool);
   }, [formData.syllabus, selectedSchool]);
 
   useEffect(() => {
-    console.log(formData)
+    console.log(formData);
     formDataLast.append("data", JSON.stringify(formData));
-
     formDataLast.append("image", photo);
   }, [formData, photo]);
 
@@ -247,12 +207,11 @@ const FormView = () => {
         .post("/registration/submitStudent", formDataLast)
         .then((response) => {
           console.log("submitted successfully:", response.data);
-          console.log(response.data.data,"aiii")
-          navigate(`/SubmitSuccess/${response.data.data.responseId}`)
-
+          console.log(response.data.data, "aiii");
+          navigate(`/SubmitSuccess/${response.data.data.responseId}`);
         })
         .catch((error) => {
-          console.error("Error submitting form data:", error);
+          console.error("Error submitting form data:", error.message);
         });
     }
   };
@@ -261,7 +220,7 @@ const FormView = () => {
     console.log(schoolName);
 
     setSelectedSchool(schoolName.toLowerCase());
-    setIsOpen(true); // Close the school list after selection
+    setIsOpen(false); // Close the school list after selection
     // Set the selected school in the input field
 
     setFormData({
@@ -270,23 +229,7 @@ const FormView = () => {
     });
   };
 
-  const handleCheckboxChange = (e) => {
-    const { value } = e.target;
-    const isChecked = formData.difficultSubjects.includes(value);
 
-    let updatedSubjects = [...formData.difficultSubjects];
-    if (isChecked) {
-      updatedSubjects = updatedSubjects.filter((subject) => subject !== value);
-    } else {
-      updatedSubjects.push(value);
-    }
-
-    console.log(updatedSubjects);
-    setFormData({
-      ...formData,
-      difficultSubjects: updatedSubjects,
-    });
-  };
 
   const handleSchoolChange2 = (schoolName) => {
     console.log(schoolName);
@@ -298,7 +241,7 @@ const FormView = () => {
       school: schoolName.toLowerCase(),
     });
 
-    setIsOpen(false); // Close the school list after selection
+    setIsOpen(true); // Close the school list after selection
     // Set the selected school in the input field
   };
 
@@ -331,51 +274,40 @@ const FormView = () => {
   const [classList, setClassList] = useState([]);
 
   const fetchLevel = (syll) => {
-
-    console.log(syll)
+    console.log(syll);
     let datas = allSyllabus.find((data) => data.syllabus == syll);
 
-    console.log(datas)
+    console.log(datas);
 
-    if(datas)
-    setLevels(datas.levels);
-    
+    if (datas) setLevels(datas.levels);
   };
 
-  
-
   const fetchClassList = (cls) => {
-
-    console.log(cls)
+    console.log(cls);
     let datas = levels.find((data) => data.level == cls);
 
-    console.log(datas.classes)
+    console.log(datas.classes);
 
-    if(datas)
-    setClassList(datas.classes);
-    
+    if (datas) setClassList(datas.classes);
   };
 
   useEffect(() => {
     fetchLevel(formData.syllabus);
-    if(formData.level){
-      fetchClassList(formData.level)
+    if (formData.level) {
+      fetchClassList(formData.level);
     }
-   
-  }, [formData.syllabus,formData.level]);
+  }, [formData.syllabus, formData.level]);
 
 
-
+  console.log("schools are",schools)
 
   return (
     <>
-      <div className="max-w-4xl mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
+      <div className="max-w-4xl mx-auto  p-4 bg-white rounded-lg shadow-lg">
         <form className="mt-6 space-y-4">
-            <div className="w-52 p-2 mx-auto  rounded ">
-          <label htmlFor="imageUpload">
-
-
-              <div className="avatar-upload">
+          <div className="w-52 p-2 mx-auto  rounded ">
+            <label htmlFor="imageUpload">
+              <div className="avatar-upload relative">
                 <div className="avatar-edit">
                   <input
                     type="file"
@@ -399,14 +331,14 @@ const FormView = () => {
                   ></div>
                 </div>
               </div>
+            </label>
+          </div>
 
-
-          </label>
-            </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="full-name">Full Name</label>
+          <div className="flex w-full">
+            <label className="flex w-full" htmlFor="full-name">
+              Full Name
+            </label>
+            <div className="flex flex-col w-full">
               <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="full-name"
@@ -422,32 +354,30 @@ const FormView = () => {
                 </span>
               )}
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="gender">Gender</label>
-
-              <div className="w-50">
-                <Select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={(e) =>
-                    handleInputChange({ target: { name: "gender", value: e } })
-                  }
-                >
-                  <Option value="male">Male</Option>
-                  <Option value="female">Female</Option>
-                </Select>
-              </div>
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Gender
+            </label>
+            <div className="flex flex-col w-full">
+              <Select
+              className="border-gray-200 border-[1px]"
+                name="gender"
+                value={formData.gender}
+                onChange={(e) =>
+                  handleInputChange({ target: { name: "gender", value: e } })
+                }
+              >
+                <Option value="male">Male</Option>
+                <Option value="female">Female</Option>
+              </Select>
               {errors.gender && (
                 <span className="text-sm  text-red-500">
                   {" * " + errors.gender}
                 </span>
               )}
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div></div>
           </div>
 
           <div>
@@ -467,9 +397,11 @@ const FormView = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="">
-              <label htmlFor="pin-code">Pin Code</label>
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              PinCode
+            </label>
+            <div className="flex flex-col w-full">
               <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="pin-code"
@@ -484,9 +416,13 @@ const FormView = () => {
                 </span>
               )}
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="dob">Date Of Birth</label>
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Date of Birth
+            </label>
+            <div className="flex flex-col w-full">
               <input
                 type="date"
                 placeholder="Date Of Birth"
@@ -502,39 +438,38 @@ const FormView = () => {
                 </span>
               )}
             </div>
-
-            <div></div>
           </div>
 
-          <div>
-            <label htmlFor="email">Email</label>
-            <input
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              id="email"
-              placeholder="Enter your email"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-            {errors.email && (
-              <span className="text-sm  text-red-500">
-                {" * " + errors.email}
-              </span>
-            )}
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Email
+            </label>
+            <div className="flex flex-col w-full">
+              <input
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                id="email"
+                placeholder="Enter your email"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+              />
+              {errors.email && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.email}
+                </span>
+              )}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            
-
-            <div>
-
-            
-
-              <label htmlFor="syllabus">Syllabus</label>
-              <div className="w-50">
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Syllabus
+            </label>
+            <div className="flex flex-col w-full">
+              <div className="w-full">
                 <Select
+                className="border-gray-200 border-[1px]"
                   name="syllabus"
                   onChange={(e) => {
                     setSyllabus(e);
@@ -553,116 +488,106 @@ const FormView = () => {
                 </span>
               )}
             </div>
-
-            <div>
-              <label htmlFor="class">Level Of Education</label>
-              <div className="w-50">
-                <Select name="level" 
-                disabled={!formData.syllabus}
-                  onChange={(e) =>
-                    handleInputChange({ target: { name: "level", value: e } })
-                  } >
-                 
-                  {/*  value={formData.class}  onChange={(e)=>handleInputChange({target:{name:"class",value:e}})} */}
-                  {levels?.map((data,i)=>(<Option key={i} value={data.level}>
-                      {data.txt}
-                    </Option>))}
-                  
-                </Select>
-              </div>
-              {/* {errors.class && <span className="text-sm  text-red-500">{" * "+ errors.class}</span>} */}
-            </div>
-
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Level of Education
+            </label>
+            <div className="flex flex-col w-full">
+              <div className="w-full">
+                <Select
+                className="border-gray-200 border-[1px]"
+                  name="level"
+                  disabled={!formData.syllabus}
+                  onChange={(e) =>
+                    handleInputChange({ target: { name: "level", value: e } })
+                  }
+                >
+                  {/*  value={formData.class}  onChange={(e)=>handleInputChange({target:{name:"class",value:e}})} */}
+                  {levels?.map((data, i) => (
+                    <Option key={i} value={data.level}>
+                      {data.txt}
+                    </Option>
+                  ))}
+                </Select>
+                {errors.class && (
+                  <span className="text-sm  text-red-500">
+                    {" * " + errors.class}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
 
-              
-            <div>
-              <label htmlFor="class">Class</label>
-              <div className="w-50">
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Class
+            </label>
+            <div className="flex flex-col w-full">
+              <div className="w-full">
                 <Select
                   name="class"
                   disabled={!formData.level}
                   onChange={(e) =>
-                    handleInputChange({ target: { name: "class", value: parseInt(e) } })
+                    handleInputChange({
+                      target: { name: "class", value: parseInt(e) },
+                    })
                   }
                 >
-                  {classList?.map((data,i)=>(<Option key={i} value={data.cls+''}>
+                  {classList?.map((data, i) => (
+                    <Option key={i} value={data.cls + ""}>
                       {data.txt}
-                    </Option>))}
+                    </Option>
+                  ))}
                 </Select>
-              </div>
-              {errors.class && (
-                <span className="text-sm  text-red-500">
-                  {" * " + errors.class}
-                </span>
-              )}
-            </div>
-
-
-
-          
-
-
-          </div>
-
-
-
-              
-                
-          
-          <div className="">
-
-              
-
-            <div className="">
-              
-             
-              <div className="my-4">
-
-              
-            <div className="space-y-2 ">
-            <div className="border-2 p-4 gap border-blue-gray-200 rounded-md">
-              <label className="block text-lg font-medium text-gray-700">
-              Are you currently studying in India or abroad?
-              </label>
-              <div className=" p-3 pl-3 grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 ">
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="country"
-                    value="india"
-                  />
-                  <span className="ml-2 text-gray-900">
-                  India
+                {errors.class && (
+                  <span className="text-sm  text-red-500">
+                    {" * " + errors.class}
                   </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="country"
-                    value="Abroad"
-                  />
-                  <span className="ml-2  text-gray-900">Abroad</span>
-                </label>
-                
-               
-               
+                )}
               </div>
             </div>
-            {errors.country && (
-              <span className="text-sm text-red-500">
-                {" * " + errors.country}
-              </span>
-            )}
           </div>
-          </div>
+
+          <div className="">
+            <div className="">
+              <div className="my-4">
+                <div className="space-y-2 ">
+                  <div className=" flex rounded-md">
+                    <label className="block text-lg w-full font-medium text-gray-700">
+                      Studying in India or abroad?
+                    </label>
+                    <div className=" flex gap-3 w-full">
+                      <label className="flex items-center">
+                        <input
+                          onChange={handleInputChange}
+                          type="radio"
+                          className="form-radio h-4 w-4 text-blue-600"
+                          name="country"
+                          value="india"
+                        />
+                        <span className="ml-2 text-gray-900">India</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          onChange={handleInputChange}
+                          type="radio"
+                          className="form-radio h-4 w-4 text-blue-600"
+                          name="country"
+                          value="Abroad"
+                        />
+                        <span className="ml-2  text-gray-900">Abroad</span>
+                      </label>
+                    </div>
+                  </div>
+                  {errors.country && (
+                    <span className="text-sm text-red-500">
+                      {" * " + errors.country}
+                    </span>
+                  )}
+                </div>
+              </div>
 
               <div className="  rounded  relative">
                 <div className="mb-4">
@@ -726,28 +651,37 @@ const FormView = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="school-location">School Location</label>
-              <input
-                name="schoolLocation"
-                className="flex uppercase h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                id="school-location"
-                placeholder="School location"
-                value={formData.schoolLocation}
-                onChange={handleInputChange}
-              />
-              {errors.schoolLocation && (
-                <span className="text-sm  text-red-500">
-                  {" * " + errors.schoolLocation}
-                </span>
-              )}
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              School Location
+            </label>
+            <div className="flex flex-col w-full">
+              <div className="w-full">
+                <input
+                  name="schoolLocation"
+                  className="flex uppercase h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  id="school-location"
+                  placeholder="School location"
+                  value={formData.schoolLocation}
+                  onChange={handleInputChange}
+                />
+                {errors.schoolLocation && (
+                  <span className="text-sm  text-red-500">
+                    {" * " + errors.schoolLocation}
+                  </span>
+                )}
+              </div>
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="medium">Medium</label>
-              <div className="w-50 uppercase">
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Medium
+            </label>
+            <div className="flex flex-col w-full">
+              <div className="w-full">
                 <Select
+                className="border-gray-200 border-[1px]"
                   value={formData.medium}
                   name="medium"
                   onChange={(e) =>
@@ -757,23 +691,23 @@ const FormView = () => {
                   <Option value="english">English</Option>
                   <Option value="malayalam">Malayalam</Option>
                 </Select>
+                {errors.medium && (
+                  <span className="text-sm  text-red-500">
+                    {" * " + errors.medium}
+                  </span>
+                )}
               </div>
-              {errors.medium && (
-                <span className="text-sm  text-red-500">
-                  {" * " + errors.medium}
-                </span>
-              )}
             </div>
           </div>
-          
 
-        
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="state">State</label>
-              <div className="w-50">
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              State
+            </label>
+            <div className="flex flex-col w-full">
+              <div className="w-full">
                 <Select
+                className="border-gray-200 border-[1px]"
                   name="state"
                   onChange={(e) => {
                     setStatesIn(e);
@@ -787,18 +721,23 @@ const FormView = () => {
                     </Option>
                   ))}
                 </Select>
+                {errors.state && (
+                  <span className="text-sm  text-red-500">
+                    {" * " + errors.state}
+                  </span>
+                )}
               </div>
-              {errors.state && (
-                <span className="text-sm  text-red-500">
-                  {" * " + errors.state}
-                </span>
-              )}
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="district">District</label>
-              <div className="w-50">
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              District
+            </label>
+            <div className="flex flex-col w-full">
+              <div className="w-full">
                 <Select
+                className="border-gray-200 border-[1px]"
                   name="district"
                   onChange={(e) =>
                     handleInputChange({
@@ -814,18 +753,23 @@ const FormView = () => {
                     </Option>
                   ))}
                 </Select>
+                {errors.district && (
+                  <span className="text-sm  text-red-500">
+                    {" * " + errors.district}
+                  </span>
+                )}
               </div>
-              {errors.district && (
-                <span className="text-sm  text-red-500">
-                  {" * " + errors.district}
-                </span>
-              )}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="father-name">Father's Name</label>
-              <input
+
+
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Father's Name
+            </label>
+            <div className="flex flex-col w-full">
+            <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="father-name"
                 placeholder="Father's Name"
@@ -839,8 +783,16 @@ const FormView = () => {
                 </span>
               )}
             </div>
-            <div>
-              <label htmlFor="mother-name">Mother's Name</label>
+          </div>
+
+
+
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Mother's Name
+            </label>
+            <div className="flex flex-col w-full">
               <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="mother-name"
@@ -857,10 +809,15 @@ const FormView = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="father-occupation">Father's Occupation</label>
-              <input
+
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Father's Occupation
+            </label>
+            <div className="flex flex-col w-full">
+            
+            <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="father-occupation"
                 placeholder="Father's Occupation"
@@ -874,9 +831,15 @@ const FormView = () => {
                 </span>
               )}
             </div>
-            <div>
-              <label htmlFor="mother-occupation">Mother's Occupation</label>
-              <input
+          </div>
+
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Mother's Occupation
+            </label>
+            <div className="flex flex-col w-full">
+            <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="mother-occupation"
                 placeholder="Mother's Occupation"
@@ -892,8 +855,13 @@ const FormView = () => {
             </div>
           </div>
 
-          <div>
-            <label htmlFor="roll-number">Roll Number</label>
+
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Roll Number
+            </label>
+            <div className="flex flex-col w-full">
             <input
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="roll-number"
@@ -907,11 +875,18 @@ const FormView = () => {
                 {" * " + errors.rollNumber}
               </span>
             )}
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="father-number">Father's Number</label>
-              <input
+
+
+
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Father's Number
+            </label>
+            <div className="flex flex-col w-full">
+            <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="father-number"
                 placeholder="Father's Number"
@@ -925,9 +900,15 @@ const FormView = () => {
                 </span>
               )}
             </div>
-            <div>
-              <label htmlFor="mother-number">Mother's Number</label>
-              <input
+          </div>
+
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Mother's Number
+            </label>
+            <div className="flex flex-col w-full">
+            <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="mother-number"
                 placeholder="Mother's Number"
@@ -942,10 +923,16 @@ const FormView = () => {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="whatsapp-number">Whatsapp Number</label>
-              <input
+
+
+
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Whatsapp Number
+            </label>
+            <div className="flex flex-col w-full">
+            <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="whatsapp-number"
                 placeholder="Whatsapp Number"
@@ -959,304 +946,34 @@ const FormView = () => {
                 </span>
               )}
             </div>
-            <div>
-              <label htmlFor="centre">Centre</label>
-              <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                id="centre"
-                placeholder="Centre"
-                name="centre"
-                value={formData.centre}
-                onChange={handleInputChange}
-              />
-              {errors.centre && (
+          </div>
+
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              Centre
+            </label>
+            <div className="flex flex-col w-full">
+              <div className="w-full">
+                <Select 
+                  className="border-gray-200 border-[1px]"
+                  name="syllabus"
+                  onChange={(e) => {
+                    setSyllabus(e);
+                    handleInputChange({
+                      target: { name: "syllabus", value: e },
+                    });
+                  }}
+                >
+                  <Option value="state">STATE</Option>
+                  <Option value="cbse">CBSE</Option>
+                </Select>
+              </div>
+              {errors.syllabus && (
                 <span className="text-sm  text-red-500">
-                  {" * " + errors.centre}
+                  {" * " + errors.syllabus}
                 </span>
               )}
-            </div>
-          </div>
-
-          <div className="sibilingparent border-2 p-4 gap border-blue-gray-200 rounded-md">
-            <div className="grid grid-cols-2">
-              <div>
-                <label htmlFor="class">Number of Siblings</label>
-                <div className="w-30">
-                  
-                  <Select
-                    value={siblingsCount}
-                    onChange={(event) => setSiblingsCount(event)}
-                  >
-                    <Option value="0">0</Option>
-                    <Option value="1">1</Option>
-                    <Option value="2">2</Option>
-                    <Option value="3">3</Option>
-                    <Option value="4">4</Option>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {[...Array(parseInt(siblingsCount))].map((value, index) => {
-              return (
-                <div
-                  key={index}
-                  className="siblings border-4 rounded-lg p-4 mt-3 "
-                >
-                  <div className="bottom-2">
-                    <div className="grid grid-cols-2  gap-4">
-                      <div>
-                        <label htmlFor="siblingname">Name</label>
-                        <input
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          id="siblingname"
-                          placeholder="Enter Name of Sibling"
-                          onChange={(e) =>
-                            sibHandle("name", index, e.target.value)
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="siblingage">Class</label>
-                        <input
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          id="siblingclass"
-                          placeholder="enter class"
-                          onChange={(e) =>
-                            sibHandle("class", index, e.target.value)
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1  gap-4">
-                      <div>
-                        <label htmlFor="siblingschool">School</label>
-                        <input
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          id="siblingschool"
-                          placeholder="Enter School Name"
-                          onChange={(e) =>
-                            sibHandle("school", index, e.target.value)
-                          }
-                        />
-                      </div>
-                    </div>
-                    <br />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Academic Status
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="academicStatus"
-                    value="Below Average"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">
-                    Below Average
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="academicStatus"
-                    value="Average"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Average</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="academicStatus"
-                    value="Good"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Good</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="academicStatus"
-                    value="Excellent"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Excellent</span>
-                </label>
-              </div>
-            </div>
-            {errors.academicStatus && (
-              <span className="text-sm text-red-500">
-                {" * " + errors.academicStatus}
-              </span>
-            )}
-          </div>
-
-          <div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                How did you hear about new10s?
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="calling executive"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">
-                    Calling Executive
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="Marketing Executive"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">
-                    Marketing Executive
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="relatives"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Relatives</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="social-media"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">
-                    Social Media
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="friends"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Friends</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="hearAbout"
-                    value="others"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Others</span>
-                </label>
-              </div>
-            </div>
-            {errors.hearAbout && (
-              <span className="text-sm  text-red-500">
-                {" * " + errors.hearAbout}
-              </span>
-            )}
-          </div>
-
-          <div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Difficult Subjects
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <label className="flex items-center">
-                  <input
-                    onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Maths"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Maths</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="English"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">English</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Malayalam"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Malayalam</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Hindi"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Hindi</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Physics"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Physics</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Chemistry"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Chemistry</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onClick={handleCheckboxChange}
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    value="Biology"
-                  />
-                  <span className="ml-2 text-sm text-gray-900">Biology</span>
-                </label>
-              </div>
             </div>
           </div>
 

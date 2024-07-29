@@ -10,7 +10,6 @@ import { CgSandClock } from "react-icons/cg";
 
 const ApproveStudents = () => {
   const { user } = useSelector((state) => state.user);
-
   const dispatch = useDispatch();
   const [emptyList, setEmptyList] = useState(false);
   const [allCentre, setAllCentre] = useState([]);
@@ -187,7 +186,7 @@ const ApproveStudents = () => {
 
   return (
     <div>
-      <div className="sm:hidden lg:flex w-full h-[88vh] pt-3 px-2 gap-2">
+      <div className="sm:hidden lg:flex w-full h-[88vh] pt-3 gap-2">
         <div className="leftcontainer w-[40%] bg-white rounded-lg flex flex-col h-full pt-4  px-2">
           <div className="sortcontainer flex justify-end  items-center mb-2">
             <div className="w-full flex justify-center items-center gap-2">
@@ -264,7 +263,7 @@ const ApproveStudents = () => {
         <div className="previewcontainer w-[60%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">
           <div className="previewtitlecontainer flex h-10 w-full justify-center items-center">
             <span className="text-2xl">
-              <h2 className=" border-black border-b-2 px-2">Preview</h2>
+              <h2 className=" border-gray-300 border-b-2 px-2 font-enriq">PREVIEW</h2>
             </span>
           </div>
           <div className="">

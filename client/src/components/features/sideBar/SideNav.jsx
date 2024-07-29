@@ -66,7 +66,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="black"
+                          color="gray"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -110,7 +110,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="black"
+                          color="gray"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -154,7 +154,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="black"
+                          color="gray"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
