@@ -19,7 +19,6 @@ const ApproveStudents = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
-  const [refId, setRefId] = useState("");
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "",
@@ -76,6 +75,7 @@ const ApproveStudents = () => {
     //getting studentList from socket
     socket.on("students_list", (data) => {
       setStudentsList([...data.students]);
+      dispatch(removeLoader());
       setEmptyList(false);
       setDisplayingStudentList([...data.students]);
     });
@@ -245,8 +245,8 @@ const ApproveStudents = () => {
                         {item.student_name}
                       </div>
                       {selectedStudents.includes(item._id) && (
-                        <div className="absolute right-5">
-                          <CgSandClock color="red" />
+                        <div className="absolute right-5 text-gray">
+                          <CgSandClock color="" />
                         </div>
                       )}
                     </button>
