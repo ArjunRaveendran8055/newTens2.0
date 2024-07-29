@@ -13,6 +13,7 @@ import { routes } from "../routes";
 import { setToastView } from "../components/features/toast/toastSlice";
 import { setUser } from "../components/features/user/userSlice";
 import { removeLoader, setLoader } from "../components/features/Loader/loaderSlice";
+import Logo from "./logo.png";
 
 export function Dashboard() {
   const { user } = useSelector((state) => state.user);

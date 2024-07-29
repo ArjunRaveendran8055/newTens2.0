@@ -10,6 +10,8 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import { routes, AAroutes, TEAMLEADroutes } from "../../../routes";
+import Logo from "./logo.png";
+
 export function Sidenav({ brandName }) {
   const { isOpen } = useSelector((state) => state.sideNav);
   const { user } = useSelector((state) => state.user);
@@ -22,8 +24,8 @@ export function Sidenav({ brandName }) {
       >
         <div className={`relative`}>
           <div className="py-6 mt-2 px-8 text-center flex flex-row justify-center items-center gap-2">
-            {/* <img width={"40px"} src={Logo} alt=""  /> */}
-            <Typography variant="h6" color="black">
+            <img width={"50px"} src={Logo} alt=""  />
+            <Typography variant="h4" color="black">
               {brandName}
             </Typography>
           </div>
@@ -64,7 +66,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="green"
+                          color="black"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -108,7 +110,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="green"
+                          color="black"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -152,7 +154,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="green"
+                          color="black"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
