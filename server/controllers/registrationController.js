@@ -73,6 +73,7 @@ const SubmitStudentController = asyncWrapper(async (req, res, next) => {
     pin_code: recData.pinCode,
     state : recData.state,
     level : recData.level,
+    country : recData.country,
     district: recData.district,
     gender: recData.gender,
     syllabus: recData.syllabus,

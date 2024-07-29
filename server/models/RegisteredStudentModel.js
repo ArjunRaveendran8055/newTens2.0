@@ -46,6 +46,12 @@ const studentSchema = new mongoose.Schema({
       type: String,
       required: [true, "class required"],
     },
+
+    country: {
+      type: String,
+      required: [true, "country required"],
+    },
+
     state: {
       type: String,
       required: [true, "state required"],

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Option, Button } from "@material-tailwind/react";
+import { Select, Option, Button, IconButton } from "@material-tailwind/react";
 import axios from "axios";
 import allStates from "./statesdistricts.json";
 import addImg from "./addimg.jpg";
@@ -20,6 +20,20 @@ const RegForm = () => {
   const [photo, setPhoto] = useState(null);
 
   const [errors, setErrors] = useState({});
+
+
+  const requiredKeys = ['idd', 'name', 'class', 'school'];
+
+  const  standardizeObjects = (arr, keys, defaultValue = null) => {
+    return arr.map(obj => {
+        const standardizedObj = {};
+        keys.forEach(key => {
+            standardizedObj[key] = obj[key] !== undefined ? obj[key] : defaultValue;
+        });
+        return standardizedObj;
+    });
+}
+
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -54,7 +68,7 @@ const RegForm = () => {
 
     const index = siblingsList.findIndex((item) => item.idd === i);
 
-    const updatedList = [...siblingsList];
+    let updatedList = [...siblingsList];
 
     if (index !== -1) {
       updatedList[index] = { ...updatedList[index], [name]: val };
@@ -62,15 +76,20 @@ const RegForm = () => {
       updatedList.push(newItem);
     }
 
+    let finalList = standardizeObjects([...updatedList], requiredKeys);
+
+    console.log(finalList)
+
     setFormData({
       ...formData,
-      siblings: updatedList,
+      siblings: finalList,
     });
 
-    setsiblingsList(updatedList);
+    setsiblingsList(finalList);
   };
 
   const [syllabus, setSyllabus] = useState("");
+
 
   const [statesIn, setStatesIn] = useState("");
 
@@ -87,6 +106,7 @@ const RegForm = () => {
     school: "",
     schoolLocation: "",
     medium: "",
+    country: "",
     state: "",
     district: "",
     fatherName: "",
@@ -106,7 +126,8 @@ const RegForm = () => {
 
   const validateForm = () => {
     const newErrors = {};
-
+    
+    if (!photo) newErrors.photo = "photo is required";
     if (!formData.fullName) newErrors.fullName = "Full name is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.address) newErrors.address = "Address is required";
@@ -127,6 +148,7 @@ const RegForm = () => {
     if (!formData.schoolLocation)
       newErrors.schoolLocation = "School location is required";
     if (!formData.medium) newErrors.medium = "Medium is required";
+    if (!formData.country) newErrors.country = "country is required";
     if (!formData.state) newErrors.state = "State is required";
     if (!formData.district) newErrors.district = "District is required";
     if (!formData.fatherName)
@@ -506,8 +528,12 @@ const RegForm = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             
+            
 
             <div>
+
+            
+
               <label htmlFor="syllabus">Syllabus</label>
               <div className="w-50">
                 <Select
@@ -584,29 +610,63 @@ const RegForm = () => {
 
           </div>
 
+
+
+              
+                
+          
           <div className="">
-            <div>
-              <label htmlFor="school">School</label>
-              {/* <input
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    id="school"
-                    placeholder="School"
-                  /> */}
 
-              {/* <Autocomplete
-           
-              disableClearable
-              id="school"
-              className=" rounded-md border-none bg-background  ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              options={top100Films}
-              sx={{ width: "100%" ,
-                               }}
-              renderInput={(params) => <TextField  {...params} label="Select Your School" />}
-            /> */}
+              
 
-              {/* <Stack spacing={2} sx={{ width: "100%" }}> */}
+            <div className="">
+              
+             
+              <div className="my-4">
 
-              <div className=" rounded  relative">
+              
+            <div className="space-y-2 ">
+            <div className="border-2 p-4 gap border-blue-gray-200 rounded-md">
+              <label className="block text-lg font-medium text-gray-700">
+              Are you currently studying in India or abroad?
+              </label>
+              <div className=" p-3 pl-3 grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 ">
+                <label className="flex items-center">
+                  <input
+                    onChange={handleInputChange}
+                    type="radio"
+                    className="form-radio h-4 w-4 text-blue-600"
+                    name="country"
+                    value="india"
+                  />
+                  <span className="ml-2 text-gray-900">
+                  India
+                  </span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    onChange={handleInputChange}
+                    type="radio"
+                    className="form-radio h-4 w-4 text-blue-600"
+                    name="country"
+                    value="Abroad"
+                  />
+                  <span className="ml-2  text-gray-900">Abroad</span>
+                </label>
+                
+               
+               
+              </div>
+            </div>
+            {errors.country && (
+              <span className="text-sm text-red-500">
+                {" * " + errors.country}
+              </span>
+            )}
+          </div>
+          </div>
+
+              <div className="  rounded  relative">
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -707,6 +767,9 @@ const RegForm = () => {
               )}
             </div>
           </div>
+          
+
+        
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -921,10 +984,12 @@ const RegForm = () => {
               <div>
                 <label htmlFor="class">Number of Siblings</label>
                 <div className="w-30">
+                  
                   <Select
                     value={siblingsCount}
                     onChange={(event) => setSiblingsCount(event)}
                   >
+                    <Option value="0">0</Option>
                     <Option value="1">1</Option>
                     <Option value="2">2</Option>
                     <Option value="3">3</Option>
