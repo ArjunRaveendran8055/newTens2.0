@@ -193,6 +193,8 @@ const RegForm = () => {
 
   const [schools, setSchools] = useState([]);
 
+  const [formFlag , setFormFlag] = useState(false);
+
   const [siblingsCount, setSiblingsCount] = useState("0");
 
   const [isOpen, setIsOpen] = useState(false);
@@ -220,6 +222,9 @@ const RegForm = () => {
   }, [formData.syllabus, selectedSchool]);
 
   useEffect(() => {
+    if(formFlag==true){
+      validateForm()
+    }
     console.log(formData)
     formDataLast.append("data", JSON.stringify(formData));
 
@@ -238,6 +243,8 @@ const RegForm = () => {
   };
 
   const handleSub = async () => {
+
+    setFormFlag(true)
     let errs = validateForm();
     console.log(errs);
 
@@ -381,13 +388,14 @@ const RegForm = () => {
         </div>
 
         <form className="mt-6 space-y-4 mb-5">
-          <div className="w-52 p-2 mx-auto mb-10 rounded ">
+          <div name="photo" className="w-52 p-2 mx-auto mb-10 rounded ">
             <label htmlFor="imageUpload">
 
 
               <div className="avatar-upload">
                 <div className="avatar-edit">
                   <input
+                    required
                     type="file"
                     id="imageUpload"
                     accept=".png, .jpg, .jpeg"
@@ -401,15 +409,25 @@ const RegForm = () => {
                     <i className="fas fa-camera fa-lg text-gray-600 "></i>
                   </label>
                 </div>
+                
                 <div className="avatar-preview">
                   <div
                     id="imagePreview"
                     className="w-48 h-48 bg-cover bg-center rounded-full border-4 border-gray-300"
                     style={{ backgroundImage: `url(${imageUrl})` }}
                   ></div>
+                  {errors.photo && (
+                <span className="text-sm text-center text-red-500">
+                  {" * " + errors.photo}
+                </span>
+              )}
                 </div>
+
+                
+
               </div>
 
+            
 
             </label>
           </div>
