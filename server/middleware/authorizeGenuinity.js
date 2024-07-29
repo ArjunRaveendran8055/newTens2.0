@@ -4,6 +4,7 @@ const { jwtVerifyToken } = require("../utils/jwt");
 
 const authorizeGenuinity = asyncWrapper(async (req, res, next) => {
   const cookie = req.headers.cookie;
+  console.log("cookie",cookie)
   if (!cookie) {
     throw new AppError(400, "Something wrong with Cookies");
   }
