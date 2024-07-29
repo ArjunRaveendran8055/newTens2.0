@@ -12,7 +12,7 @@ const ApproveStudents = () => {
   const { user } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
-  const [emptyList, setEmptyList] = useState(true);
+  const [emptyList, setEmptyList] = useState(false);
   const [allCentre, setAllCentre] = useState([]);
   const [studentsList, setStudentsList] = useState([]);
   const [displayingStudentList, setDisplayingStudentList] = useState([]);
@@ -53,6 +53,7 @@ const ApproveStudents = () => {
   const [statesIn, setStatesIn] = useState("");
 
   const socketConnection = () => {
+    dispatch(setLoader())
     socket.connect();
     socket.on("connect", () => {
       console.log("Connected to server");
@@ -70,36 +71,39 @@ const ApproveStudents = () => {
   };
 
   const fetchStudents = () => {
-    dispatch(setLoader());
     socket.emit("fetchstudents", {});
     //getting studentList from socket
     socket.on("students_list", (data) => {
       setStudentsList([...data.students]);
-      dispatch(removeLoader());
+      dispatch(removeLoader())
       setEmptyList(false);
       setDisplayingStudentList([...data.students]);
     });
     //getting noPending response
     socket.on("no_pending_students", (msg) => {
       console.log(msg);
+      dispatch(removeLoader())
+
       setEmptyList(true);
     });
   };
 
   //get all centreNames and tags
   const fetchAllCetres = () => {
+    dispatch(setLoader())
     axios
       .get("/centre/getCentreTags")
       .then((res) => {
         setAllCentre(res.data.data);
+        dispatch(removeLoader())
       })
       .catch((err) => {
         console.log(err.message);
+        dispatch(removeLoader())
       });
   };
 
   useEffect(() => {
-    // dispatch(setLoader());
     socketConnection();
     fetchStudents();
     fetchAllCetres();

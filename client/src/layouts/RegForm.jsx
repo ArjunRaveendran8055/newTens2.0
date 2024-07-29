@@ -8,9 +8,7 @@ import compressImage from "browser-image-compression";
 import allSyllabus from "./syllabus.json";
 import { useNavigate } from "react-router-dom";
 
-
 const RegForm = () => {
-
 
   const navigate = useNavigate();
 
