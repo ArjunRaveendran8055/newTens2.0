@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Select, Option, Button, IconButton } from "@material-tailwind/react";
 import axios from "axios";
 import allStates from "./statesdistricts.json";
-import addImg from "./addimg.jpg";
+import addImg from "./addimg.png";
+import Logo from "./logo.png";
 import compressImage from "browser-image-compression";
 import allSyllabus from "./syllabus.json";
 import { useNavigate } from "react-router-dom";
@@ -24,15 +25,15 @@ const RegForm = () => {
 
   const requiredKeys = ['idd', 'name', 'class', 'school'];
 
-  const  standardizeObjects = (arr, keys, defaultValue = null) => {
+  const standardizeObjects = (arr, keys, defaultValue = null) => {
     return arr.map(obj => {
-        const standardizedObj = {};
-        keys.forEach(key => {
-            standardizedObj[key] = obj[key] !== undefined ? obj[key] : defaultValue;
-        });
-        return standardizedObj;
+      const standardizedObj = {};
+      keys.forEach(key => {
+        standardizedObj[key] = obj[key] !== undefined ? obj[key] : defaultValue;
+      });
+      return standardizedObj;
     });
-}
+  }
 
 
   const handleImageChange = async (e) => {
@@ -102,7 +103,7 @@ const RegForm = () => {
     email: "",
     class: "",
     syllabus: "",
-    level:"",
+    level: "",
     school: "",
     schoolLocation: "",
     medium: "",
@@ -126,7 +127,7 @@ const RegForm = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!photo) newErrors.photo = "photo is required";
     if (!formData.fullName) newErrors.fullName = "Full name is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
@@ -249,7 +250,7 @@ const RegForm = () => {
         .post("/registration/submitStudent", formDataLast)
         .then((response) => {
           console.log("submitted successfully:", response.data);
-          console.log(response.data.data,"aiii")
+          console.log(response.data.data, "aiii")
           navigate(`/SubmitSuccess/${response.data.data.responseId}`)
 
         })
@@ -339,12 +340,12 @@ const RegForm = () => {
 
     console.log(datas)
 
-    if(datas)
-    setLevels(datas.levels);
-    
+    if (datas)
+      setLevels(datas.levels);
+
   };
 
-  
+
 
   const fetchClassList = (cls) => {
 
@@ -353,28 +354,35 @@ const RegForm = () => {
 
     console.log(datas.classes)
 
-    if(datas)
-    setClassList(datas.classes);
-    
+    if (datas)
+      setClassList(datas.classes);
+
   };
 
   useEffect(() => {
     fetchLevel(formData.syllabus);
-    if(formData.level){
+    if (formData.level) {
       fetchClassList(formData.level)
     }
-   
-  }, [formData.syllabus,formData.level]);
+
+  }, [formData.syllabus, formData.level]);
 
 
 
 
   return (
     <>
-      <div className="max-w-4xl mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
-        <form className="mt-6 space-y-4">
-            <div className="w-52 p-2 mx-auto  rounded ">
-          <label htmlFor="imageUpload">
+      <div className="flex flex-col border-[1px] border-black items-center justify-center mb-20 max-w-4xl font-sans text-lg md:font-serif mx-auto mt-10 p-4 bg-white rounded-xl shadow-2xl">
+        <div className="flex items-center justify-center flex-col gap-5">
+          <img src={Logo} alt="" style={{ height: '70px' }} />
+          <h2 className="text-2xl font-bold">
+            <i className="fa-solid fa-graduation-cap mr-3"></i>
+            Student Resistration Form</h2>
+        </div>
+
+        <form className="mt-6 space-y-4 mb-5">
+          <div className="w-52 p-2 mx-auto mb-10 rounded ">
+            <label htmlFor="imageUpload">
 
 
               <div className="avatar-upload">
@@ -396,15 +404,15 @@ const RegForm = () => {
                 <div className="avatar-preview">
                   <div
                     id="imagePreview"
-                    className="w-48 h-48 bg-cover bg-center rounded-full"
+                    className="w-48 h-48 bg-cover bg-center rounded-full border-4 border-gray-300"
                     style={{ backgroundImage: `url(${imageUrl})` }}
                   ></div>
                 </div>
               </div>
 
 
-          </label>
-            </div>
+            </label>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -527,12 +535,12 @@ const RegForm = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            
+
+
 
             <div>
 
-            
+
 
               <label htmlFor="syllabus">Syllabus</label>
               <div className="w-50">
@@ -559,17 +567,17 @@ const RegForm = () => {
             <div>
               <label htmlFor="class">Level Of Education</label>
               <div className="w-50">
-                <Select name="level" 
-                disabled={!formData.syllabus}
+                <Select name="level"
+                  disabled={!formData.syllabus}
                   onChange={(e) =>
                     handleInputChange({ target: { name: "level", value: e } })
                   } >
-                 
+
                   {/*  value={formData.class}  onChange={(e)=>handleInputChange({target:{name:"class",value:e}})} */}
-                  {levels?.map((data,i)=>(<Option key={i} value={data.level}>
-                      {data.txt}
-                    </Option>))}
-                  
+                  {levels?.map((data, i) => (<Option key={i} value={data.level}>
+                    {data.txt}
+                  </Option>))}
+
                 </Select>
               </div>
               {/* {errors.class && <span className="text-sm  text-red-500">{" * "+ errors.class}</span>} */}
@@ -578,9 +586,9 @@ const RegForm = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
 
-              
+
+
             <div>
               <label htmlFor="class">Class</label>
               <div className="w-50">
@@ -591,9 +599,9 @@ const RegForm = () => {
                     handleInputChange({ target: { name: "class", value: parseInt(e) } })
                   }
                 >
-                  {classList?.map((data,i)=>(<Option key={i} value={data.cls+''}>
-                      {data.txt}
-                    </Option>))}
+                  {classList?.map((data, i) => (<Option key={i} value={data.cls + ''}>
+                    {data.txt}
+                  </Option>))}
                 </Select>
               </div>
               {errors.class && (
@@ -605,66 +613,66 @@ const RegForm = () => {
 
 
 
-          
+
 
 
           </div>
 
 
 
-              
-                
-          
+
+
+
           <div className="">
 
-              
+
 
             <div className="">
-              
-             
+
+
               <div className="my-4">
 
-              
-            <div className="space-y-2 ">
-            <div className="border-2 p-4 gap border-blue-gray-200 rounded-md">
-              <label className="block text-lg font-medium text-gray-700">
-              Are you currently studying in India or abroad?
-              </label>
-              <div className=" p-3 pl-3 grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 ">
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="country"
-                    value="india"
-                  />
-                  <span className="ml-2 text-gray-900">
-                  India
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    onChange={handleInputChange}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-blue-600"
-                    name="country"
-                    value="Abroad"
-                  />
-                  <span className="ml-2  text-gray-900">Abroad</span>
-                </label>
-                
-               
-               
+
+                <div className="space-y-2 ">
+                  <div className="border-2 p-4 gap border-blue-gray-200 rounded-md">
+                    <label className="block text-lg font-medium text-gray-700">
+                      Are you currently studying in India or abroad?
+                    </label>
+                    <div className=" p-3 pl-3 grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 ">
+                      <label className="flex items-center">
+                        <input
+                          onChange={handleInputChange}
+                          type="radio"
+                          className="form-radio h-4 w-4 text-blue-600"
+                          name="country"
+                          value="india"
+                        />
+                        <span className="ml-2 text-gray-900">
+                          India
+                        </span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          onChange={handleInputChange}
+                          type="radio"
+                          className="form-radio h-4 w-4 text-blue-600"
+                          name="country"
+                          value="Abroad"
+                        />
+                        <span className="ml-2  text-gray-900">Abroad</span>
+                      </label>
+
+
+
+                    </div>
+                  </div>
+                  {errors.country && (
+                    <span className="text-sm text-red-500">
+                      {" * " + errors.country}
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-            {errors.country && (
-              <span className="text-sm text-red-500">
-                {" * " + errors.country}
-              </span>
-            )}
-          </div>
-          </div>
 
               <div className="  rounded  relative">
                 <div className="mb-4">
@@ -695,9 +703,8 @@ const RegForm = () => {
                     {schools?.map((school, index) => (
                       <li
                         key={index}
-                        className={`cursor-pointer px-4 py-2 hover:bg-gray-100 ${
-                          selectedSchool === school.name ? "bg-gray-100" : ""
-                        }`}
+                        className={`cursor-pointer px-4 py-2 hover:bg-gray-100 ${selectedSchool === school.name ? "bg-gray-100" : ""
+                          }`}
                         onClick={() => {
                           handleSchoolChange2(
                             school.name + " " + school.location
@@ -767,9 +774,9 @@ const RegForm = () => {
               )}
             </div>
           </div>
-          
 
-        
+
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -984,7 +991,7 @@ const RegForm = () => {
               <div>
                 <label htmlFor="class">Number of Siblings</label>
                 <div className="w-30">
-                  
+
                   <Select
                     value={siblingsCount}
                     onChange={(event) => setSiblingsCount(event)}
@@ -1053,7 +1060,7 @@ const RegForm = () => {
 
           <div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-lg font-medium underline mb-5">
                 Academic Status
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1065,7 +1072,7 @@ const RegForm = () => {
                     name="academicStatus"
                     value="Below Average"
                   />
-                  <span className="ml-2 text-sm text-gray-900">
+                  <span className="ml-2 text-lg">
                     Below Average
                   </span>
                 </label>
@@ -1077,7 +1084,7 @@ const RegForm = () => {
                     name="academicStatus"
                     value="Average"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Average</span>
+                  <span className="ml-2 text-lg">Average</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1087,7 +1094,7 @@ const RegForm = () => {
                     name="academicStatus"
                     value="Good"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Good</span>
+                  <span className="ml-2 text-lg">Good</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1097,7 +1104,7 @@ const RegForm = () => {
                     name="academicStatus"
                     value="Excellent"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Excellent</span>
+                  <span className="ml-2 text-lg">Excellent</span>
                 </label>
               </div>
             </div>
@@ -1110,7 +1117,7 @@ const RegForm = () => {
 
           <div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-lg font-medium underline mb-5">
                 How did you hear about new10s?
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1122,7 +1129,7 @@ const RegForm = () => {
                     name="hearAbout"
                     value="calling executive"
                   />
-                  <span className="ml-2 text-sm text-gray-900">
+                  <span className="ml-2 text-lg">
                     Calling Executive
                   </span>
                 </label>
@@ -1134,7 +1141,7 @@ const RegForm = () => {
                     name="hearAbout"
                     value="Marketing Executive"
                   />
-                  <span className="ml-2 text-sm text-gray-900">
+                  <span className="ml-2 text-lg">
                     Marketing Executive
                   </span>
                 </label>
@@ -1146,7 +1153,7 @@ const RegForm = () => {
                     name="hearAbout"
                     value="relatives"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Relatives</span>
+                  <span className="ml-2 text-lg">Relatives</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1156,7 +1163,7 @@ const RegForm = () => {
                     name="hearAbout"
                     value="social-media"
                   />
-                  <span className="ml-2 text-sm text-gray-900">
+                  <span className="ml-2 text-lg">
                     Social Media
                   </span>
                 </label>
@@ -1168,7 +1175,7 @@ const RegForm = () => {
                     name="hearAbout"
                     value="friends"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Friends</span>
+                  <span className="ml-2 text-lg">Friends</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1178,7 +1185,7 @@ const RegForm = () => {
                     name="hearAbout"
                     value="others"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Others</span>
+                  <span className="ml-2 text-lg">Others</span>
                 </label>
               </div>
             </div>
@@ -1191,7 +1198,7 @@ const RegForm = () => {
 
           <div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-lg font-medium underline">
                 Difficult Subjects
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1202,7 +1209,7 @@ const RegForm = () => {
                     className="form-checkbox h-5 w-5 text-blue-600"
                     value="Maths"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Maths</span>
+                  <span className="ml-2 text-lg">Maths</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1211,7 +1218,7 @@ const RegForm = () => {
                     className="form-checkbox h-5 w-5 text-blue-600"
                     value="English"
                   />
-                  <span className="ml-2 text-sm text-gray-900">English</span>
+                  <span className="ml-2 text-lg">English</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1220,7 +1227,7 @@ const RegForm = () => {
                     className="form-checkbox h-5 w-5 text-blue-600"
                     value="Malayalam"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Malayalam</span>
+                  <span className="ml-2 text-lg">Malayalam</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1229,7 +1236,7 @@ const RegForm = () => {
                     className="form-checkbox h-5 w-5 text-blue-600"
                     value="Hindi"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Hindi</span>
+                  <span className="ml-2 text-lg">Hindi</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1238,7 +1245,7 @@ const RegForm = () => {
                     className="form-checkbox h-5 w-5 text-blue-600"
                     value="Physics"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Physics</span>
+                  <span className="ml-2 text-lg">Physics</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1247,7 +1254,7 @@ const RegForm = () => {
                     className="form-checkbox h-5 w-5 text-blue-600"
                     value="Chemistry"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Chemistry</span>
+                  <span className="ml-2 text-lg">Chemistry</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1256,13 +1263,13 @@ const RegForm = () => {
                     className="form-checkbox h-5 w-5 text-blue-600"
                     value="Biology"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Biology</span>
+                  <span className="ml-2 text-lg">Biology</span>
                 </label>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center mb-5">
             <Button onClick={handleSub} className="mt-5">
               Register
             </Button>
