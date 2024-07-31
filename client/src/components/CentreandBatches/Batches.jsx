@@ -195,7 +195,7 @@ function Batches() {
             <div className="text-lg font-semibold self-end">2732 Students</div>
           </div>
           <div className="flex justify-between items-center space-x-2 border-t p-4">
-          <Link to={`/displaybatches/${id}?class=${cls.class}&stream=${cls.stream}`}>
+          <Link to={`/allcentres/displaybatches/${id}?class=${cls.class}&stream=${cls.stream}`}>
             <Button variant="outlined" className="text-sm" >
               Batches
             </Button>

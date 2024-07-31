@@ -51,15 +51,17 @@ function App() {
           <Route path="/tables" element={<Table />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/pendingusers" element={<PendingUsers />} />
-          <Route path="/classes" element={<DisplayClasses />} />
           {/* <Route path="/accessdenied" element={<AccessDenied/>} /> */}
           <Route path="/search/studentdetails/:id" element={<StudentDetailsPage/>}/>
-          <Route path="/classhome/:id" element={<ClassHome/>}/>
-          <Route path="/classreport/:id" element={<ClassReport/>}/>
-          <Route path="/allcentres" element={<AllCentres/>} />
+          {/* classes components inside here */}
+          <Route path="/classes" element={<DisplayClasses />} />
+          <Route path="/classes/classhome/:id" element={<ClassHome/>}/>
+          <Route path="/classes/classreport/:id" element={<ClassReport/>}/>
           <Route path="/approvestudents" element={<ApproveStudents/>} />
-          <Route path="/batches/:id" element={<Batches/>} />
-          <Route path="/displaybatches/:id" element={<DisplayBatches/>} />
+          {/* components inside allcentres */}
+          <Route path="/allcentres" element={<AllCentres/>} />
+          <Route path="/allcentres/batches/:id" element={<Batches/>} />
+          <Route path="/allcentres/displaybatches/:id" element={<DisplayBatches/>} />
           {/* private route example */}
           <Route path="/assignaa" element={<Asignaa/>}/>
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>

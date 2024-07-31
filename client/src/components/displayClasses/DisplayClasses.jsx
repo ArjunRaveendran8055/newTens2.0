@@ -241,7 +241,7 @@ function DisplayClasses() {
           ))
         ) : (
           classes.map((item) => (
-            <Link key={item._id} to={`/classhome/${item._id}`}>
+            <Link key={item._id} to={`/classes/classhome/${item._id}`}>
               <ClassCard classDetail={item} key={item._id} />
             </Link>
           ))

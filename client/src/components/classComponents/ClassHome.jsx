@@ -173,7 +173,7 @@ function ClassHome() {
           </div>
           <p className="text-right text-l text-black-500 mb-4">December, 12</p>
           <div className="grid grid-cols-2 gap-4">
-            <Link to={`/classreport/${id}`}>
+            <Link to={`/classes/classreport/${id}`}>
               <div className="bg-[#ffd940] rounded-lg h-full p-4 cursor-pointer">
                 <h3 className="text-lg font-semibold text-black">Add Report</h3>
                 <p className="text-l text-black-500">
