@@ -26,6 +26,10 @@ const FormView = ({
   setSyllabus,
   statesIn,
   setStatesIn,
+  levels,
+  setLevels,
+  classList,
+  setClassList,
 }) => {
   const navigate = useNavigate();
 
@@ -143,7 +147,6 @@ const FormView = ({
   }, [formData.syllabus, selectedSchool]);
 
   useEffect(() => {
-    console.log(formData);
     formDataLast.append("data", JSON.stringify(formData));
     formDataLast.append("image", photo);
   }, [formData, photo]);
@@ -233,15 +236,11 @@ const FormView = ({
     return final;
   };
 
-  const [levels, setLevels] = useState([]);
-
-  const [classList, setClassList] = useState([]);
-
   const fetchLevel = (syll) => {
     console.log(syll);
     let datas = allSyllabus.find((data) => data.syllabus == syll);
 
-    console.log(datas);
+    // console.log(datas);
 
     if (datas) setLevels(datas.levels);
   };
@@ -249,9 +248,7 @@ const FormView = ({
   const fetchClassList = (cls) => {
     console.log(cls);
     let datas = levels.find((data) => data.level == cls);
-
-    console.log(datas.classes);
-
+    console.log(datas)
     if (datas) setClassList(datas.classes);
   };
 
@@ -432,6 +429,7 @@ const FormView = ({
             <div className="flex flex-col w-full">
               <div className="w-full">
                 <Select
+                  value={formData.syllabus}
                   className="border-gray-200 border-[1px]"
                   name="syllabus"
                   onChange={(e) => {
@@ -452,7 +450,7 @@ const FormView = ({
               )}
             </div>
           </div>
-
+          {console.log("class is:", formData.class)}
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Level of Education
@@ -462,17 +460,20 @@ const FormView = ({
                 <Select
                   className="border-gray-200 border-[1px]"
                   name="level"
-                  disabled={!formData.syllabus}
+                  value={formData.level}
                   onChange={(e) =>
                     handleInputChange({ target: { name: "level", value: e } })
                   }
                 >
                   {/*  value={formData.class}  onChange={(e)=>handleInputChange({target:{name:"class",value:e}})} */}
-                  {levels?.map((data, i) => (
-                    <Option key={i} value={data.level}>
-                      {data.txt}
-                    </Option>
-                  ))}
+                  <Option value={formData.level}>{formData.level}</Option>
+                  {levels
+                    ?.filter((item) => item.level !== formData.level)
+                    .map((data, i) => (
+                      <Option key={i} value={data.level}>
+                        {data.txt}
+                      </Option>
+                    ))}
                 </Select>
                 {errors.class && (
                   <span className="text-sm  text-red-500">
@@ -482,7 +483,9 @@ const FormView = ({
               </div>
             </div>
           </div>
-
+              {
+                console.log(classList)
+              }
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Class
@@ -491,6 +494,7 @@ const FormView = ({
               <div className="w-full">
                 <Select
                   name="class"
+                  value={formData.class}
                   disabled={!formData.level}
                   onChange={(e) =>
                     handleInputChange({
@@ -551,7 +555,6 @@ const FormView = ({
                   )}
                 </div>
               </div>
-                  {console.log(selectedSchool)}
               <div className="  rounded  relative">
                 <div className="mb-4">
                   <label

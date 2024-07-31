@@ -19,6 +19,7 @@ const ApproveStudents = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
+  
 
 
   const [imageUrl, setImageUrl] = useState(addImg);
@@ -36,6 +37,10 @@ const ApproveStudents = () => {
   const [syllabus, setSyllabus] = useState("");
 
   const [statesIn, setStatesIn] = useState("");
+
+  const [levels, setLevels] = useState([]);
+
+  const [classList, setClassList] = useState([]);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -163,6 +168,7 @@ const ApproveStudents = () => {
       schoolLocation: item.school_location,
       medium: item.medium,
       state: item.state,
+      level:item.level,
       district: item.district,
       fatherName: item.father,
       motherName: item.mother,
@@ -176,12 +182,13 @@ const ApproveStudents = () => {
     });
     setStatesIn(item.state)
     setSelectedSchool(item.school_name)
+    console.log("level is:", formData.level)
 
     //socket to show a student is selected for approval process
     socket.emit("student_selected", { userId: user.id, studentId: item._id });
   };
 
-  console.log(selectedSchool)
+  // console.log(selectedSchool)
 
   //receiving the selected studentIds from the backend
   socket.on("student_ids", (student) => {
@@ -303,6 +310,8 @@ const ApproveStudents = () => {
                 syllabus={syllabus} setSyllabus={setSyllabus}
                 statesIn={statesIn} setStatesIn={setStatesIn}
                 formData={formData} setFormData={setFormData}
+                levels={levels} setLevels={setLevels}
+                classList={classList} setClassList={setClassList}
                 />
               </div>
             ) : (

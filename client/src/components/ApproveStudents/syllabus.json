@@ -4,7 +4,7 @@
     "syllabus": "cbse",
     "levels": [
       {
-        "level": "hs",
+        "level": "high school (8-10)",
         "txt": "high school (8-10)",
         "classes": [
           {
@@ -22,7 +22,7 @@
         ]
       },
       {
-        "level": "hss bio",
+        "level": "higher secondary bio (11-12)",
         "txt": "higher secondary bio (11-12)",
         "classes": [
           {
@@ -36,7 +36,7 @@
         ]
       },
       {
-        "level": "hss cs",
+        "level": "higher secondary cs (11-12)",
         "txt": "higher secondary cs (11-12)",
         "classes": [
           {
@@ -50,7 +50,7 @@
         ]
       },
       {
-        "level": "hss com(maths)",
+        "level": "higher secondary com(maths) (11-12)",
         "txt": "higher secondary com(maths) (11-12)",
         "classes": [
           {
@@ -64,7 +64,7 @@
         ]
       },
       {
-        "level": "hss com(cs)",
+        "level": "higher secondary com(computer) (11-12)",
         "txt": "higher secondary com(computer) (11-12)",
         "classes": [
           {
@@ -83,7 +83,7 @@
     "syllabus": "state",
     "levels": [
       {
-        "level": "up",
+        "level": "upper primary (5-7)",
         "txt": "upper primary (5-7)",
         "classes": [
           {
@@ -93,7 +93,7 @@
         ]
       },
       {
-        "level": "hs",
+        "level": "high school (8-10)",
         "txt": "high school (8-10)",
         "classes": [
           {
@@ -111,7 +111,7 @@
         ]
       },
       {
-        "level": "hss bio",
+        "level": "higher secondary bio (11-12)",
         "txt": "higher secondary bio (11-12)",
         "classes": [
           {
@@ -125,7 +125,7 @@
         ]
       },
       {
-        "level": "hss cs",
+        "level": "higher secondary cs (11-12)",
         "txt": "higher secondary cs (11-12)",
         "classes": [
           {
@@ -139,7 +139,7 @@
         ]
       },
       {
-        "level": "hss com(maths)",
+        "level": "higher secondary com(maths) (11-12)",
         "txt": "higher secondary com(maths) (11-12)",
         "classes": [
           {
@@ -153,7 +153,7 @@
         ]
       },
       {
-        "level": "hss com(cs)",
+        "level": "higher secondary com(computer) (11-12)",
         "txt": "higher secondary com(computer) (11-12)",
         "classes": [
           {
