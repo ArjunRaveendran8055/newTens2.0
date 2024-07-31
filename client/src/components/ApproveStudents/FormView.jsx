@@ -485,28 +485,41 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <div className="w-full">
-                <Select
+                <select
+                  className="w-full h-10 relative flex px-4 py-2 border-gray-300 border-[1px] rounded-md focus:outline-2 focus:outline-gray-500 bg-white active:bg-red-300"
                   name="class"
-                  value={formData.class+""}
+                  value={formData.class + ""}
                   onChange={(e) =>
                     handleInputChange({
                       target: { name: "class", value: parseInt(e) },
                     })
                   }
                 >
-                  <Option
-                    value={formData.class}
-                  >{`Class ${formData.class}`}</Option>
-                  {classList
-                    ?.filter((item) => parseInt(item.cls) != parseInt(formData.class))
-                    .map((item,key) => (
-                      
-                      <Option key={key} value={item.cls + ""}>
-                        {console.log("checking items are:",formData.class,item.cls)}
-                        {item.txt}
-                      </Option>
-                    ))}
-                </Select>
+                  
+                    <option
+                      className="w-full flex "
+                      value={formData.class}
+                    >{`Class ${formData.class}`}</option>
+                    {classList
+                      ?.filter(
+                        (item) => parseInt(item.cls) != parseInt(formData.class)
+                      )
+                      .map((item, key) => (
+                        <option
+                          className="bg-white w-full flex absolute right-5"
+                          key={key}
+                          value={item.cls + ""}
+                        >
+                          {console.log(
+                            "checking items are:",
+                            formData.class,
+                            item.cls
+                          )}
+                          {item.txt}
+                        </option>
+                      ))}
+        
+                </select>
                 {errors.class && (
                   <span className="text-sm  text-red-500">
                     {" * " + errors.class}
