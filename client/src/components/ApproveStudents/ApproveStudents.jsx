@@ -7,6 +7,7 @@ import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import FormView from "./FormView";
 import socket from "../../socket";
 import { CgSandClock } from "react-icons/cg";
+import addImg from "./addimg.jpg";
 
 const ApproveStudents = () => {
   const { user } = useSelector((state) => state.user);
@@ -18,6 +19,24 @@ const ApproveStudents = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
+
+
+  const [imageUrl, setImageUrl] = useState(addImg);
+
+  const [photo, setPhoto] = useState(null);
+
+  const [errors, setErrors] = useState({});
+
+  const [schools, setSchools] = useState([]);
+
+  const [isOpen, setIsOpen] = useState(true);
+
+  const [selectedSchool, setSelectedSchool] = useState([]);
+
+  const [syllabus, setSyllabus] = useState("");
+
+  const [statesIn, setStatesIn] = useState("");
+
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "",
@@ -25,8 +44,10 @@ const ApproveStudents = () => {
     pinCode: "",
     dob: "",
     email: "",
-    class: "",
     syllabus: "",
+    level: "",
+    class: "",
+    country: "",
     school: "",
     schoolLocation: "",
     medium: "",
@@ -41,18 +62,10 @@ const ApproveStudents = () => {
     motherNumber: "",
     whatsappNumber: "",
     centre: "",
-    academicStatus: "",
-    hearAbout: "",
-    difficultSubjects: [],
-    siblings: [],
   });
 
-  const [selectedSchool, setSelectedSchool] = useState([]);
-  const [syllabus, setSyllabus] = useState("");
-  const [statesIn, setStatesIn] = useState("");
-
   const socketConnection = () => {
-    dispatch(setLoader())
+    dispatch(setLoader());
     socket.connect();
     socket.on("connect", () => {
       console.log("Connected to server");
@@ -74,14 +87,14 @@ const ApproveStudents = () => {
     //getting studentList from socket
     socket.on("students_list", (data) => {
       setStudentsList([...data.students]);
-      dispatch(removeLoader())
+      dispatch(removeLoader());
       setEmptyList(false);
       setDisplayingStudentList([...data.students]);
     });
     //getting noPending response
     socket.on("no_pending_students", (msg) => {
       console.log(msg);
-      dispatch(removeLoader())
+      dispatch(removeLoader());
 
       setEmptyList(true);
     });
@@ -89,16 +102,16 @@ const ApproveStudents = () => {
 
   //get all centreNames and tags
   const fetchAllCetres = () => {
-    dispatch(setLoader())
+    dispatch(setLoader());
     axios
       .get("/centre/getCentreTags")
       .then((res) => {
         setAllCentre(res.data.data);
-        dispatch(removeLoader())
+        dispatch(removeLoader());
       })
       .catch((err) => {
         console.log(err.message);
-        dispatch(removeLoader())
+        dispatch(removeLoader());
       });
   };
 
@@ -119,27 +132,37 @@ const ApproveStudents = () => {
     };
   }, []);
 
-  // console.log("all centres are", allCentre);
-  const previewHandler = (item, index) => {
-    //console.log("index", index);
+  const previewHandler = (item, index) => {  
     //console.log("selected student is:", item._id);
+
+    const isoStringToInputValue = (isoString) => {
+      const date = new Date(isoString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+    
+      return `${year}-${month}-${day}`;
+    };
+    
+      const actDate=isoStringToInputValue(item.dob)
+      console.log(actDate)
     setSelectedIndex(index);
     setOpenPreview(true);
     // console.log(item.student_name);
-    // console.log(item);
+    console.log("student is:",item);
     setFormData({
       fullName: item.student_name,
       gender: item.gender,
       address: item.address,
       pinCode: item.pin_code,
-      dob: item.dob,
+      dob: actDate,
       email: item.email,
       class: item.class,
       syllabus: item.syllabus,
       school: item.school_name,
       schoolLocation: item.school_location,
       medium: item.medium,
-      state: "",
+      state: item.state,
       district: item.district,
       fatherName: item.father,
       motherName: item.mother,
@@ -151,15 +174,14 @@ const ApproveStudents = () => {
       whatsappNumber: item.whatsapp,
       centre: item.centre,
     });
-
-    setSelectedSchool(item.school_name);
-    // console.log(item.state)
-    setStatesIn(item.state);
-    setSyllabus(item.syllabus);
+    setStatesIn(item.state)
+    setSelectedSchool(item.school_name)
 
     //socket to show a student is selected for approval process
     socket.emit("student_selected", { userId: user.id, studentId: item._id });
   };
+
+  console.log(selectedSchool)
 
   //receiving the selected studentIds from the backend
   socket.on("student_ids", (student) => {
@@ -263,21 +285,24 @@ const ApproveStudents = () => {
         <div className="previewcontainer w-[60%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">
           <div className="previewtitlecontainer flex h-10 w-full justify-center items-center">
             <span className="text-2xl">
-              <h2 className=" border-gray-300 border-b-2 px-2 font-enriq">PREVIEW</h2>
+              <h2 className=" border-gray-300 border-b-2 px-2 font-enriq">
+                PREVIEW
+              </h2>
             </span>
           </div>
           <div className="">
             {openPreview ? (
               <div>
-                <FormView
-                  formData={formData}
-                  setFormData={setFormData}
-                  selectedSchool={selectedSchool}
-                  setSelectedSchool={setSelectedSchool}
-                  statesIn={statesIn}
-                  setStatesIn={setStatesIn}
-                  syllabus={syllabus}
-                  setSyllabus={setSyllabus}
+                <FormView 
+                imageUrl={imageUrl} setImageUrl={setImageUrl}
+                photo={photo} setPhoto={setPhoto}
+                errors={errors} setErrors={setErrors}
+                schools={schools} setSchools={setSchools}
+                isOpen={isOpen} setIsOpen={setIsOpen}
+                selectedSchool={selectedSchool} setSelectedSchool={setSelectedSchool}
+                syllabus={syllabus} setSyllabus={setSyllabus}
+                statesIn={statesIn} setStatesIn={setStatesIn}
+                formData={formData} setFormData={setFormData}
                 />
               </div>
             ) : (

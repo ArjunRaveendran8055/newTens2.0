@@ -7,28 +7,31 @@ import compressImage from "browser-image-compression";
 import allSyllabus from "./syllabus.json";
 import { useNavigate } from "react-router-dom";
 
-const FormView = () => {
+const FormView = ({
+  formData,
+  setFormData,
+  imageUrl,
+  setImageUrl,
+  photo,
+  setPhoto,
+  errors,
+  setErrors,
+  schools,
+  setSchools,
+  isOpen,
+  setIsOpen,
+  selectedSchool,
+  setSelectedSchool,
+  syllabus,
+  setSyllabus,
+  statesIn,
+  setStatesIn,
+}) => {
   const navigate = useNavigate();
-
-  const [imageUrl, setImageUrl] = useState(addImg);
 
   const formDataLast = new FormData();
 
-  const [photo, setPhoto] = useState(null);
-
-  const [errors, setErrors] = useState({});
-
   const requiredKeys = ["idd", "name", "class", "school"];
-
-  const standardizeObjects = (arr, keys, defaultValue = null) => {
-    return arr.map((obj) => {
-      const standardizedObj = {};
-      keys.forEach((key) => {
-        standardizedObj[key] = obj[key] !== undefined ? obj[key] : defaultValue;
-      });
-      return standardizedObj;
-    });
-  };
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -55,38 +58,6 @@ const FormView = () => {
       reader.readAsDataURL(file);
     }
   };
-
-
-  const [syllabus, setSyllabus] = useState("");
-
-  const [statesIn, setStatesIn] = useState("");
-
-  const [formData, setFormData] = useState({
-    fullName: "",
-    gender: "",
-    address: "",
-    pinCode: "",
-    dob: "",
-    email: "",
-    syllabus: "",
-    level: "",
-    class: "",
-    country: "",
-    school: "",
-    schoolLocation: "",
-    medium: "",
-    state: "",
-    district: "",
-    fatherName: "",
-    motherName: "",
-    fatherOccupation: "",
-    motherOccupation: "",
-    rollNumber: "",
-    fatherNumber: "",
-    motherNumber: "",
-    whatsappNumber: "",
-    centre: "",
-  });
 
   const validateForm = () => {
     const newErrors = {};
@@ -143,20 +114,10 @@ const FormView = () => {
       newErrors.whatsappNumber = "WhatsApp number must be 10 digits";
     }
     if (!formData.centre) newErrors.centre = "Centre is required";
-    if (!formData.academicStatus)
-      newErrors.academicStatus = "Academic status is required";
-    if (!formData.hearAbout)
-      newErrors.hearAbout = "Please specify how you heard about us";
 
     setErrors(newErrors);
     return newErrors;
   };
-
-  const [schools, setSchools] = useState([]);
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const [selectedSchool, setSelectedSchool] = useState([]);
 
   useEffect(() => {
     console.log(addImg);
@@ -169,9 +130,13 @@ const FormView = () => {
             console.log(response.data.data);
             setSchools([...response.data.data]);
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            console.log(error.message);
+            setIsOpen(false);
+          });
       } else {
         setSchools([]);
+        setIsOpen(false);
       }
     };
     fetchSchool(selectedSchool);
@@ -218,9 +183,11 @@ const FormView = () => {
 
   const handleSchoolChange = (schoolName) => {
     console.log(schoolName);
-
+    if (schoolName.length >= 3) {
+      setIsOpen(true);
+    }
     setSelectedSchool(schoolName.toLowerCase());
-    setIsOpen(false); // Close the school list after selection
+    // Close the school list after selection
     // Set the selected school in the input field
 
     setFormData({
@@ -229,11 +196,8 @@ const FormView = () => {
     });
   };
 
-
-
   const handleSchoolChange2 = (schoolName) => {
     console.log(schoolName);
-
     setSelectedSchool(schoolName.toLowerCase());
 
     setFormData({
@@ -298,8 +262,7 @@ const FormView = () => {
     }
   }, [formData.syllabus, formData.level]);
 
-
-  console.log("schools are",schools)
+  console.log("schools are", schools);
 
   return (
     <>
@@ -362,7 +325,7 @@ const FormView = () => {
             </label>
             <div className="flex flex-col w-full">
               <Select
-              className="border-gray-200 border-[1px]"
+                className="border-gray-200 border-[1px]"
                 name="gender"
                 value={formData.gender}
                 onChange={(e) =>
@@ -469,7 +432,7 @@ const FormView = () => {
             <div className="flex flex-col w-full">
               <div className="w-full">
                 <Select
-                className="border-gray-200 border-[1px]"
+                  className="border-gray-200 border-[1px]"
                   name="syllabus"
                   onChange={(e) => {
                     setSyllabus(e);
@@ -497,7 +460,7 @@ const FormView = () => {
             <div className="flex flex-col w-full">
               <div className="w-full">
                 <Select
-                className="border-gray-200 border-[1px]"
+                  className="border-gray-200 border-[1px]"
                   name="level"
                   disabled={!formData.syllabus}
                   onChange={(e) =>
@@ -588,7 +551,7 @@ const FormView = () => {
                   )}
                 </div>
               </div>
-
+                  {console.log(selectedSchool)}
               <div className="  rounded  relative">
                 <div className="mb-4">
                   <label
@@ -681,7 +644,7 @@ const FormView = () => {
             <div className="flex flex-col w-full">
               <div className="w-full">
                 <Select
-                className="border-gray-200 border-[1px]"
+                  className="border-gray-200 border-[1px]"
                   value={formData.medium}
                   name="medium"
                   onChange={(e) =>
@@ -707,8 +670,9 @@ const FormView = () => {
             <div className="flex flex-col w-full">
               <div className="w-full">
                 <Select
-                className="border-gray-200 border-[1px]"
+                  className="border-gray-200 border-[1px]"
                   name="state"
+                  value={statesIn}
                   onChange={(e) => {
                     setStatesIn(e);
                     handleInputChange({ target: { name: "state", value: e } });
@@ -737,7 +701,7 @@ const FormView = () => {
             <div className="flex flex-col w-full">
               <div className="w-full">
                 <Select
-                className="border-gray-200 border-[1px]"
+                  className="border-gray-200 border-[1px]"
                   name="district"
                   onChange={(e) =>
                     handleInputChange({
@@ -762,14 +726,12 @@ const FormView = () => {
             </div>
           </div>
 
-
-
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Father's Name
             </label>
             <div className="flex flex-col w-full">
-            <input
+              <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="father-name"
                 placeholder="Father's Name"
@@ -784,9 +746,6 @@ const FormView = () => {
               )}
             </div>
           </div>
-
-
-
 
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
@@ -809,15 +768,12 @@ const FormView = () => {
             </div>
           </div>
 
-
-
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Father's Occupation
             </label>
             <div className="flex flex-col w-full">
-            
-            <input
+              <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="father-occupation"
                 placeholder="Father's Occupation"
@@ -833,13 +789,12 @@ const FormView = () => {
             </div>
           </div>
 
-
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Mother's Occupation
             </label>
             <div className="flex flex-col w-full">
-            <input
+              <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="mother-occupation"
                 placeholder="Mother's Occupation"
@@ -855,38 +810,33 @@ const FormView = () => {
             </div>
           </div>
 
-
-
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Roll Number
             </label>
             <div className="flex flex-col w-full">
-            <input
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              id="roll-number"
-              placeholder="Assign Roll Number (5 digit)"
-              name="rollNumber"
-              value={formData.rollNumber}
-              onChange={handleInputChange}
-            />
-            {errors.rollNumber && (
-              <span className="text-sm  text-red-500">
-                {" * " + errors.rollNumber}
-              </span>
-            )}
+              <input
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                id="roll-number"
+                placeholder="Assign Roll Number (5 digit)"
+                name="rollNumber"
+                value={formData.rollNumber}
+                onChange={handleInputChange}
+              />
+              {errors.rollNumber && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.rollNumber}
+                </span>
+              )}
             </div>
           </div>
-
-
-
 
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Father's Number
             </label>
             <div className="flex flex-col w-full">
-            <input
+              <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="father-number"
                 placeholder="Father's Number"
@@ -902,13 +852,12 @@ const FormView = () => {
             </div>
           </div>
 
-
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Mother's Number
             </label>
             <div className="flex flex-col w-full">
-            <input
+              <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="mother-number"
                 placeholder="Mother's Number"
@@ -924,15 +873,12 @@ const FormView = () => {
             </div>
           </div>
 
-
-
-
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Whatsapp Number
             </label>
             <div className="flex flex-col w-full">
-            <input
+              <input
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="whatsapp-number"
                 placeholder="Whatsapp Number"
@@ -948,14 +894,13 @@ const FormView = () => {
             </div>
           </div>
 
-
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Centre
             </label>
             <div className="flex flex-col w-full">
               <div className="w-full">
-                <Select 
+                <Select
                   className="border-gray-200 border-[1px]"
                   name="syllabus"
                   onChange={(e) => {
