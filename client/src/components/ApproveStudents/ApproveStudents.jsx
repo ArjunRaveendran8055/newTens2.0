@@ -19,8 +19,6 @@ const ApproveStudents = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
-  
-
 
   const [imageUrl, setImageUrl] = useState(addImg);
 
@@ -137,24 +135,22 @@ const ApproveStudents = () => {
     };
   }, []);
 
-  const previewHandler = (item, index) => {  
+  const previewHandler = (item, index) => {
     //console.log("selected student is:", item._id);
 
     const isoStringToInputValue = (isoString) => {
       const date = new Date(isoString);
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-    
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
       return `${year}-${month}-${day}`;
     };
-    
-      const actDate=isoStringToInputValue(item.dob)
-      console.log(actDate)
+
+    const actDate = isoStringToInputValue(item.dob);
     setSelectedIndex(index);
     setOpenPreview(true);
-    // console.log(item.student_name);
-    console.log("student is:",item);
+    console.log("selected student is:", item)
     setFormData({
       fullName: item.student_name,
       gender: item.gender,
@@ -168,7 +164,7 @@ const ApproveStudents = () => {
       schoolLocation: item.school_location,
       medium: item.medium,
       state: item.state,
-      level:item.level,
+      level: item.level,
       district: item.district,
       fatherName: item.father,
       motherName: item.mother,
@@ -180,10 +176,8 @@ const ApproveStudents = () => {
       whatsappNumber: item.whatsapp,
       centre: item.centre,
     });
-    setStatesIn(item.state)
-    setSelectedSchool(item.school_name)
-    console.log("level is:", formData.level)
-
+    setStatesIn(item.state);
+    setSelectedSchool(item.school_name);
     //socket to show a student is selected for approval process
     socket.emit("student_selected", { userId: user.id, studentId: item._id });
   };
@@ -192,7 +186,7 @@ const ApproveStudents = () => {
 
   //receiving the selected studentIds from the backend
   socket.on("student_ids", (student) => {
-    console.log("ids array on selection", student.studentIds);
+    //console.log("ids array on selection", student.studentIds);
     setSelectedStudents(student.studentIds);
   });
 
@@ -300,18 +294,29 @@ const ApproveStudents = () => {
           <div className="">
             {openPreview ? (
               <div>
-                <FormView 
-                imageUrl={imageUrl} setImageUrl={setImageUrl}
-                photo={photo} setPhoto={setPhoto}
-                errors={errors} setErrors={setErrors}
-                schools={schools} setSchools={setSchools}
-                isOpen={isOpen} setIsOpen={setIsOpen}
-                selectedSchool={selectedSchool} setSelectedSchool={setSelectedSchool}
-                syllabus={syllabus} setSyllabus={setSyllabus}
-                statesIn={statesIn} setStatesIn={setStatesIn}
-                formData={formData} setFormData={setFormData}
-                levels={levels} setLevels={setLevels}
-                classList={classList} setClassList={setClassList}
+                <FormView
+                  imageUrl={imageUrl}
+                  setImageUrl={setImageUrl}
+                  photo={photo}
+                  setPhoto={setPhoto}
+                  errors={errors}
+                  setErrors={setErrors}
+                  schools={schools}
+                  setSchools={setSchools}
+                  isOpen={isOpen}
+                  setIsOpen={setIsOpen}
+                  selectedSchool={selectedSchool}
+                  setSelectedSchool={setSelectedSchool}
+                  syllabus={syllabus}
+                  setSyllabus={setSyllabus}
+                  statesIn={statesIn}
+                  setStatesIn={setStatesIn}
+                  formData={formData}
+                  setFormData={setFormData}
+                  levels={levels}
+                  setLevels={setLevels}
+                  classList={classList}
+                  setClassList={setClassList}
                 />
               </div>
             ) : (

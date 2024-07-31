@@ -33,9 +33,60 @@ const FormView = ({
 }) => {
   const navigate = useNavigate();
 
-  const formDataLast = new FormData();
+  const fetchLevels = () => {
+    const levels = allSyllabus
+      .find((item) => item.syllabus === formData.syllabus)
+      .levels.map((item) => item.level);
+    console.log("levels are", levels);
+    setLevels([...levels]);
+  };
 
-  const requiredKeys = ["idd", "name", "class", "school"];
+  const fetchClassList = () => {
+    const levels = allSyllabus.find(
+      (item) => item.syllabus === formData.syllabus
+    ).levels;
+    const classes = levels.find(
+      (level) => level.level === formData.level
+    ).classes;
+    // Use a Set to track unique class identifiers
+    const uniqueClasses = Array.from(
+      new Set(classes.map((cls) => JSON.stringify(cls)))
+    ).map((cls) => JSON.parse(cls));
+    console.log("classes are: ", uniqueClasses);
+    setClassList([...uniqueClasses]);
+  };
+
+  //useEffect to fetch Level of educations and Classes for dropDown
+
+  useEffect(() => {
+    fetchLevels();
+    fetchClassList();
+  }, [formData.syllabus, formData.level]);
+
+  console.log("level of selected student", formData.level);
+  // console.log("levels are",levels)
+
+  //useEffect to fetch schools accordingly
+  useEffect(() => {
+    const fetchSchool = async (scl) => {
+      if (scl.length > 2) {
+        await axios
+          .post("/registration/getschool", { syllabus: syllabus, search: scl })
+          .then((response) => {
+            console.log(response.data.data);
+            setSchools([...response.data.data]);
+          })
+          .catch((error) => {
+            console.log(error.message);
+            setIsOpen(false);
+          });
+      } else {
+        setSchools([]);
+        setIsOpen(false);
+      }
+    };
+    fetchSchool(selectedSchool);
+  }, [formData.syllabus, selectedSchool]);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -63,6 +114,7 @@ const FormView = ({
     }
   };
 
+  //function for validating form
   const validateForm = () => {
     const newErrors = {};
     if (!photo) newErrors.photo = "photo is required";
@@ -123,34 +175,6 @@ const FormView = ({
     return newErrors;
   };
 
-  useEffect(() => {
-    console.log(addImg);
-    console.log(fetchDistricts(statesIn));
-    const fetchSchool = async (scl) => {
-      if (scl.length > 2) {
-        await axios
-          .post("/registration/getschool", { syllabus: syllabus, search: scl })
-          .then((response) => {
-            console.log(response.data.data);
-            setSchools([...response.data.data]);
-          })
-          .catch((error) => {
-            console.log(error.message);
-            setIsOpen(false);
-          });
-      } else {
-        setSchools([]);
-        setIsOpen(false);
-      }
-    };
-    fetchSchool(selectedSchool);
-  }, [formData.syllabus, selectedSchool]);
-
-  useEffect(() => {
-    formDataLast.append("data", JSON.stringify(formData));
-    formDataLast.append("image", photo);
-  }, [formData, photo]);
-
   const scrollToElement = (name) => {
     const element = document.getElementsByName(name);
 
@@ -159,28 +183,6 @@ const FormView = ({
       const topPos =
         element[0].getBoundingClientRect().top + window.scrollY + offset;
       window.scrollTo({ top: topPos, behavior: "smooth" });
-    }
-  };
-
-  const handleSub = async () => {
-    let errs = validateForm();
-    console.log(errs);
-
-    if (Object.keys(errs).length > 0) {
-      scrollToElement(Object.keys(errs)[0]);
-    }
-
-    if (Object.entries(errs).length == 0) {
-      await axios
-        .post("/registration/submitStudent", formDataLast)
-        .then((response) => {
-          console.log("submitted successfully:", response.data);
-          console.log(response.data.data, "aiii");
-          navigate(`/SubmitSuccess/${response.data.data.responseId}`);
-        })
-        .catch((error) => {
-          console.error("Error submitting form data:", error.message);
-        });
     }
   };
 
@@ -236,30 +238,27 @@ const FormView = ({
     return final;
   };
 
-  const fetchLevel = (syll) => {
-    console.log(syll);
-    let datas = allSyllabus.find((data) => data.syllabus == syll);
+  const handleSub = async () => {
+    let errs = validateForm();
+    console.log(errs);
 
-    // console.log(datas);
-
-    if (datas) setLevels(datas.levels);
-  };
-
-  const fetchClassList = (cls) => {
-    console.log(cls);
-    let datas = levels.find((data) => data.level == cls);
-    console.log(datas)
-    if (datas) setClassList(datas.classes);
-  };
-
-  useEffect(() => {
-    fetchLevel(formData.syllabus);
-    if (formData.level) {
-      fetchClassList(formData.level);
+    if (Object.keys(errs).length > 0) {
+      scrollToElement(Object.keys(errs)[0]);
     }
-  }, [formData.syllabus, formData.level]);
 
-  console.log("schools are", schools);
+    if (Object.entries(errs).length == 0) {
+      await axios
+        .post("/registration/submitStudent")
+        .then((response) => {
+          console.log("submitted successfully:", response.data);
+          console.log(response.data.data, "aiii");
+          navigate(`/SubmitSuccess/${response.data.data.responseId}`);
+        })
+        .catch((error) => {
+          console.error("Error submitting form data:", error.message);
+        });
+    }
+  };
 
   return (
     <>
@@ -450,7 +449,6 @@ const FormView = ({
               )}
             </div>
           </div>
-          {console.log("class is:", formData.class)}
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Level of Education
@@ -460,20 +458,17 @@ const FormView = ({
                 <Select
                   className="border-gray-200 border-[1px]"
                   name="level"
-                  value={formData.level}
+                  defaultValue={formData.level}
                   onChange={(e) =>
                     handleInputChange({ target: { name: "level", value: e } })
                   }
                 >
                   {/*  value={formData.class}  onChange={(e)=>handleInputChange({target:{name:"class",value:e}})} */}
-                  <Option value={formData.level}>{formData.level}</Option>
-                  {levels
-                    ?.filter((item) => item.level !== formData.level)
-                    .map((data, i) => (
-                      <Option key={i} value={data.level}>
-                        {data.txt}
-                      </Option>
-                    ))}
+                  {levels.map((data, i) => (
+                    <Option key={i} value={data}>
+                      {data}
+                    </Option>
+                  ))}
                 </Select>
                 {errors.class && (
                   <span className="text-sm  text-red-500">
@@ -483,9 +478,7 @@ const FormView = ({
               </div>
             </div>
           </div>
-              {
-                console.log(classList)
-              }
+
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Class
@@ -494,19 +487,25 @@ const FormView = ({
               <div className="w-full">
                 <Select
                   name="class"
-                  value={formData.class}
-                  disabled={!formData.level}
+                  value={formData.class+""}
                   onChange={(e) =>
                     handleInputChange({
                       target: { name: "class", value: parseInt(e) },
                     })
                   }
                 >
-                  {classList?.map((data, i) => (
-                    <Option key={i} value={data.cls + ""}>
-                      {data.txt}
-                    </Option>
-                  ))}
+                  <Option
+                    value={formData.class}
+                  >{`Class ${formData.class}`}</Option>
+                  {classList
+                    ?.filter((item) => parseInt(item.cls) != parseInt(formData.class))
+                    .map((item,key) => (
+                      
+                      <Option key={key} value={item.cls + ""}>
+                        {console.log("checking items are:",formData.class,item.cls)}
+                        {item.txt}
+                      </Option>
+                    ))}
                 </Select>
                 {errors.class && (
                   <span className="text-sm  text-red-500">
