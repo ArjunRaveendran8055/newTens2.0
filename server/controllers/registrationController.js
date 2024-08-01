@@ -95,7 +95,6 @@ const SubmitStudentController = asyncWrapper(async (req, res, next) => {
     academic_status: recData.academicStatus,
     referral_source: recData.hearAbout,
     image: req.file ? req.file.filename : null, // optional field
-    centre: recData.centre,
     report: [], // optional field, empty array by default
     active_status: false, // default value
     student_status: false, // default value

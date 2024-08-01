@@ -1,6 +1,5 @@
-{  
-   "states":[  
-      {  
+export const allStates=[  
+         {  
          "state":"Andhra Pradesh",
          "districts":[  
             "Anantapur",
@@ -898,4 +897,3 @@
          ]
       }
    ]
-}

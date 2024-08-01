@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Select, Option, Button, IconButton } from "@material-tailwind/react";
 import axios from "axios";
-import allStates from "./statesdistricts.json";
+import { allStates } from "./statesdistricts";
 import addImg from "./addimg.jpg";
 import compressImage from "browser-image-compression";
 import allSyllabus from "./syllabus.json";
@@ -30,30 +30,106 @@ const FormView = ({
   setLevels,
   classList,
   setClassList,
+  districtsIn,
+  setDistrictsIn,
+  allCentre,
 }) => {
   const navigate = useNavigate();
+  const [isClassDropdownVisible, setIsClassDropdownVisible] = useState(false);
+  const [isLevelDropdownVisible, setIsLevelDropdownVisible] = useState(false);
+  const [isStateDropdownVisible, setIsStateDropdownVisible] = useState(false);
+  const [isDistDropdownVisible, setIsDistDropdownVisible] = useState(false);
+
+  const ClassDropdownRef = useRef(null);
+  const levelDropdonwRef = useRef(null);
+  const stateDropdownRef = useRef(null);
+  const distDropdownRef = useRef(null);
+
+  //check the mouse is clicked outside levels list
+  const LevelListClickOutside = (event) => {
+    if (
+      levelDropdonwRef.current &&
+      !levelDropdonwRef.current.contains(event.target)
+    ) {
+      setIsLevelDropdownVisible(false);
+    }
+  };
+
+  //check the mouse is clicked outside class list
+  const ClassListClickOutside = (event) => {
+    if (
+      ClassDropdownRef.current &&
+      !ClassDropdownRef.current.contains(event.target)
+    ) {
+      setIsClassDropdownVisible(false);
+    }
+  };
+
+  //check the mouse is clicked outside state list
+  const StateListClickOutside = (event) => {
+    if (
+      stateDropdownRef.current &&
+      !stateDropdownRef.current.contains(event.target)
+    ) {
+      setIsStateDropdownVisible(false);
+    }
+  };
+
+  //check the mouse is clicked outside district list
+  const DistListClickOutside = (event) => {
+    if (
+      distDropdownRef.current &&
+      !distDropdownRef.current.contains(event.target)
+    ) {
+      setIsDistDropdownVisible(false);
+    }
+  };
+
+  //check the mouse is clicked outside class list
+  useEffect(() => {
+    document.addEventListener("mousedown", LevelListClickOutside);
+    document.addEventListener("mousedown", ClassListClickOutside);
+    document.addEventListener("mousedown", StateListClickOutside);
+    document.addEventListener("mousedown", DistListClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", LevelListClickOutside);
+      document.removeEventListener("mousedown", ClassListClickOutside);
+      document.removeEventListener("mousedown", StateListClickOutside);
+      document.removeEventListener("mousedown", DistListClickOutside);
+    };
+  }, []);
+
+  // //useEffect to fetch the Blob of the stored image
+  // useEffect(()=>{
+  //   axios.get(imageUrl,{responseType:'blob'})
+  //   .then((res)=>{
+  //     console.log(res);
+  //   })
+  // },[])
 
   const fetchLevels = () => {
     const levels = allSyllabus
       .find((item) => item.syllabus === formData.syllabus)
       .levels.map((item) => item.level);
-    console.log("levels are", levels);
+    //console.log("levels are", levels);
     setLevels([...levels]);
   };
 
   const fetchClassList = () => {
-    const levels = allSyllabus.find(
-      (item) => item.syllabus === formData.syllabus
-    ).levels;
-    const classes = levels.find(
-      (level) => level.level === formData.level
-    ).classes;
-    // Use a Set to track unique class identifiers
-    const uniqueClasses = Array.from(
-      new Set(classes.map((cls) => JSON.stringify(cls)))
-    ).map((cls) => JSON.parse(cls));
-    console.log("classes are: ", uniqueClasses);
-    setClassList([...uniqueClasses]);
+    if (formData.level !== null) {
+      const levels = allSyllabus.find(
+        (item) => item.syllabus === formData.syllabus
+      ).levels;
+      const classes = levels.find(
+        (level) => level.level === formData.level
+      ).classes;
+      // Use a Set to track unique class identifiers
+      const uniqueClasses = Array.from(
+        new Set(classes.map((cls) => JSON.stringify(cls)))
+      ).map((cls) => JSON.parse(cls));
+      //console.log("classes are: ", uniqueClasses);
+      setClassList([...uniqueClasses]);
+    }
   };
 
   //useEffect to fetch Level of educations and Classes for dropDown
@@ -63,8 +139,28 @@ const FormView = ({
     fetchClassList();
   }, [formData.syllabus, formData.level]);
 
-  console.log("level of selected student", formData.level);
-  // console.log("levels are",levels)
+  //function to fetch all the states
+  const fetchStates = () => {
+    const states = allStates.map((item) => item.state);
+    //console.log("states are: ", states);
+    setStatesIn([...states]);
+  };
+
+  //function to fetch districts base on the stateOpted
+
+  const fetchAllDists = () => {
+    const dists = allStates.find(
+      (data) => data.state.toLowerCase() === formData.state.toLowerCase()
+    ).districts;
+    setDistrictsIn([...dists]);
+  };
+
+  //useEffect to fetch states and Districts for dropDown
+
+  useEffect(() => {
+    fetchStates();
+    fetchAllDists();
+  }, [formData.state]);
 
   //useEffect to fetch schools accordingly
   useEffect(() => {
@@ -87,6 +183,22 @@ const FormView = ({
     };
     fetchSchool(selectedSchool);
   }, [formData.syllabus, selectedSchool]);
+
+  const handleLevelButtonClick = () => {
+    setIsLevelDropdownVisible((prev) => !prev);
+  };
+
+  const handleClassButtonClick = () => {
+    setIsClassDropdownVisible((prev) => !prev);
+  };
+
+  const handleStateBtnClick = () => {
+    setIsStateDropdownVisible((prev) => !prev);
+  };
+
+  const handleDistBtnClick = () => {
+    setIsDistDropdownVisible((prev) => !prev);
+  };
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -116,8 +228,10 @@ const FormView = ({
 
   //function for validating form
   const validateForm = () => {
+    console.log("centre is",formData.centre)
     const newErrors = {};
-    if (!photo) newErrors.photo = "photo is required";
+    if (!formData.centre) newErrors.centre = "Centre is required";
+    //if (!photo) newErrors.photo = "photo is required";
     if (!formData.fullName) newErrors.fullName = "Full name is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.address) newErrors.address = "Address is required";
@@ -132,6 +246,7 @@ const FormView = ({
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
+    if (!formData.level) newErrors.level = "Level is required";
     if (!formData.class) newErrors.class = "Class is required";
     if (!formData.syllabus) newErrors.syllabus = "Syllabus is required";
     if (!formData.school) newErrors.school = "School is required";
@@ -169,20 +284,28 @@ const FormView = ({
     } else if (!/^\d{10}$/.test(formData.whatsappNumber)) {
       newErrors.whatsappNumber = "WhatsApp number must be 10 digits";
     }
-    if (!formData.centre) newErrors.centre = "Centre is required";
-
     setErrors(newErrors);
     return newErrors;
   };
+  console.log("errors are", errors);
 
   const scrollToElement = (name) => {
-    const element = document.getElementsByName(name);
+    console.log("Name of element is:", name);
 
-    if (element) {
-      const offset = -250; // Adjust this value to scroll a bit above
-      const topPos =
-        element[0].getBoundingClientRect().top + window.scrollY + offset;
-      window.scrollTo({ top: topPos, behavior: "smooth" });
+    // Retrieve the element by its name attribute
+    const elements = document.getElementsByName(name);
+    console.log("Elements found:", elements);
+
+    if (elements.length > 0) {
+      const element = elements[0];
+
+      // Scroll to the calculated position smoothly
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      // Optionally, focus the element to highlight it
+      element.focus();
+    } else {
+      console.error("Element not found:", name);
     }
   };
 
@@ -194,7 +317,6 @@ const FormView = ({
     setSelectedSchool(schoolName.toLowerCase());
     // Close the school list after selection
     // Set the selected school in the input field
-
     setFormData({
       ...formData,
       school: schoolName.toLowerCase(),
@@ -216,27 +338,31 @@ const FormView = ({
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(name, value);
+    if (name === "level") {
+      return setFormData({ ...formData, class: null, [name]: value });
+    }
+
+    if (name === "syllabus")
+      return setFormData({
+        ...formData,
+        level: null,
+        class: null,
+        syllabus: value,
+      });
+    if (name === "state")
+      return setFormData({ ...formData, district: "", state: value });
     setFormData({
       ...formData,
       [name]: value,
     });
   };
+  console.log("formData is: ", formData);
 
-  const fetchDistricts = (state) => {
-    let final = [];
 
-    let Data = allStates.states.find((value) => {
-      if (value.state == state) {
-        return value.districts;
-      }
-    });
-
-    if (Data) {
-      final = Data.districts;
-    }
-
-    return final;
-  };
+  const preSubmissionHandle=()=>{
+    
+  }
 
   const handleSub = async () => {
     let errs = validateForm();
@@ -247,26 +373,30 @@ const FormView = ({
     }
 
     if (Object.entries(errs).length == 0) {
-      await axios
-        .post("/registration/submitStudent")
-        .then((response) => {
-          console.log("submitted successfully:", response.data);
-          console.log(response.data.data, "aiii");
-          navigate(`/SubmitSuccess/${response.data.data.responseId}`);
+      if(!photo){
+        console.log("dum...dum..")
+        axios.post("/approve/staffApproval",{formData})
+        .then((res)=>{
+          console.log(res.data)
         })
-        .catch((error) => {
-          console.error("Error submitting form data:", error.message);
-        });
+        .catch((err)=>{
+          console.log(err.message)
+        })
+      }
+      else{
+        const lastFormData=new FormData()
+        axios.post("/approve/staffApprovalWithPhoto",lastFormData)
+      }
     }
   };
 
   return (
     <>
       <div className="max-w-4xl mx-auto  p-4 bg-white rounded-lg shadow-lg">
-        <form className="mt-6 space-y-4">
-          <div className="w-52 p-2 mx-auto  rounded ">
-            <label htmlFor="imageUpload">
-              <div className="avatar-upload relative">
+        <div className="mt-6 space-y-4">
+          <div className="w-52 p-2 mx-auto  rounded">
+            <label name="photo" htmlFor="imageUpload" className="">
+              <div className="avatar-upload relative rounded-full bg-gray-200">
                 <div className="avatar-edit">
                   <input
                     type="file"
@@ -291,6 +421,11 @@ const FormView = ({
                 </div>
               </div>
             </label>
+            {errors.photo && (
+              <span className="text-sm text-red-500">
+                {" * " + errors.photo}
+              </span>
+            )}
           </div>
 
           <div className="flex w-full">
@@ -449,83 +584,102 @@ const FormView = ({
               )}
             </div>
           </div>
-          <div className="flex">
-            <label className="flex w-full" htmlFor="gender">
+
+          <div className="flex w-full">
+            <label className="flex w-full" htmlFor="gender" name="level">
               Level of Education
             </label>
-            <div className="flex flex-col w-full">
-              <div className="w-full">
-                <Select
-                  className="border-gray-200 border-[1px]"
-                  name="level"
-                  defaultValue={formData.level}
-                  onChange={(e) =>
-                    handleInputChange({ target: { name: "level", value: e } })
-                  }
+            <div className="flex flex-col w-full text-[12px]">
+              <button
+                ref={levelDropdonwRef}
+                onClick={handleLevelButtonClick}
+                value={formData.level}
+                className={`relative w-full h-10 border-[1px] border-gray-500  rounded-md ${
+                  isLevelDropdownVisible &&
+                  "rounded-b-none border-b-0 border-gray-700  "
+                } flex px-4 py-2`}
+              >
+                {formData.level}
+                <div
+                  className={`classlists transition-scale duration-150 ${
+                    isLevelDropdownVisible
+                      ? "scale-100 opacity-100"
+                      : "sr-only scale-90 opacity-75"
+                  } flex absolute bg-white w-full top-12 z-20 right-0 rounded-md border-[1px] border-gray-200 flex-col px-2 py-2 shadow-md`}
                 >
-                  {/*  value={formData.class}  onChange={(e)=>handleInputChange({target:{name:"class",value:e}})} */}
-                  {levels.map((data, i) => (
-                    <Option key={i} value={data}>
-                      {data}
-                    </Option>
-                  ))}
-                </Select>
-                {errors.class && (
-                  <span className="text-sm  text-red-500">
-                    {" * " + errors.class}
-                  </span>
-                )}
-              </div>
+                  {levels
+                    ?.filter((item) => item !== formData.level)
+                    .map((item, key) => (
+                      <span
+                        className="bg-white w-full flex px-2 py-2 hover:bg-gray-200 rounded-md"
+                        key={key}
+                        value={item}
+                        onClick={(e) => {
+                          handleInputChange({
+                            target: { name: "level", value: item },
+                          });
+                        }}
+                      >
+                        {item}
+                      </span>
+                    ))}
+                </div>
+              </button>
+              {errors.level && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.class}
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="flex">
+          <div className="flex w-full">
             <label className="flex w-full" htmlFor="gender">
               Class
             </label>
-            <div className="flex flex-col w-full">
-              <div className="w-full">
-                <select
-                  className="w-full h-10 relative flex px-4 py-2 border-gray-300 border-[1px] rounded-md focus:outline-2 focus:outline-gray-500 bg-white active:bg-red-300"
-                  name="class"
-                  value={formData.class + ""}
-                  onChange={(e) =>
-                    handleInputChange({
-                      target: { name: "class", value: parseInt(e) },
-                    })
-                  }
+            <div name="class" className="flex flex-col w-full">
+              <button
+                ref={ClassDropdownRef}
+                onClick={handleClassButtonClick}
+                value={formData.class}
+                className={`relative w-full h-10 border-[1px] border-gray-500  rounded-md ${
+                  isClassDropdownVisible &&
+                  "rounded-b-none border-b-0 border-gray-700 "
+                } flex px-4 py-2`}
+              >
+                {formData.class !== null ? `Class ${formData.class}` : ``}
+                <div
+                  className={`classlists transition-scale duration-150 ${
+                    isClassDropdownVisible
+                      ? "scale-100 opacity-100"
+                      : "sr-only scale-90 opacity-75"
+                  } flex absolute bg-white w-full top-12 z-20 right-0 rounded-md border-[1px] border-gray-200 flex-col px-2 py-2 shadow-md`}
                 >
-                  
-                    <option
-                      className="w-full flex "
-                      value={formData.class}
-                    >{`Class ${formData.class}`}</option>
-                    {classList
-                      ?.filter(
-                        (item) => parseInt(item.cls) != parseInt(formData.class)
-                      )
-                      .map((item, key) => (
-                        <option
-                          className="bg-white w-full flex absolute right-5"
-                          key={key}
-                          value={item.cls + ""}
-                        >
-                          {console.log(
-                            "checking items are:",
-                            formData.class,
-                            item.cls
-                          )}
-                          {item.txt}
-                        </option>
-                      ))}
-        
-                </select>
-                {errors.class && (
-                  <span className="text-sm  text-red-500">
-                    {" * " + errors.class}
-                  </span>
-                )}
-              </div>
+                  {classList
+                    ?.filter(
+                      (item) => parseInt(item.cls) !== parseInt(formData.class)
+                    )
+                    .map((item, key) => (
+                      <span
+                        className="bg-white w-full flex px-2 py-2 hover:bg-gray-200 rounded-md"
+                        key={key}
+                        onClick={() =>
+                          handleInputChange({
+                            target: { name: "class", value: item.cls },
+                          })
+                        }
+                        value={item.cls + ""}
+                      >
+                        {item.txt}
+                      </span>
+                    ))}
+                </div>
+              </button>
+              {errors.class && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.class}
+                </span>
+              )}
             </div>
           </div>
 
@@ -542,6 +696,7 @@ const FormView = ({
                         <input
                           onChange={handleInputChange}
                           type="radio"
+                          checked={formData.country === "india" && true}
                           className="form-radio h-4 w-4 text-blue-600"
                           name="country"
                           value="india"
@@ -552,9 +707,10 @@ const FormView = ({
                         <input
                           onChange={handleInputChange}
                           type="radio"
+                          checked={formData.country === "abroad" && true}
                           className="form-radio h-4 w-4 text-blue-600"
                           name="country"
-                          value="Abroad"
+                          value="abroad"
                         />
                         <span className="ml-2  text-gray-900">Abroad</span>
                       </label>
@@ -678,66 +834,105 @@ const FormView = ({
             </div>
           </div>
 
-          <div className="flex">
+          <div className="flex w-full">
             <label className="flex w-full" htmlFor="gender">
               State
             </label>
             <div className="flex flex-col w-full">
-              <div className="w-full">
-                <Select
-                  className="border-gray-200 border-[1px]"
-                  name="state"
-                  value={statesIn}
-                  onChange={(e) => {
-                    setStatesIn(e);
-                    handleInputChange({ target: { name: "state", value: e } });
-                  }}
-                  placeholder="State"
+              <button
+                ref={stateDropdownRef}
+                onClick={handleStateBtnClick}
+                value={formData.state}
+                className={`relative w-full h-10 border-[1px] border-gray-500  rounded-md ${
+                  isStateDropdownVisible &&
+                  "rounded-b-none border-b-0 border-gray-700 "
+                } flex px-4 py-2`}
+              >
+                {formData.state}
+                <div
+                  className={`classlists transition-scale duration-150 h-[25vh] overflow-y-scroll ${
+                    isStateDropdownVisible
+                      ? "scale-100 opacity-100"
+                      : "sr-only scale-90 opacity-75"
+                  } flex absolute bg-white w-full top-12 z-20 right-0 rounded-md border-[1px] border-gray-200 flex-col px-2 py-2 shadow-md`}
                 >
-                  {allStates?.states?.map((value, index) => (
-                    <Option key={index} value={value.state}>
-                      {value.state}
-                    </Option>
-                  ))}
-                </Select>
-                {errors.state && (
-                  <span className="text-sm  text-red-500">
-                    {" * " + errors.state}
-                  </span>
-                )}
-              </div>
+                  {statesIn
+                    ?.filter(
+                      (item) =>
+                        item.toLowerCase() !== formData.state.toLowerCase()
+                    )
+                    .map((item, key) => (
+                      <span
+                        className="bg-white w-full flex px-2 py-2 hover:bg-gray-200 rounded-md"
+                        key={key}
+                        onClick={() =>
+                          handleInputChange({
+                            target: { name: "state", value: item },
+                          })
+                        }
+                        value={item}
+                      >
+                        {item}
+                      </span>
+                    ))}
+                </div>
+              </button>
+              {errors.state && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.state}
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="flex">
+          <div className="flex w-full">
             <label className="flex w-full" htmlFor="gender">
-              District
+              Districts
             </label>
             <div className="flex flex-col w-full">
-              <div className="w-full">
-                <Select
-                  className="border-gray-200 border-[1px]"
-                  name="district"
-                  onChange={(e) =>
-                    handleInputChange({
-                      target: { name: "district", value: e },
-                    })
-                  }
-                  disabled={!statesIn}
-                  placeholder="State"
+              <button
+                ref={distDropdownRef}
+                onClick={handleDistBtnClick}
+                value={formData.district}
+                className={`relative w-full h-10 border-[1px] border-gray-500  rounded-md ${
+                  isDistDropdownVisible &&
+                  "rounded-b-none border-b-0 border-gray-700 "
+                } flex px-4 py-2`}
+              >
+                {formData.district}
+                <div
+                  className={`classlists transition-scale duration-150 h-[25vh] overflow-y-scroll ${
+                    isDistDropdownVisible
+                      ? "scale-100 opacity-100"
+                      : "sr-only scale-90 opacity-75"
+                  } flex absolute bg-white w-full top-12 z-20 right-0 rounded-md border-[1px] border-gray-200 flex-col px-2 py-2 shadow-md`}
                 >
-                  {fetchDistricts(statesIn).map((value, index) => (
-                    <Option key={index} value={value}>
-                      {value}
-                    </Option>
-                  ))}
-                </Select>
-                {errors.district && (
-                  <span className="text-sm  text-red-500">
-                    {" * " + errors.district}
-                  </span>
-                )}
-              </div>
+                  {districtsIn
+                    ?.filter(
+                      (item) =>
+                        item.toLowerCase() !== formData.district.toLowerCase()
+                    )
+                    .map((item, key) => (
+                      <span
+                        className="bg-white w-full flex px-2 py-2 hover:bg-gray-200 rounded-md"
+                        key={key}
+                        onClick={() =>
+                          handleInputChange({
+                            target: { name: "district", value: item },
+                          })
+                        }
+                        value={item}
+                      >
+                        {item}
+                      </span>
+                    ))}
+                </div>
+              </button>
+              {errors.district && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.district}
+                </span>
+              )}
             </div>
           </div>
 
@@ -914,35 +1109,51 @@ const FormView = ({
               Centre
             </label>
             <div className="flex flex-col w-full">
+              {console.log(formData)}
               <div className="w-full">
                 <Select
                   className="border-gray-200 border-[1px]"
-                  name="syllabus"
-                  onChange={(e) => {
-                    setSyllabus(e);
-                    handleInputChange({
-                      target: { name: "syllabus", value: e },
-                    });
-                  }}
+                  value={formData.centre}
+                  name="centre"
+                  onChange={(e) =>
+                    handleInputChange({ target: { name: "centre", value: e } })
+                  }
                 >
-                  <Option value="state">STATE</Option>
-                  <Option value="cbse">CBSE</Option>
+                  {allCentre.map((item, key) => (
+                    <Option key={key} value={item.centre}>{item.centre}</Option>
+                  ))}
                 </Select>
               </div>
-              {errors.syllabus && (
+              {errors.centre && (
                 <span className="text-sm  text-red-500">
-                  {" * " + errors.syllabus}
+                  {" * " + errors.centre}
                 </span>
               )}
             </div>
           </div>
 
           <div className="flex justify-center">
-            <Button onClick={handleSub} className="mt-5">
+            <Button onClick={()=>{preSubmissionHandle}} className="mt-5">
               Register
             </Button>
           </div>
-        </form>
+        </div>
+        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white w-[20%] h-[18%] rounded-lg p-6">
+            <h2 className="text-xl mb-4">Approve Confirmation</h2>
+            <p className="uppercase">You sure want to Approve "{formData.rollNumber}" ? </p>
+            <div className="flex justify-end mt-4">
+              <button 
+              onClick={handleSub}
+              className="bg-red-500 text-white px-4 py-2 rounded mr-2" >
+                Yes, Delete
+              </button>
+              <button className="bg-gray-300 px-4 py-2 rounded" >
+                No, Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

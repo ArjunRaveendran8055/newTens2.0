@@ -20,7 +20,7 @@ const ApproveStudents = () => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
 
-  const [imageUrl, setImageUrl] = useState(addImg);
+  const [imageUrl, setImageUrl] = useState();
 
   const [photo, setPhoto] = useState(null);
 
@@ -34,7 +34,9 @@ const ApproveStudents = () => {
 
   const [syllabus, setSyllabus] = useState("");
 
-  const [statesIn, setStatesIn] = useState("");
+  const [statesIn, setStatesIn] = useState([]);
+
+  const [districtsIn,setDistrictsIn]=useState([])
 
   const [levels, setLevels] = useState([]);
 
@@ -151,6 +153,12 @@ const ApproveStudents = () => {
     setSelectedIndex(index);
     setOpenPreview(true);
     console.log("selected student is:", item)
+    const imageName=item.image
+    if(imageName.length ===0){
+      setImageUrl(addImg)
+    }
+    const url=`http://localhost:8055/uploads/${imageName}`
+    setImageUrl(url)
     setFormData({
       fullName: item.student_name,
       gender: item.gender,
@@ -163,9 +171,10 @@ const ApproveStudents = () => {
       school: item.school_name,
       schoolLocation: item.school_location,
       medium: item.medium,
-      state: item.state,
-      level: item.level,
       district: item.district,
+      state: item.state,
+      country:item.country,
+      level: item.level,
       fatherName: item.father,
       motherName: item.mother,
       fatherOccupation: item.fathers_occupation,
@@ -174,9 +183,9 @@ const ApproveStudents = () => {
       fatherNumber: item.father_no,
       motherNumber: item.mother_no,
       whatsappNumber: item.whatsapp,
-      centre: item.centre,
     });
-    setStatesIn(item.state);
+      
+    setErrors({})
     setSelectedSchool(item.school_name);
     //socket to show a student is selected for approval process
     socket.emit("student_selected", { userId: user.id, studentId: item._id });
@@ -210,7 +219,7 @@ const ApproveStudents = () => {
   return (
     <div>
       <div className="sm:hidden lg:flex w-full h-[88vh] pt-3 gap-2">
-        <div className="leftcontainer w-[40%] bg-white rounded-lg flex flex-col h-full pt-4  px-2">
+        <div className="leftcontainer w-[35%] bg-white rounded-lg flex flex-col h-full pt-4  px-2">
           <div className="sortcontainer flex justify-end  items-center mb-2">
             <div className="w-full flex justify-center items-center gap-2">
               <input
@@ -272,7 +281,7 @@ const ApproveStudents = () => {
                       </div>
                       {selectedStudents.includes(item._id) && (
                         <div className="absolute right-5 text-gray">
-                          <CgSandClock color="" />
+                          <CgSandClock color="" className=" animate-pulse"/>
                         </div>
                       )}
                     </button>
@@ -283,7 +292,7 @@ const ApproveStudents = () => {
           )}
         </div>
         <div className="vrtline w-[1px]  bg-black" />
-        <div className="previewcontainer w-[60%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">
+        <div className="previewcontainer w-[65%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">
           <div className="previewtitlecontainer flex h-10 w-full justify-center items-center">
             <span className="text-2xl">
               <h2 className=" border-gray-300 border-b-2 px-2 font-enriq">
@@ -317,6 +326,9 @@ const ApproveStudents = () => {
                   setLevels={setLevels}
                   classList={classList}
                   setClassList={setClassList}
+                  districtsIn={districtsIn}
+                  setDistrictsIn={setDistrictsIn}
+                  allCentre={allCentre}
                 />
               </div>
             ) : (

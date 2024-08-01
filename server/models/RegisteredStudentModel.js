@@ -126,7 +126,7 @@ const studentSchema = new mongoose.Schema({
     },
     centre: {
       type: String,
-      required: [true, "center required"],
+      default:""
     },
     responseId: {
       type: String,

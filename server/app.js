@@ -1,6 +1,7 @@
 const express =require("express")
 const cors=require("cors")
 const morgan =require("morgan")
+const path=require("path")
 const erroHandler = require("./middleware/errorHandler")
 const { authRoutes } = require("./routes/authRoutes")
 const { userRoutes } = require("./routes/userRoutes")
@@ -17,6 +18,8 @@ app.use(cors({
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
+
+app.use("/uploads",express.static(path.join(__dirname,'uploads')))
 
 app.use("/auth",authRoutes)
 
