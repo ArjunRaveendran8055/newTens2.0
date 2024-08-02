@@ -14,7 +14,7 @@ const RegForm = () => {
 
   const [imageUrl, setImageUrl] = useState(addImg);
 
-  const formDataLast = new FormData();
+ 
 
   const [photo, setPhoto] = useState(null);
 
@@ -223,9 +223,8 @@ const RegForm = () => {
       validateForm()
     }
     console.log(formData)
-    formDataLast.append("data", JSON.stringify(formData));
-
-    formDataLast.append("image", photo);
+    
+    
   }, [formData, photo]);
 
   const scrollToElement = (name) => {
@@ -240,6 +239,13 @@ const RegForm = () => {
   };
 
   const handleSub = async () => {
+
+    const formDataLast = new FormData();
+
+    formDataLast.set("data", JSON.stringify(formData));
+
+    
+    formDataLast.set("image", photo);
 
     setFormFlag(true)
     let errs = validateForm();
