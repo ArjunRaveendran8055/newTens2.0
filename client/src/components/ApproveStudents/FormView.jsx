@@ -40,6 +40,9 @@ const FormView = ({
   const [isStateDropdownVisible, setIsStateDropdownVisible] = useState(false);
   const [isDistDropdownVisible, setIsDistDropdownVisible] = useState(false);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
   const ClassDropdownRef = useRef(null);
   const levelDropdonwRef = useRef(null);
   const stateDropdownRef = useRef(null);
@@ -228,7 +231,7 @@ const FormView = ({
 
   //function for validating form
   const validateForm = () => {
-    console.log("centre is",formData.centre)
+    console.log("centre is", formData.centre);
     const newErrors = {};
     if (!formData.centre) newErrors.centre = "Centre is required";
     //if (!photo) newErrors.photo = "photo is required";
@@ -359,34 +362,33 @@ const FormView = ({
   };
   console.log("formData is: ", formData);
 
-
-  const preSubmissionHandle=()=>{
-    
-  }
-
-  const handleSub = async () => {
+  const preSubmissionHandle = async () => {
+    console.log("duttuttu...");
     let errs = validateForm();
     console.log(errs);
-
     if (Object.keys(errs).length > 0) {
       scrollToElement(Object.keys(errs)[0]);
     }
-
     if (Object.entries(errs).length == 0) {
-      if(!photo){
-        console.log("dum...dum..")
-        axios.post("/approve/staffApproval",{formData})
-        .then((res)=>{
-          console.log(res.data)
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleSub = async () => {
+    if (!photo) {
+      console.log("dum...dum..");
+      setIsSaving(true)
+      axios
+        .post("/approve/staffApproval", { formData })
+        .then((res) => {
+          console.log(res.data);
         })
-        .catch((err)=>{
-          console.log(err.message)
-        })
-      }
-      else{
-        const lastFormData=new FormData()
-        axios.post("/approve/staffApprovalWithPhoto",lastFormData)
-      }
+        .catch((err) => {
+          console.log(err.message);
+        });
+    } else {
+      const lastFormData = new FormData();
+      axios.post("/approve/staffApprovalWithPhoto", lastFormData);
     }
   };
 
@@ -1120,7 +1122,9 @@ const FormView = ({
                   }
                 >
                   {allCentre.map((item, key) => (
-                    <Option key={key} value={item.centre}>{item.centre}</Option>
+                    <Option key={key} value={item.centre}>
+                      {item.centre}
+                    </Option>
                   ))}
                 </Select>
               </div>
@@ -1133,27 +1137,48 @@ const FormView = ({
           </div>
 
           <div className="flex justify-center">
-            <Button onClick={()=>{preSubmissionHandle}} className="mt-5">
+            <Button onClick={preSubmissionHandle} className="mt-5">
               Register
             </Button>
           </div>
         </div>
-        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white w-[20%] h-[18%] rounded-lg p-6">
-            <h2 className="text-xl mb-4">Approve Confirmation</h2>
-            <p className="uppercase">You sure want to Approve "{formData.rollNumber}" ? </p>
-            <div className="flex justify-end mt-4">
-              <button 
-              onClick={handleSub}
-              className="bg-red-500 text-white px-4 py-2 rounded mr-2" >
-                Yes, Delete
-              </button>
-              <button className="bg-gray-300 px-4 py-2 rounded" >
-                No, Cancel
-              </button>
+        {isModalOpen && (
+          <div className={` fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50`}>
+            <div className="bg-white w-100 h-100 rounded-lg p-6">
+              <h2 className="text-xl mb-4">Approve Confirmation</h2>
+              <p className="uppercase">
+                You sure want to Approve "{formData.rollNumber}" ?{" "}
+              </p>
+              <div className="flex justify-end mt-4">
+                {!isSaving ? (
+                  <button
+                    onClick={handleSub}
+                    className="bg-red-500 text-white px-4 py-2 rounded mr-2 cursor-pointer"
+                  >
+                    Yes, Confirm
+                  </button>
+                ) : (
+                  <button
+                    disabled={true}
+                    className="bg-red-500 text-white px-4 py-2 rounded mr-2 cursor-pointer"
+                  >
+                    <span className=" animate-pulse">Updating..</span>
+                  </button>
+                )}
+
+                <button
+                  disabled={isSaving}
+                  onClick={() => {
+                    setIsModalOpen(false);
+                  }}
+                  className="bg-gray-300 px-4 py-2 rounded cursor-pointer"
+                >
+                  No, Cancel
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
