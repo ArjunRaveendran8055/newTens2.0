@@ -53,7 +53,10 @@ const getSchoolList = asyncWrapper(async (req, res, next) => {
 });
 
 const SubmitStudentController = asyncWrapper(async (req, res, next) => {
-  // console.log(req.file)
+
+
+  console.log(req.body)
+
   const recData= JSON.parse(req.body.data);
 
   console.log(req.file.filename);

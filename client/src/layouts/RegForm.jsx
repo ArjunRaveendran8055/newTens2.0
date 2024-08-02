@@ -116,7 +116,7 @@ const RegForm = () => {
     fatherNumber: "",
     motherNumber: "",
     whatsappNumber: "",
-    centre: "",
+    centre: "sd",
     academicStatus: "",
     hearAbout: "",
     difficultSubjects: [],
