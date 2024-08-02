@@ -229,6 +229,29 @@ const FormView = ({
     }
   };
 
+  //function to handle changes in all the fields
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    if (name === "level") {
+      return setFormData({ ...formData, class: null, [name]: value });
+    }
+
+    if (name === "syllabus")
+      return setFormData({
+        ...formData,
+        level: null,
+        class: null,
+        syllabus: value,
+      });
+    if (name === "state")
+      return setFormData({ ...formData, district: "", state: value });
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   //function for validating form
   const validateForm = () => {
     console.log("centre is", formData.centre);
@@ -339,27 +362,7 @@ const FormView = ({
     // Set the selected school in the input field
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    console.log(name, value);
-    if (name === "level") {
-      return setFormData({ ...formData, class: null, [name]: value });
-    }
 
-    if (name === "syllabus")
-      return setFormData({
-        ...formData,
-        level: null,
-        class: null,
-        syllabus: value,
-      });
-    if (name === "state")
-      return setFormData({ ...formData, district: "", state: value });
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
   console.log("formData is: ", formData);
 
   const preSubmissionHandle = async () => {

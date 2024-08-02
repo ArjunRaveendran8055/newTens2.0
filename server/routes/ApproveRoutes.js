@@ -7,5 +7,4 @@ const approveRouter=express.Router()
 approveRouter.post("/staffApproval",staffApprovalController)
 
 
-
 module.exports={approveRouter}

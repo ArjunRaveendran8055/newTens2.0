@@ -36,7 +36,7 @@ app.use("/registration",registrationRoutes)
 
 app.use("/centre",centreRouter)
 
-// app.use("/approve",approveRouter)
+app.use("/approve",approveRouter)
 
 app.use(erroHandler)
 
