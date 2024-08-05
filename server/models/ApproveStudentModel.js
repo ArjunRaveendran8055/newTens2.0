@@ -110,7 +110,7 @@ const ApprovedStudentSchema = new mongoose.Schema({
     },
     remark: {
       type: String,
-      required: [true, "remark requrired"],
+      required: false
     },
     academic_status: {
       type: String,
@@ -141,11 +141,6 @@ const ApprovedStudentSchema = new mongoose.Schema({
       type: Boolean,
       default: false,
     },
-    approveStatus:{
-      type:Boolean,
-      default:false
-    }
-  
 },
 {
   timestamps: true // This adds `createdAt` and `updatedAt` fields

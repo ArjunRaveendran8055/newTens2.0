@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Select, Option, Button, IconButton } from "@material-tailwind/react";
 import axios from "axios";
+import socket from "../../socket";
 import { allStates } from "./statesdistricts";
 import addImg from "./addimg.jpg";
 import compressImage from "browser-image-compression";
 import allSyllabus from "./syllabus.json";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setToastView } from "../features/toast/toastSlice";
 
 const FormView = ({
   formData,
@@ -33,16 +36,18 @@ const FormView = ({
   districtsIn,
   setDistrictsIn,
   allCentre,
+  setIsUpdatedMsg,
+  setOpenPreview,
+  setSelectedIndex
 }) => {
   const navigate = useNavigate();
+  const dispatch=useDispatch()
   const [isClassDropdownVisible, setIsClassDropdownVisible] = useState(false);
   const [isLevelDropdownVisible, setIsLevelDropdownVisible] = useState(false);
   const [isStateDropdownVisible, setIsStateDropdownVisible] = useState(false);
   const [isDistDropdownVisible, setIsDistDropdownVisible] = useState(false);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
   const ClassDropdownRef = useRef(null);
   const levelDropdonwRef = useRef(null);
   const stateDropdownRef = useRef(null);
@@ -232,6 +237,8 @@ const FormView = ({
   //function to handle changes in all the fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log("error in name is",errors[name])
+    setErrors({...errors,[name]:""})
     console.log(name, value);
     if (name === "level") {
       return setFormData({ ...formData, class: null, [name]: value });
@@ -336,6 +343,7 @@ const FormView = ({
   };
 
   const handleSchoolChange = (schoolName) => {
+    setErrors({...errors,school:""})
     console.log(schoolName);
     if (schoolName.length >= 3) {
       setIsOpen(true);
@@ -351,6 +359,7 @@ const FormView = ({
 
   const handleSchoolChange2 = (schoolName) => {
     console.log(schoolName);
+    setErrors({...errors,schools:""})
     setSelectedSchool(schoolName.toLowerCase());
 
     setFormData({
@@ -384,10 +393,21 @@ const FormView = ({
       axios
         .post("/approve/staffApproval", { formData })
         .then((res) => {
-          console.log(res.data);
+          const {id}=res.data
+          console.log("ithanne alle angod ayache",id);
+          setIsModalOpen(false)
+          setIsSaving(false)
+          setOpenPreview(false)
+          setSelectedIndex(null)
+          setIsUpdatedMsg(true)
+          setTimeout(()=>setIsUpdatedMsg(false),4000)
+          socket.emit("student-updated",{id})
         })
-        .catch((err) => {
-          console.log(err.message);
+        .catch((err) => {   
+          setIsModalOpen(false)
+          setIsSaving(false)
+          err.response.data.error
+          dispatch(setToastView({msg:err.response.data.error,type:"error"}))
         });
     } else {
       const lastFormData = new FormData();

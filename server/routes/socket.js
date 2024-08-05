@@ -23,7 +23,7 @@ const setupSocket = (server) => {
         const pipeLine=[
           {
             $match:{
-              student_status:false
+              approveStatus:false
             }
           },
           {
@@ -61,7 +61,6 @@ const setupSocket = (server) => {
         io.emit("student_ids", { studentIds });
       }
       else {
-        console.log("dum");
         console.log("index of existing user is",objInd)
         if (objInd !== -1) {
           students[objInd].studentId = student.studentId;
@@ -72,6 +71,41 @@ const setupSocket = (server) => {
       }
       console.log(students);
     });
+
+    //socket for removing student id form student array and updated the pending approval list
+    socket.on("student-updated",async (student)=>{
+      console.log("recevied id is:",student.id)
+      const updatedIds=students.filter(
+        (obj)=>obj.studentId !== student.id)
+      students=[...updatedIds]
+      const studentIds=students.map((obj)=>obj.studentId)
+      console.log("itrem ini bhaaki ollu",studentIds)
+      try {
+        const pipeLine=[
+          {
+            $match:{
+              approveStatus:false
+            }
+          },
+          {
+            $sort:{
+              createdAt:-1
+            }
+          }
+
+        ]
+        const students = await RegisteredStudentModel.aggregate(pipeLine)
+        // console.log(students)
+        if (students.length === 0) {
+          return io.emit("no_pending_students", {
+            msg: "No Students for Approval In Pending",
+          });
+        }
+        return io.emit("after-student-updation", { students,studentIds });
+      } catch (error) {
+        return io.emit("fetch_student_error", { msg: err.message });
+      }
+    })
 
     //on socket connection discontinued
     socket.on("disconnect", () => {

@@ -8,7 +8,7 @@ import FormView from "./FormView";
 import socket from "../../socket";
 import { CgSandClock } from "react-icons/cg";
 import addImg from "./addimg.jpg";
-
+import { TiTick } from "react-icons/ti";
 const ApproveStudents = () => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -19,6 +19,7 @@ const ApproveStudents = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
+  const [isUpdatedMsg, setIsUpdatedMsg] = useState(false);
 
   const [imageUrl, setImageUrl] = useState();
 
@@ -36,13 +37,14 @@ const ApproveStudents = () => {
 
   const [statesIn, setStatesIn] = useState([]);
 
-  const [districtsIn,setDistrictsIn]=useState([])
+  const [districtsIn, setDistrictsIn] = useState([]);
 
   const [levels, setLevels] = useState([]);
 
   const [classList, setClassList] = useState([]);
 
   const [formData, setFormData] = useState({
+    _id: "",
     fullName: "",
     gender: "",
     address: "",
@@ -73,6 +75,7 @@ const ApproveStudents = () => {
     dispatch(setLoader());
     socket.connect();
     socket.on("connect", () => {
+      dispatch(removeLoader());
       console.log("Connected to server");
     });
 
@@ -92,7 +95,6 @@ const ApproveStudents = () => {
     //getting studentList from socket
     socket.on("students_list", (data) => {
       setStudentsList([...data.students]);
-      dispatch(removeLoader());
       setEmptyList(false);
       setDisplayingStudentList([...data.students]);
     });
@@ -126,6 +128,8 @@ const ApproveStudents = () => {
     fetchAllCetres();
 
     return () => {
+
+      //on component unmount
       socket.off("connect");
       socket.off("students_list");
       socket.off("connect_failed");
@@ -138,8 +142,7 @@ const ApproveStudents = () => {
   }, []);
 
   const previewHandler = (item, index) => {
-    //console.log("selected student is:", item._id);
-
+    console.log("selected student is:", item);
     const isoStringToInputValue = (isoString) => {
       const date = new Date(isoString);
       const year = date.getFullYear();
@@ -152,14 +155,15 @@ const ApproveStudents = () => {
     const actDate = isoStringToInputValue(item.dob);
     setSelectedIndex(index);
     setOpenPreview(true);
-    console.log("selected student is:", item)
-    const imageName=item.image
-    if(imageName.length ===0){
-      setImageUrl(addImg)
+    console.log("selected student is:", item);
+    const imageName = item.image;
+    if (imageName.length === 0) {
+      setImageUrl(addImg);
     }
-    const url=`http://localhost:8055/uploads/${imageName}`
-    setImageUrl(url)
+    const url = `http://localhost:8055/uploads/${imageName}`;
+    setImageUrl(url);
     setFormData({
+      _id: item._id,
       fullName: item.student_name,
       gender: item.gender,
       address: item.address,
@@ -168,12 +172,13 @@ const ApproveStudents = () => {
       email: item.email,
       class: item.class,
       syllabus: item.syllabus,
+      centre: item.centre,
       school: item.school_name,
       schoolLocation: item.school_location,
       medium: item.medium,
       district: item.district,
       state: item.state,
-      country:item.country,
+      country: item.country,
       level: item.level,
       fatherName: item.father,
       motherName: item.mother,
@@ -184,8 +189,8 @@ const ApproveStudents = () => {
       motherNumber: item.mother_no,
       whatsappNumber: item.whatsapp,
     });
-      
-    setErrors({})
+
+    setErrors({});
     setSelectedSchool(item.school_name);
     //socket to show a student is selected for approval process
     socket.emit("student_selected", { userId: user.id, studentId: item._id });
@@ -205,6 +210,13 @@ const ApproveStudents = () => {
     setSelectedStudents(student.studentIds);
   });
 
+  //getting updated pendingapprovalstudent list and selected students
+  socket.on("after-student-updation",(student)=>{
+    console.log("hoiii...hoii....",student)
+    setSelectedStudents(student.studentIds)
+    setStudentsList([...student.students]);
+  }) 
+
   //on changing ref Id in the refid input box
   const refIdChangeHandler = (e) => {
     console.log("changing ref is:", e.target.value);
@@ -217,7 +229,14 @@ const ApproveStudents = () => {
   //console.log("updated display classes", displayingStudentList);
 
   return (
-    <div>
+    <div className="relative">
+      {isUpdatedMsg && (
+        <span className="absolute bg-gray-300 px-4 py-2 rounded-md right-5 top-5 text-white flex justify-center items-center z-10">
+          <span>updation successFul</span>
+          <TiTick className="text-xl text-green-500" />{" "}
+        </span>
+      )}
+
       <div className="sm:hidden lg:flex w-full h-[88vh] pt-3 gap-2">
         <div className="leftcontainer w-[35%] bg-white rounded-lg flex flex-col h-full pt-4  px-2">
           <div className="sortcontainer flex justify-end  items-center mb-2">
@@ -281,7 +300,7 @@ const ApproveStudents = () => {
                       </div>
                       {selectedStudents.includes(item._id) && (
                         <div className="absolute right-5 text-gray">
-                          <CgSandClock color="" className=" animate-pulse"/>
+                          <CgSandClock color="" className=" animate-pulse" />
                         </div>
                       )}
                     </button>
@@ -292,9 +311,9 @@ const ApproveStudents = () => {
           )}
         </div>
         <div className="vrtline w-[1px]  bg-black" />
-        <div className="previewcontainer w-[65%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">
+        <div className="previewcontainer relative w-[65%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">
           <div className="previewtitlecontainer flex h-10 w-full justify-center items-center">
-            <span className="text-2xl">
+            <span className="text-2xl ">
               <h2 className=" border-gray-300 border-b-2 px-2 font-enriq">
                 PREVIEW
               </h2>
@@ -329,6 +348,9 @@ const ApproveStudents = () => {
                   districtsIn={districtsIn}
                   setDistrictsIn={setDistrictsIn}
                   allCentre={allCentre}
+                  setIsUpdatedMsg={setIsUpdatedMsg}
+                  setOpenPreview={setOpenPreview}
+                  setSelectedIndex={setSelectedIndex}
                 />
               </div>
             ) : (
