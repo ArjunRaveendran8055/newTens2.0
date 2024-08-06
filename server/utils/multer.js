@@ -1,16 +1,40 @@
-const multer = require('multer');
-const path = require('path');
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 // Multer configuration
-const storage = multer.diskStorage({
+const studentStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/') // Specify the directory where uploaded files will be stored
+    const dir = "uploads/students";
+    //check if directory exists
+    if (!fs.existsSync(dir)) {
+      //create directory
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir); // Specify the directory where uploaded files will be stored
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + '.png') // Specify the filename format
-  }
+    cb(null, file.fieldname + "-" + Date.now() + ".png"); // Specify the filename format
+  },
 });
 
-const upload = multer({ storage: storage });
+const userStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const dir = "uploads/users";
+    //check if directory exists
+    if (!fs.existsSync(dir)) {
+      //create directory
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir); // Specify the directory where uploaded files will be stored
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + "-" + Date.now() + ".png"); // Specify the filename format
+  },
+});
 
-module.exports = upload;
+const studentUpload = multer({ storage: studentStorage });
+
+const userUpload = multer({ storage: userStorage });
+
+module.exports = { studentUpload,userStorage };

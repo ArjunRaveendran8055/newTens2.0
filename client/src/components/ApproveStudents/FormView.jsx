@@ -38,10 +38,10 @@ const FormView = ({
   allCentre,
   setIsUpdatedMsg,
   setOpenPreview,
-  setSelectedIndex
+  setSelectedIndex,
 }) => {
   const navigate = useNavigate();
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const [isClassDropdownVisible, setIsClassDropdownVisible] = useState(false);
   const [isLevelDropdownVisible, setIsLevelDropdownVisible] = useState(false);
   const [isStateDropdownVisible, setIsStateDropdownVisible] = useState(false);
@@ -237,8 +237,8 @@ const FormView = ({
   //function to handle changes in all the fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    console.log("error in name is",errors[name])
-    setErrors({...errors,[name]:""})
+    console.log("error in name is", errors[name]);
+    setErrors({ ...errors, [name]: "" });
     console.log(name, value);
     if (name === "level") {
       return setFormData({ ...formData, class: null, [name]: value });
@@ -343,7 +343,7 @@ const FormView = ({
   };
 
   const handleSchoolChange = (schoolName) => {
-    setErrors({...errors,school:""})
+    setErrors({ ...errors, school: "" });
     console.log(schoolName);
     if (schoolName.length >= 3) {
       setIsOpen(true);
@@ -359,7 +359,7 @@ const FormView = ({
 
   const handleSchoolChange2 = (schoolName) => {
     console.log(schoolName);
-    setErrors({...errors,schools:""})
+    setErrors({ ...errors, schools: "" });
     setSelectedSchool(schoolName.toLowerCase());
 
     setFormData({
@@ -370,7 +370,6 @@ const FormView = ({
     setIsOpen(true); // Close the school list after selection
     // Set the selected school in the input field
   };
-
 
   console.log("formData is: ", formData);
 
@@ -389,29 +388,60 @@ const FormView = ({
   const handleSub = async () => {
     if (!photo) {
       console.log("dum...dum..");
-      setIsSaving(true)
+      setIsSaving(true);
       axios
         .post("/approve/staffApproval", { formData })
         .then((res) => {
-          const {id}=res.data
-          console.log("ithanne alle angod ayache",id);
-          setIsModalOpen(false)
-          setIsSaving(false)
-          setOpenPreview(false)
-          setSelectedIndex(null)
-          setIsUpdatedMsg(true)
-          setTimeout(()=>setIsUpdatedMsg(false),4000)
-          socket.emit("student-updated",{id})
+          const { id } = res.data;
+          console.log("ithanne alle angod ayache", id);
+          setIsModalOpen(false);
+          setIsSaving(false);
+          setOpenPreview(false);
+          setSelectedIndex(null);
+          setIsUpdatedMsg(true);
+          setTimeout(() => setIsUpdatedMsg(false), 3000);
+          socket.emit("student-updated", { id });
         })
-        .catch((err) => {   
-          setIsModalOpen(false)
-          setIsSaving(false)
-          err.response.data.error
-          dispatch(setToastView({msg:err.response.data.error,type:"error"}))
+        .catch((err) => {
+          setIsModalOpen(false);
+          setIsSaving(false);
+          err.response.data.error;
+          dispatch(
+            setToastView({ msg: err.response.data.error, type: "error" })
+          );
         });
     } else {
-      const lastFormData = new FormData();
-      axios.post("/approve/staffApprovalWithPhoto", lastFormData);
+      setIsSaving(true);
+      const finalFormData = new FormData();
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      const strFormData = JSON.stringify(formData);
+      finalFormData.append("file", photo);
+      finalFormData.append("formData", strFormData);
+      axios
+        .post("/approve/staffApprovalWithPhoto", finalFormData, config)
+        .then((res) => {
+          const { id } = res.data;
+          console.log("ithanne alle angod ayache", id);
+          setIsModalOpen(false);
+          setIsSaving(false);
+          setOpenPreview(false);
+          setSelectedIndex(null);
+          setIsUpdatedMsg(true);
+          setTimeout(() => setIsUpdatedMsg(false), 3000);
+          socket.emit("student-updated", { id });
+        })
+        .catch((err) => {
+          setIsModalOpen(false);
+          setIsSaving(false);
+          err.response.data.error;
+          dispatch(
+            setToastView({ msg: err.response.data.error, type: "error" })
+          );
+        });
     }
   };
 
@@ -1166,7 +1196,9 @@ const FormView = ({
           </div>
         </div>
         {isModalOpen && (
-          <div className={` fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50`}>
+          <div
+            className={` fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50`}
+          >
             <div className="bg-white w-100 h-100 rounded-lg p-6">
               <h2 className="text-xl mb-4">Approve Confirmation</h2>
               <p className="uppercase">

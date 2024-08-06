@@ -102,7 +102,6 @@ const ApproveStudents = () => {
     socket.on("no_pending_students", (msg) => {
       console.log(msg);
       dispatch(removeLoader());
-
       setEmptyList(true);
     });
   };
@@ -128,7 +127,6 @@ const ApproveStudents = () => {
     fetchAllCetres();
 
     return () => {
-
       //on component unmount
       socket.off("connect");
       socket.off("students_list");
@@ -141,8 +139,9 @@ const ApproveStudents = () => {
     };
   }, []);
 
+  console.log("selectedIndexIs:", selectedIndex);
+
   const previewHandler = (item, index) => {
-    console.log("selected student is:", item);
     const isoStringToInputValue = (isoString) => {
       const date = new Date(isoString);
       const year = date.getFullYear();
@@ -153,14 +152,14 @@ const ApproveStudents = () => {
     };
 
     const actDate = isoStringToInputValue(item.dob);
-    setSelectedIndex(index);
+    setSelectedIndex(item._id);
     setOpenPreview(true);
     console.log("selected student is:", item);
     const imageName = item.image;
     if (imageName.length === 0) {
       setImageUrl(addImg);
     }
-    const url = `http://localhost:8055/uploads/${imageName}`;
+    const url = `http://localhost:8055/uploads/students/${imageName}`;
     setImageUrl(url);
     setFormData({
       _id: item._id,
@@ -211,11 +210,14 @@ const ApproveStudents = () => {
   });
 
   //getting updated pendingapprovalstudent list and selected students
-  socket.on("after-student-updation",(student)=>{
-    console.log("hoiii...hoii....",student)
-    setSelectedStudents(student.studentIds)
+  socket.on("after-student-updation", (student) => {
+    console.log("hoiii...hoii....", student);
+    setSelectedStudents(student.studentIds);
     setStudentsList([...student.students]);
-  }) 
+    setDisplayingStudentList([...student.students]);
+  });
+
+  //console.log("updated student list is",displayingStudentList)
 
   //on changing ref Id in the refid input box
   const refIdChangeHandler = (e) => {
@@ -231,9 +233,13 @@ const ApproveStudents = () => {
   return (
     <div className="relative">
       {isUpdatedMsg && (
-        <span className="absolute bg-gray-300 px-4 py-2 rounded-md right-5 top-5 text-white flex justify-center items-center z-10">
-          <span>updation successFul</span>
-          <TiTick className="text-xl text-green-500" />{" "}
+        <span
+          className={`absolute bg-green-200 border border-green-400 px-4 py-2 rounded-md right-5 top-5 text-gray-700 flex justify-center items-center z-10 gap-2`}
+        >
+          <div className="flex p-[1px] justify-center items-center rounded-full border border-gray-500">
+            <TiTick className="text-2xl text-green-500" />
+          </div>
+          <span>Updation successFul</span>
         </span>
       )}
 
@@ -287,7 +293,7 @@ const ApproveStudents = () => {
                   <div className="relative" key={index}>
                     <button
                       className={` ${
-                        selectedIndex === index &&
+                        selectedIndex === item._id &&
                         " bg-blue-gray-900 text-white"
                       } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md p-2 border-black border-[1px] gap-2`}
                       onClick={() => previewHandler(item, index)}
