@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "../layouts/Dashboard";
-import Profile from "../pages/dashboard/profile";
-import Notifications from "../pages/dashboard/notifications";
+import Profile from "../pages/dashboard/Profile";
+import Notifications from "../pages/dashboard/Notifications";
 import Table from "../pages/dashboard/Table";
 import SignUp from "../pages/auth/SignUp";
 import CustToastContainer from "../components/features/toast/ToastContainer";

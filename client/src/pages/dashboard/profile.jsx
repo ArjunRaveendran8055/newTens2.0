@@ -25,7 +25,6 @@ import conversationsData from "../../data/conversationsData";
 import platformSettingsData from "../../data/platformSettingsData";
 import projectsData from "../../data/projectsData";
 import { useSelector } from "react-redux";
-
 export function Profile() {
   const { user } = useSelector(state => state.user);
   return (
