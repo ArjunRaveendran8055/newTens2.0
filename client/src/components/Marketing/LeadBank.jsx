@@ -21,10 +21,12 @@ function LeadBank() {
         syllabus: '',
         district: '',
         school: '',
+        location:'',
     });
 
     const [errors, setErrors] = useState({});
     const [schools, setSchools] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -32,6 +34,7 @@ function LeadBank() {
             ...errors,
             [e.target.id]: '', // Clear the error when user starts typing
         });
+        setIsOpen(true);
     };
 
     const handleSelectChange = (key, value) => {
@@ -81,12 +84,14 @@ function LeadBank() {
         fetchSchool(formData.school)
     }, [formData.syllabus, formData.school])
 
-    const handleSelectSchool = (schoolName) => {
-        setFormData({ ...formData, school: schoolName });
-        setSchools([]);
-      };
-
-
+    const handleSelectSchool = (schoolName,schoollocation) => {
+        setFormData({ ...formData, school: schoolName, location:schoollocation });
+        setSchools([]); // Clear the schools array immediately
+        document.getElementById("school").blur();
+        console.log(formData);
+        setIsOpen(false);
+         // Blur the input field to close the dropdown
+    };
 
 
     return (
@@ -207,13 +212,13 @@ function LeadBank() {
                                 onChange={handleChange}
                             />
                         </div>
-                        {schools.length > 0 && (
+                        {isOpen && (
                 <ul className="absolute bg-white border border-gray-300 w-[550px] mt-16 z-10 max-h-40 overflow-y-auto">
                   {schools.map((result, index) => (
                     <li
                       key={index}
                       className="p-2 hover:bg-gray-200 cursor-pointer"
-                      onClick={() => handleSelectSchool(result.name)}
+                      onClick={() => handleSelectSchool(result.name,result.location)}
                     >
                       {result.name} , {result.location}
                     </li>
