@@ -15,7 +15,7 @@ import {
 } from "@material-tailwind/react";
 import { EllipsisVerticalIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
-import StatisticsCard from "../../widgets/cards/StatisticsCard";
+//import StatisticsCard from "../../widgets/cards/StatisticsCard";
 import StatisticsChart from "../../widgets/charts/StatisticsChart";
 import projectsTableData from "../../data/projectsTableData";
 import statisticsChartsData from "../../data/chartData";
