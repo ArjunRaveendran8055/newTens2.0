@@ -50,10 +50,10 @@ function Batches() {
       }
     };
     fetchClasses();
-    // Set visibility to true after component mounts to trigger transition
     setIsFormSubmitted(false)
     setIsVisible(true);
   }, [isFormSubmitted]);
+  
 
   const handleClassChange = (e) => {
     const value = e.target.value;

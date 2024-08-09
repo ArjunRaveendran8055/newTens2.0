@@ -9,7 +9,7 @@ import {
 } from "@material-tailwind/react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { routes, AAroutes, TEAMLEADroutes, MENTORroutes } from "../../../routes";
+import { routes, AAroutes, TEAMLEADroutes, MENTORroutes, MARKETINGroutes } from "../../../routes";
 import Logo from "./logo.png";
 
 export function Sidenav({ brandName }) {
@@ -131,6 +131,50 @@ export function Sidenav({ brandName }) {
 
           {user.role === "TEAMLEAD" &&
             TEAMLEADroutes.map(({ layout, title, pages }, key) => (
+              <ul key={key} className="mb-4 flex flex-col gap-1">
+                {
+                  //MODULE TITLE
+                }
+
+                {title && (
+                  <li className="mx-3.5 mt-4 mb-2">
+                    <Typography
+                      variant="small"
+                      color="inherit"
+                      className="font-black uppercase opacity-75"
+                    >
+                      {title}
+                    </Typography>
+                  </li>
+                )}
+
+                {pages.map(({ icon, name, path }) => (
+                  <li key={name}>
+                    <NavLink to={`${path}`}>
+                      {({ isActive }) => (
+                        <Button
+                          variant={isActive ? "gradient" : "text"}
+                          color="gray"
+                          className="flex items-center gap-4 px-4 capitalize"
+                          fullWidth
+                        >
+                          {icon}
+                          <Typography
+                            color="inherit"
+                            className="font-medium capitalize"
+                          >
+                            {name}
+                          </Typography>
+                        </Button>
+                      )}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            ))}
+
+{user.role === "MARKETING" &&
+            MARKETINGroutes.map(({ layout, title, pages }, key) => (
               <ul key={key} className="mb-4 flex flex-col gap-1">
                 {
                   //MODULE TITLE
@@ -337,6 +381,50 @@ export function Sidenav({ brandName }) {
 
 {user.role === "MENTOR" &&
             MENTORroutes.map(({ layout, title, pages }, key) => (
+              <ul key={key} className="mb-4 flex flex-col gap-1">
+                {
+                  //MODULE TITLE
+                }
+
+                {title && (
+                  <li className="mx-3.5 mt-4 mb-2">
+                    <Typography
+                      variant="small"
+                      color="inherit"
+                      className="font-black uppercase opacity-75"
+                    >
+                      {title}
+                    </Typography>
+                  </li>
+                )}
+
+                {pages.map(({ icon, name, path }) => (
+                  <li key={name}>
+                    <NavLink to={`${path}`}>
+                      {({ isActive }) => (
+                        <Button
+                          variant={isActive ? "gradient" : "text"}
+                          color="green"
+                          className="flex items-center gap-4 px-4 capitalize"
+                          fullWidth
+                        >
+                          {icon}
+                          <Typography
+                            color="inherit"
+                            className="font-medium capitalize"
+                          >
+                            {name}
+                          </Typography>
+                        </Button>
+                      )}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            ))}
+
+{user.role === "MARKETING" &&
+            MARKETINGroutes.map(({ layout, title, pages }, key) => (
               <ul key={key} className="mb-4 flex flex-col gap-1">
                 {
                   //MODULE TITLE

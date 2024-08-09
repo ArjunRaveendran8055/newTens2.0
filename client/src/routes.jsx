@@ -277,3 +277,32 @@ export const TEAMLEADroutes = [
   }
   
 ];
+
+export const MARKETINGroutes = [
+  {
+    layout: "dashboard",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "dashboard",
+        path: "/home",
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "profile",
+        path: "/profile",
+      },
+    ],
+  },
+  {
+    title: "MARKETING MANAGEMENT",
+    layout: "class",
+    pages: [
+      {
+        icon: <ServerStackIcon {...icon} />,
+        name: "Search Students",
+        path: "/search",
+      },
+    ],
+  },
+];
