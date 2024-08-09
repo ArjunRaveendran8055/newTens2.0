@@ -26,12 +26,8 @@ function LeadBank() {
     const [errors, setErrors] = useState({});
     const [schools, setSchools] = useState([]);
 
-
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.id]: e.target.value,
-        });
+        setFormData({ ...formData, [e.target.id]: e.target.value });
         setErrors({
             ...errors,
             [e.target.id]: '', // Clear the error when user starts typing
@@ -84,6 +80,11 @@ function LeadBank() {
         }
         fetchSchool(formData.school)
     }, [formData.syllabus, formData.school])
+
+    const handleSelectSchool = (schoolName) => {
+        setFormData({ ...formData, school: schoolName });
+        setSchools([]);
+      };
 
 
 
@@ -206,6 +207,19 @@ function LeadBank() {
                                 onChange={handleChange}
                             />
                         </div>
+                        {schools.length > 0 && (
+                <ul className="absolute bg-white border border-gray-300 w-[550px] mt-16 z-10 max-h-40 overflow-y-auto">
+                  {schools.map((result, index) => (
+                    <li
+                      key={index}
+                      className="p-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => handleSelectSchool(result.name)}
+                    >
+                      {result.name} , {result.location}
+                    </li>
+                  ))}
+                </ul>
+              )}
                     </div>
                 </CardBody>
                 <CardFooter className="pt-4">
