@@ -11,7 +11,7 @@ import Login from "../pages/auth/Login";
 import SearchPage from "../pages/dashboard/SearchPage";
 import PendingUsers from "../components/features/user/pendingUsers/PendingUsers";
 import Loader from "../components/features/Loader/Loader";
-import Home from "../pages/dashboard/home";
+import Home from "../pages/dashboard/Home";
 import StudentDetailsPage from "../pages/otherPages/StudentDetailsPage";
 import DisplayClasses from "../components/displayClasses/DisplayClasses";
 import ClassHome from "../components/classComponents/ClassHome";
