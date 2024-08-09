@@ -165,19 +165,22 @@ const RegForm = () => {
     }
     if (!formData.fatherNumber) {
       newErrors.fatherNumber = "Father's number is required";
-    } else if (!/^\d{10}$/.test(formData.fatherNumber)) {
-      newErrors.fatherNumber = "Father's number must be 10 digits";
+    } else if (!/^\d{6,15}$/.test(formData.fatherNumber)) {
+      newErrors.fatherNumber = "Father's number must be between 6 and 15 digits";
     }
+    
     if (!formData.motherNumber) {
       newErrors.motherNumber = "Mother's number is required";
-    } else if (!/^\d{10}$/.test(formData.motherNumber)) {
-      newErrors.motherNumber = "Mother's number must be 10 digits";
+    } else if (!/^\d{6,15}$/.test(formData.motherNumber)) {
+      newErrors.motherNumber = "Mother's number must be between 6 and 15 digits";
     }
+    
     if (!formData.whatsappNumber) {
       newErrors.whatsappNumber = "WhatsApp number is required";
-    } else if (!/^\d{10}$/.test(formData.whatsappNumber)) {
-      newErrors.whatsappNumber = "WhatsApp number must be 10 digits";
+    } else if (!/^\d{6,15}$/.test(formData.whatsappNumber)) {
+      newErrors.whatsappNumber = "WhatsApp number must be between 6 and 15 digits";
     }
+    
     if (!formData.academicStatus)
       newErrors.academicStatus = "Academic status is required";
     if (!formData.hearAbout)
@@ -317,10 +320,31 @@ const RegForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+    if(name=='country' && value!= 'india'){
+      setFormData({
+        ...formData,
+        [name]: value,
+        state: "others",
+        district: "others",
+      });
+    }else if(name=='country' && value== 'india'){
+
+      setFormData({
+        ...formData,
+        [name]: value,
+        state: "",
+        district: "",
+      });
+    }
+    else{
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+
+   
   };
 
   const fetchDistricts = (state) => {
@@ -384,17 +408,16 @@ const RegForm = () => {
     <>
       <div className="flex flex-col border-[1px] border-black items-center justify-center mb-20 max-w-4xl font-sans text-lg md:font-serif mx-auto mt-10 p-4 bg-white rounded-xl shadow-2xl">
         <div className="flex items-center justify-center flex-col gap-5">
-          <img src={Logo} alt="" style={{ height: '70px' }} />
+          <img src={Logo} alt="" style={{ height: "70px" }} />
           <h2 className="text-2xl font-bold">
             <i className="fa-solid fa-graduation-cap mr-3"></i>
-            Student Resistration Form</h2>
+            Student Resistration Form
+          </h2>
         </div>
 
         <form className="mt-6 space-y-4 mb-5">
           <div name="photo" className="w-52 p-2 mx-auto mb-10 rounded ">
             <label htmlFor="imageUpload">
-
-
               <div className="avatar-upload">
                 <div className="avatar-edit">
                   <input
@@ -412,7 +435,7 @@ const RegForm = () => {
                     <i className="fas fa-camera fa-lg text-gray-600 "></i>
                   </label>
                 </div>
-                
+
                 <div className="avatar-preview">
                   <div
                     id="imagePreview"
@@ -420,18 +443,12 @@ const RegForm = () => {
                     style={{ backgroundImage: `url(${imageUrl})` }}
                   ></div>
                   {errors.photo && (
-                <span className="text-sm text-center text-red-500">
-                  {" * " + errors.photo}
-                </span>
-              )}
+                    <span className="text-sm text-center text-red-500">
+                      {" * " + errors.photo}
+                    </span>
+                  )}
                 </div>
-
-                
-
               </div>
-
-            
-
             </label>
           </div>
 
@@ -556,13 +573,7 @@ const RegForm = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-
-
             <div>
-
-
-
               <label htmlFor="syllabus">Syllabus</label>
               <div className="w-50">
                 <Select
@@ -588,28 +599,26 @@ const RegForm = () => {
             <div>
               <label htmlFor="class">Level Of Education</label>
               <div className="w-50">
-                <Select name="level"
+                <Select
+                  name="level"
                   disabled={!formData.syllabus}
                   onChange={(e) =>
                     handleInputChange({ target: { name: "level", value: e } })
-                  } >
-
+                  }
+                >
                   {/*  value={formData.class}  onChange={(e)=>handleInputChange({target:{name:"class",value:e}})} */}
-                  {levels?.map((data, i) => (<Option key={i} value={data.level}>
-                    {data.txt}
-                  </Option>))}
-
+                  {levels?.map((data, i) => (
+                    <Option key={i} value={data.level}>
+                      {data.txt}
+                    </Option>
+                  ))}
                 </Select>
               </div>
               {/* {errors.class && <span className="text-sm  text-red-500">{" * "+ errors.class}</span>} */}
             </div>
-
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-
-
             <div>
               <label htmlFor="class">Class</label>
               <div className="w-50">
@@ -617,12 +626,16 @@ const RegForm = () => {
                   name="class"
                   disabled={!formData.level}
                   onChange={(e) =>
-                    handleInputChange({ target: { name: "class", value: parseInt(e) } })
+                    handleInputChange({
+                      target: { name: "class", value: parseInt(e) },
+                    })
                   }
                 >
-                  {classList?.map((data, i) => (<Option key={i} value={data.cls + ''}>
-                    {data.txt}
-                  </Option>))}
+                  {classList?.map((data, i) => (
+                    <Option key={i} value={data.cls + ""}>
+                      {data.txt}
+                    </Option>
+                  ))}
                 </Select>
               </div>
               {errors.class && (
@@ -632,69 +645,36 @@ const RegForm = () => {
               )}
             </div>
 
-
-
-
-
-
+            <div>
+              <label htmlFor="country">Country</label>
+              <div className="w-50 uppercase">
+                <Select
+                  value={formData.country}
+                  name="country"
+                  onChange={(e) =>
+                    handleInputChange({ target: { name: "country", value: e } })
+                  }
+                >
+                  <Option value="india">India</Option>
+                  <Option value="dubai">Dubai</Option>
+                  <Option value="bahrain">Bahrain</Option>
+                  <Option value="kuwait">Kuwait</Option>
+                  <Option value="oman">Oman</Option>
+                  <Option value="qatar">Qatar</Option>
+                  <Option value="saudiarabia">Saudi Arabia</Option>
+                  <Option value="uae">United Arab Emirates</Option>
+                </Select>
+              </div>
+              {errors.country && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.country}
+                </span>
+              )}
+            </div>
           </div>
 
-
-
-
-
-
           <div className="">
-
-
-
             <div className="">
-
-
-              <div className="my-4">
-
-
-                <div className="space-y-2 ">
-                  <div className="border-2 p-4 gap border-blue-gray-200 rounded-md">
-                    <label className="block text-lg font-medium text-gray-700">
-                      Are you currently studying in India or abroad?
-                    </label>
-                    <div className=" p-3 pl-3 grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 ">
-                      <label className="flex items-center">
-                        <input
-                          onChange={handleInputChange}
-                          type="radio"
-                          className="form-radio h-4 w-4 text-blue-600"
-                          name="country"
-                          value="india"
-                        />
-                        <span className="ml-2 text-gray-900">
-                          India
-                        </span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          onChange={handleInputChange}
-                          type="radio"
-                          className="form-radio h-4 w-4 text-blue-600"
-                          name="country"
-                          value="Abroad"
-                        />
-                        <span className="ml-2  text-gray-900">Abroad</span>
-                      </label>
-
-
-
-                    </div>
-                  </div>
-                  {errors.country && (
-                    <span className="text-sm text-red-500">
-                      {" * " + errors.country}
-                    </span>
-                  )}
-                </div>
-              </div>
-
               <div className="  rounded  relative">
                 <div className="mb-4">
                   <label
@@ -724,8 +704,9 @@ const RegForm = () => {
                     {schools?.map((school, index) => (
                       <li
                         key={index}
-                        className={`cursor-pointer px-4 py-2 hover:bg-gray-100 ${selectedSchool === school.name ? "bg-gray-100" : ""
-                          }`}
+                        className={`cursor-pointer px-4 py-2 hover:bg-gray-100 ${
+                          selectedSchool === school.name ? "bg-gray-100" : ""
+                        }`}
                         onClick={() => {
                           handleSchoolChange2(
                             school.name + " " + school.location
@@ -796,14 +777,12 @@ const RegForm = () => {
             </div>
           </div>
 
-
-
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="state">State</label>
               <div className="w-50">
                 <Select
+                  disabled={formData.country!="india"}
                   name="state"
                   onChange={(e) => {
                     setStatesIn(e);
@@ -1013,7 +992,6 @@ const RegForm = () => {
               <div>
                 <label htmlFor="class">Number of Siblings</label>
                 <div className="w-30">
-
                   <Select
                     value={siblingsCount}
                     onChange={(event) => setSiblingsCount(event)}
@@ -1094,9 +1072,7 @@ const RegForm = () => {
                     name="academicStatus"
                     value="Below Average"
                   />
-                  <span className="ml-2 text-lg">
-                    Below Average
-                  </span>
+                  <span className="ml-2 text-lg">Below Average</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1151,9 +1127,7 @@ const RegForm = () => {
                     name="hearAbout"
                     value="calling executive"
                   />
-                  <span className="ml-2 text-lg">
-                    Calling Executive
-                  </span>
+                  <span className="ml-2 text-lg">Calling Executive</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1163,9 +1137,7 @@ const RegForm = () => {
                     name="hearAbout"
                     value="Marketing Executive"
                   />
-                  <span className="ml-2 text-lg">
-                    Marketing Executive
-                  </span>
+                  <span className="ml-2 text-lg">Marketing Executive</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1185,9 +1157,7 @@ const RegForm = () => {
                     name="hearAbout"
                     value="social-media"
                   />
-                  <span className="ml-2 text-lg">
-                    Social Media
-                  </span>
+                  <span className="ml-2 text-lg">Social Media</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -1216,7 +1186,12 @@ const RegForm = () => {
                 {" * " + errors.hearAbout}
               </span>
             )}
+
+
+            
           </div>
+
+          
 
           <div>
             <div className="space-y-2">
