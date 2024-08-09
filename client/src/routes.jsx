@@ -300,8 +300,8 @@ export const MARKETINGroutes = [
     pages: [
       {
         icon: <ServerStackIcon {...icon} />,
-        name: "Search Students",
-        path: "/search",
+        name: "Lead Bank",
+        path: "/leadbank",
       },
     ],
   },
