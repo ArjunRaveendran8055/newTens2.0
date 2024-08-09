@@ -11,7 +11,7 @@ import Login from "../pages/auth/Login";
 import SearchPage from "../pages/dashboard/SearchPage";
 import PendingUsers from "../components/features/user/pendingUsers/PendingUsers";
 import Loader from "../components/features/Loader/Loader";
-import Home from "../pages/dashboard/Home";
+import Home from "../pages/dashboard/home";
 import StudentDetailsPage from "../pages/otherPages/StudentDetailsPage";
 import DisplayClasses from "../components/displayClasses/DisplayClasses";
 import ClassHome from "../components/classComponents/ClassHome";
@@ -26,6 +26,7 @@ import Batches from "../components/CentreandBatches/Batches";
 import DisplayBatches from "../components/CentreandBatches/DisplayBatches";
 import Asignaa from "../components/classComponents/Asignaa";
 import SubmitSuccess from "../layouts/SubmitSuccess";
+import LeadBank from "../components/Marketing/LeadBank";
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -64,6 +65,7 @@ function App() {
           <Route path="/allcentres/displaybatches/:id" element={<DisplayBatches/>} />
           {/* private route example */}
           <Route path="/assignaa" element={<Asignaa/>}/>
+          <Route path="/leadbank" element={<LeadBank/>}/>
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
       </Routes>

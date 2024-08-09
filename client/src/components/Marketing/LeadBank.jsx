@@ -1,0 +1,109 @@
+import React from 'react'
+import {
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
+    Typography,
+    Input,
+    Select,
+    Option,
+    Button,
+} from "@material-tailwind/react";
+
+function LeadBank() {
+    return (
+        <div className="bg-white shadow-lg min-h-[83vh] rounded-lg flex justify-center items-center mt-4 p-4 sm:p-6 md:p-8">
+            <Card className="w-full max-w-md md:max-w-2xl p-4 sm:p-6 md:p-8">
+                <CardHeader floated={false} shadow={false} className="pb-2">
+                    <Typography variant="h5" className="text-xl md:text-2xl font-bold">
+                        Student Lead Collection
+                    </Typography>
+                    <Typography variant="paragraph">
+                        Fill out the form to enroll a new student.
+                    </Typography>
+                </CardHeader>
+                <CardBody className="space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 sm:grid-cols-1 gap-4">
+                        <div className="space-y-2">
+                            <Typography variant="small" className="font-medium">
+                                Name
+                            </Typography>
+                            <Input id="name" label="Enter student's name" />
+                        </div>
+                        <div className="space-y-2">
+                            <Typography variant="small" className="font-medium">
+                                Phone
+                            </Typography>
+                            <Input id="phone" type="tel" label="Enter phone number" />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 sm:grid-cols-1 gap-4">
+                        <div className="space-y-2">
+                            <Typography variant="small" className="font-medium">
+                                Class
+                            </Typography>
+                            <Input id="class" type="number" label="Enter class number" />
+                        </div>
+                        <div className="space-y-2">
+                            <Typography variant="small" className="font-medium">
+                                Division
+                            </Typography>
+                            <Input id="division" label="Enter division" />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 sm:grid-cols-1 gap-4">
+                        <div className="space-y-2">
+                            <Typography variant="small" className="font-medium">
+                                Syllabus
+                            </Typography>
+                            <Select id="district" label="Select district">
+                                <Option value="state">STATE</Option>
+                                <Option value="cbse">CBSE</Option>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+
+                            <Typography variant="small" className="font-medium">
+                                District
+                            </Typography>
+                            <Select id="district" label="Select district">
+                                <Option value="none">Unknown</Option>
+                                <Option value="thrissur">Thrissur</Option>
+                                <Option value="ernakulam">Ernakulam</Option>
+                                <Option value="alappuzha">Alappuzha</Option>
+                                <Option value="idukki">Idukki</Option>
+                                <Option value="kannur">Kannur</Option>
+                                <Option value="kasaragod">Kasaragod</Option>
+                                <Option value="kollam">Kollam</Option>
+                                <Option value="kottayam">Kottayam</Option>
+                                <Option value="kozhikode">Kozhikode</Option>
+                                <Option value="malappuram">Malappuram</Option>
+                                <Option value="palakkad">Palakkad</Option>
+                                <Option value="pathanamthitta">Pathanamthitta</Option>
+                                <Option value="thiruvananthapuram">Thiruvananthapuram</Option>
+                                <Option value="wayanad">Wayanad</Option>
+                            </Select>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                        <div className="space-y-2">
+                            <Typography variant="small" className="font-medium">
+                                School
+                            </Typography>
+                            <Input id="school" label="Enter school name" />
+                        </div>
+
+                    </div>
+                </CardBody>
+                <CardFooter className="pt-4">
+                    <Button className="w-full bg-red-500">Submit Data</Button>
+                </CardFooter>
+            </Card>
+        </div>
+
+    )
+}
+
+export default LeadBank
