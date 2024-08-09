@@ -2,7 +2,7 @@ import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { IconButton } from "@material-tailwind/react";
 import Sidenav from "../components/features/sideBar/SideNav";
-import Configurator from "../components/features/configurator/configurator";
+import Configurator from "../components/features/configurator/Configurator";
 import { setOpenConfigurator } from "../components/features/configurator/configuratorSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
