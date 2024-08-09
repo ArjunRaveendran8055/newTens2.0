@@ -94,7 +94,6 @@ function AllCentres() {
     axios
       .get("/centre/getAllCentres")
       .then((res) => {
-        console.log("result", res.data.result);
         setAllCentres(res.data.result);
         dispatch(removeLoader());
       })

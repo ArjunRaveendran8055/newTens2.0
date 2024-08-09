@@ -43,7 +43,6 @@ function DisplayClasses() {
           `http://localhost:8055/class/getAllClass?page=${currentPage}&limit=${limit}`
         );
         const data = await response.json();
-        console.log(data);
         setClasses(data.classes);
         if (data.pagination && data.pagination.next) {
           setTotalPages(data.pagination.next.page);
@@ -65,7 +64,6 @@ function DisplayClasses() {
     setLoad((curr) => !curr);
     handleOpen();
   };
-  console.log(totalPages);
 
   const handleInputChange = (fieldName, value) => {
     setClassDetails((prevDetails) => ({

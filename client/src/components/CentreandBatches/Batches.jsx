@@ -52,7 +52,6 @@ function Batches() {
     fetchClasses();
     // Set visibility to true after component mounts to trigger transition
     setIsFormSubmitted(false)
-    console.log("hi");
     setIsVisible(true);
   }, [isFormSubmitted]);
 
