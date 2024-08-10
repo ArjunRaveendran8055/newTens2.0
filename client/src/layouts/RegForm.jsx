@@ -406,7 +406,7 @@ const RegForm = () => {
 
   return (
     <>
-      <div className="flex flex-col border-[1px] border-black items-center justify-center mb-20 max-w-4xl font-sans text-lg md:font-serif mx-auto mt-10 p-4 bg-white rounded-xl shadow-2xl">
+      <div className="flex flex-col border-[1px] border-black sm:border-none items-center justify-center mb-10 max-w-4xl font-sans text-lg md:font-serif mx-auto sm:mt-0 lg:mt-5 p-4 bg-white rounded-xl shadow-2xl">
         <div className="flex items-center justify-center flex-col gap-5">
           <img src={Logo} alt="" style={{ height: "70px" }} />
           <h2 className="text-2xl font-bold">

@@ -36,24 +36,31 @@ function DisplayClasses() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `http://localhost:8055/class/getAllClass?page=${currentPage}&limit=${limit}`
-        );
-        const data = await response.json();
-        setClasses(data.classes);
-        if (data.pagination && data.pagination.next) {
-          setTotalPages(data.pagination.next.page);
-        }
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
     fetchData();
   }, [currentPage, limit, load]);
+
+  // FUNCTION TO FETCH ALL CLASSES
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `http://localhost:8055/class/getAllClass`, {
+          params: {
+            page: currentPage,
+            limit: limit
+          }
+        }
+      );
+      const data = response.data;
+      setClasses(data.classes);
+      if (data.pagination && data.pagination.next) {
+        setTotalPages(data.pagination.next.page);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
 
   const handleOpen = () => {
@@ -232,7 +239,7 @@ function DisplayClasses() {
         </Card>
       </Dialog>
 
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap justify-center">
         {isLoading ? (
           Array.from({ length: limit }).map((_, index) => (
             <Skeleton key={index} />
