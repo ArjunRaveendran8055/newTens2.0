@@ -11,6 +11,7 @@ const { classReportRoutes } = require("./routes/classReportRoutes")
 const { registrationRoutes } = require("./routes/registrationRoutes")
 const { centreRouter } = require("./routes/centreRoutes")
 const { approveRouter } = require("./routes/ApproveRoutes")
+const { leadBankRouter } = require("./routes/leadBankRoutes")
 const app=express()
 app.use(cors({
     origin:"http://localhost:5173",
@@ -37,6 +38,8 @@ app.use("/registration",registrationRoutes)
 app.use("/centre",centreRouter)
 
 app.use("/approve",approveRouter)
+
+app.use("/leadBank",leadBankRouter)
 
 app.use(erroHandler)
 
