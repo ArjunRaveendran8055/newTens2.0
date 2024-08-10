@@ -26,10 +26,14 @@ const leadBankSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    schoolName: {
+    school: {
       type: String,
       required: false,
     },
+    location:{
+      type:String,
+      required:false
+    }
   },
   {
     timestamps: true,
