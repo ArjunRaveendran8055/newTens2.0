@@ -34,9 +34,10 @@ function LeadBank() {
   const [schools, setSchools] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [schoolCopy,setSchoolCopy] = useState()
 
   const fetchSchool = async (school) => {
-    if (school.length > 2) {
+    if (school?.length > 2) {
       await axios
         .post("/registration/getschool", {
           syllabus: formData.syllabus,
@@ -53,10 +54,19 @@ function LeadBank() {
   };
 
   useEffect(() => {
-    fetchSchool(formData.school);
-  }, [formData.syllabus, formData.school]);
+    fetchSchool(schoolCopy);
+  }, [formData.syllabus, schoolCopy]);
 
   const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setErrors({
+      ...errors,
+      [e.target.id]: "", // Clear the error when user starts typing
+    });
+  };
+
+  const handleChangeschool = (e) => {
+    setSchoolCopy(e.target.value)
     setFormData({ ...formData, [e.target.id]: e.target.value });
     setErrors({
       ...errors,
@@ -70,6 +80,7 @@ function LeadBank() {
       ...formData,
       [key]: value,
     });
+    
     setErrors({
       ...errors,
       [key]: "", // Clear the error when user selects an option
@@ -101,6 +112,7 @@ function LeadBank() {
   //console.log("errors are:", errors);
 
   const handleSelectSchool = (schoolName, schoollocation) => {
+    setSchoolCopy(schoolName)
     setFormData({ ...formData, school: schoolName, location: schoollocation });
     setSchools([]); // Clear the schools array immediately
     document.getElementById("school").blur();
@@ -327,8 +339,8 @@ function LeadBank() {
                     type="search"
                     id="school"
                     label={`${isKnown ? "Enter School Name" : "Unknown"}`}
-                    value={formData.school}
-                    onChange={handleChange}
+                    value={schoolCopy}
+                    onChange={handleChangeschool}
                   />
                 </div>
               </div>
