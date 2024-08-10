@@ -1,18 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 function SubmitSuccess() {
+  const { resid } = useParams();
+  const [isCopied, setIsCopied] = useState(false);
 
-    const { resid } = useParams();
+  useEffect(() => {
+    console.log(resid);
+  }, [resid]);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(resid);
+    setIsCopied(true);
     
-    useEffect(() => {
-      
-      
-    console.log(resid)
-     
-    }, [])
-    
-    
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000); // Hide the message after 2 seconds
+  };
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-md text-center">
@@ -21,17 +26,21 @@ function SubmitSuccess() {
           Form Submitted Successfully
         </h1>
         <p className="mt-4 text-muted-foreground">Your form has been submitted. Here's your response code:</p>
-        <div className="mt-4 flex items-center justify-center rounded-md bg-muted px-4 py-2 text-2xl font-medium text-foreground">
+        <div className="relative mt-4 flex items-center justify-center rounded-md bg-muted px-4 py-2 text-2xl font-medium text-foreground">
           <span className="uppercase">{resid}</span>
           <button
             className="ml-2 rounded-md border border-muted-foreground/20 p-1 hover:bg-muted-foreground/10"
-            onClick={() => {
-              navigator.clipboard.writeText(resid);
-              // alert("Copied response code to clipboard!");
-            }}
+            onClick={handleCopy}
           >
             <CopyIcon className="h-5 w-5" />
           </button>
+
+          {/* Popup message */}
+          {isCopied && (
+            <div className="absolute rounded-md mt-16 bg-green-500 px-2 py-1 text-sm text-white">
+              Copied successfully!
+            </div>
+          )}
         </div>
         <div className="mt-6">
           <a
