@@ -29,6 +29,7 @@ import SubmitSuccess from "../layouts/SubmitSuccess";
 import LeadBankForm from "../components/Marketing/LeadBankForm";
 import LeadBank from "../components/Marketing/LeadBank";
 import LeadDisplayTable from "../components/Marketing/LeadDisplayTable";
+import BulkUpload from "../components/Marketing/BulkUpload";
 
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
@@ -69,8 +70,9 @@ function App() {
           {/* private route example */}
           <Route path="/assignaa" element={<Asignaa/>}/>
           <Route path="/leadbank" element={<LeadBank/>}/>
-          <Route path="/leadbankform" element={<LeadBankForm/>}/>
-          <Route path="/viewdetailedleads" element={<LeadDisplayTable/>}/>
+          <Route path="/leadbank/leadbankform" element={<LeadBankForm/>}/>
+          <Route path="/leadbank/viewdetailedleads" element={<LeadDisplayTable/>}/>
+          <Route path="/leadbank/bulkupload" element={<BulkUpload/>}/>
 
 
         

@@ -7,12 +7,12 @@ import {
   CardFooter,
   Typography,
 } from "@material-tailwind/react";
-import { FaWpforms } from "react-icons/fa";
+import { FaWpforms,FaCloudUploadAlt } from "react-icons/fa";
 import { AiOutlineFileExcel } from "react-icons/ai";
 const LeadBank = () => {
   return (
     <div className="relative min-h-[89vh] rounded-lg items-start flex sm:flex-col lg:flex-row sm:gap-5 lg:gap-10 md:pt-4 lg:pt-0 mt-4 ">
-      <Link to="/leadbankform">
+      <Link to="/leadbank/leadbankform">
         <Card className="border border-blue-gray-100 shadow-sm sm:w-full lg:w-80 h-36">
           <CardHeader
             variant="gradient"
@@ -40,7 +40,7 @@ const LeadBank = () => {
         </Card>
       </Link>
 
-      <Link to="/viewdetailedleads" >
+      <Link to="/leadbank/viewdetailedleads" >
       <Card className="border border-blue-gray-100 shadow-sm sm:w-full lg:w-80 h-36">
         <CardHeader
           variant="gradient"
@@ -66,6 +66,34 @@ const LeadBank = () => {
         </CardFooter>
       </Card>
       </Link>
+
+      <Link to="/leadbank/bulkupload" >
+      <Card className="border border-blue-gray-100 shadow-sm sm:w-full lg:w-80 h-36">
+        <CardHeader
+          variant="gradient"
+          floated={false}
+          shadow={false}
+          className="absolute grid h-12 w-12 place-items-center"
+        >
+          <FaCloudUploadAlt size={40} color="red" />
+        </CardHeader>
+        <CardBody className="p-4 text-right">
+          <Typography
+            variant="small"
+            className="font-normal text-blue-gray-600"
+          >
+            Upload bulk excel
+          </Typography>
+          <Typography variant="h4" color="blue-gray">
+            Bulk Upload
+          </Typography>
+        </CardBody>
+        <CardFooter className="border-t border-blue-gray-50 p-4">
+          Upload details
+        </CardFooter>
+      </Card>
+      </Link>
+
     </div>
   );
 };
