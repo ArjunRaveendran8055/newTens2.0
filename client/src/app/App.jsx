@@ -29,6 +29,7 @@ import SubmitSuccess from "../layouts/SubmitSuccess";
 import LeadBankForm from "../components/Marketing/LeadBankForm";
 import LeadBank from "../components/Marketing/LeadBank";
 import LeadDisplayTable from "../components/Marketing/LeadDisplayTable";
+import ViewDetailedLeads from "../components/Marketing/ViewDetailedLeads";
 
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
@@ -69,11 +70,9 @@ function App() {
           {/* private route example */}
           <Route path="/assignaa" element={<Asignaa/>}/>
           <Route path="/leadbank" element={<LeadBank/>}/>
-          <Route path="/leadbank/leadbank/leadbankform" element={<LeadBankForm/>}/>
-          <Route path="/leadbank/leadbank/viewdetailedleads" element={<LeadDisplayTable/>}/>
-
-
-        
+          <Route path="/leadbank/leadbankform" element={<LeadBankForm/>}/>
+          <Route path="/leadbank/viewdetailedleads" element={<ViewDetailedLeads/>}/>
+          
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
       </Routes>

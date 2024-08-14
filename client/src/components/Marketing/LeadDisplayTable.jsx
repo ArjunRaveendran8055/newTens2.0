@@ -6,24 +6,36 @@ import {
   Typography,
   Avatar,
   Chip,
-  Tooltip,
-  Progress,
   Button,
 } from "@material-tailwind/react";
 import { CiExport } from "react-icons/ci";
 import authorsTableData from "../../data/authorsTableData";
 
-const LeadDisplayTable = () => {
-    
+
+
+const LeadDisplayTable = ({
+  leadList,
+  setLeadList,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  setTotalPages,
+  itemsPerPage,
+  tHeadings,
+  setTHeadings
+}) => {
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
-        <CardHeader  className="mb-2 p-2 shadow-lg">
-          <Typography  color="white" className="w-full flex justify-between">
-            <span className="text-3xl text-gray-600 font-extrabold">Lead Details</span>
-            <Button color="black" className="flex gap-2 justify-center items-center"><span>Export</span> <CiExport size={25}/></Button>
+        <CardHeader className="mb-2 p-2 shadow-lg">
+          <Typography color="white" className="w-full flex justify-between">
+            <span className="text-3xl text-gray-600 font-extrabold">
+              Lead Details
+            </span>
+            <Button className="flex gap-2 justify-center items-center bg-black">
+              <span>Export</span> <CiExport size={25} />
+            </Button>
           </Typography>
-          
         </CardHeader>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           <table className="w-full min-w-[640px] table-auto">

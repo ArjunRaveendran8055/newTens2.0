@@ -10,6 +10,10 @@ const leadBankSchema = new mongoose.Schema(
       type: String,
       required: [true, "phone number is required"],
     },
+    whatsapp:{
+      type:String,
+      required:false
+    },
     class: {
       type: String,
       required: [true, "class is required"],
@@ -31,6 +35,14 @@ const leadBankSchema = new mongoose.Schema(
       required: false,
     },
     location:{
+      type:String,
+      required:false
+    },
+    addedByUserId:{
+      type:String,
+      required:false
+    },
+    addByUserName:{
       type:String,
       required:false
     }

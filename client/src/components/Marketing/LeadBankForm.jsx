@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Card,
   CardHeader,
@@ -17,21 +17,22 @@ import axios from "axios";
 import { setToastView } from "../features/toast/toastSlice";
 
 function LeadBankForm() {
-  const {user}=useSelector(state=>state.user)
-  console.log("user is:",user.id);
-  
+  const { user } = useSelector((state) => state.user);
+  //.log("user is:", user);
+
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    whatsapp:"",
+    whatsapp: "",
     class: "",
     division: "",
     syllabus: "",
     district: "",
     school: "",
     location: "",
-    addedBy:""
+    addedByUserId: user.id,
+    addByUserName: `${user.firstname} ${user.lastname}`,
   });
 
   const [isKnown, setIsKnown] = useState(true);
@@ -98,11 +99,10 @@ function LeadBankForm() {
       newErrors.name = "enter valid name";
     }
 
-    if(formData.class >12 || formData.class <7 ){
-
-      newErrors.class="Invalid class"
+    if (formData.class > 12 || formData.class < 7) {
+      newErrors.class = "Invalid class";
     }
-    
+
     if (!/^\d{6,15}$/.test(formData.phone)) {
       newErrors.phone = "number must be in between 6-15";
     }
@@ -112,7 +112,9 @@ function LeadBankForm() {
         key !== "school" &&
         key !== "district" &&
         key !== "location" &&
-        key !=="whatsapp"
+        key !== "whatsapp" &&
+        key !== "addedByUserId" &&
+        key !== "addByUserName"
       ) {
         newErrors[key] = `${key} is required`;
       }
@@ -136,8 +138,8 @@ function LeadBankForm() {
   //handle form submission
   const handleSubmit = () => {
     //function to Validate form fields
-    
     const newErrors = validate();
+    console.log("errors are:", newErrors);
     //check there are no errors left in the custom error object
     if (Object.keys(newErrors).length === 0) {
       console.log("formData is", formData);
@@ -157,6 +159,7 @@ function LeadBankForm() {
             division: "",
             syllabus: "",
             district: "",
+            whatsapp:"",
             location: formData.location,
           });
           setSchools([]);
@@ -184,7 +187,9 @@ function LeadBankForm() {
           </span>
         )}
         <div className="sm:px-4 sm:pt-2 lg:px-10 lg:pt-5  flex w-ful">
-          <span className="sm:text-xl lg:text-3xl border-b-[1px] border-gray-400">Lead Registration Form</span>
+          <span className="sm:text-xl lg:text-3xl border-b-[1px] border-gray-400">
+            Lead Registration Form
+          </span>
         </div>
 
         <div className="flex justify-center items-center w-full sm:mt-5 ">
@@ -201,23 +206,23 @@ function LeadBankForm() {
               </Typography>
             </CardHeader>
             <CardBody className="space-y-4 capitalize">
-            <div className="space-y-2">
-                  <Typography variant="small" className="font-medium">
-                    Name
-                  </Typography>
-                  <div>
-                    <Input
-                      className=" capitalize"
-                      id="name"
-                      label="Enter student's name"
-                      value={formData.name}
-                      onChange={handleChange}
-                    />
-                    {errors.name && (
-                      <span className="text-red-400">{"* " + errors.name}</span>
-                    )}
-                  </div>
+              <div className="space-y-2">
+                <Typography variant="small" className="font-medium">
+                  Name
+                </Typography>
+                <div>
+                  <Input
+                    className=" capitalize"
+                    id="name"
+                    label="Enter student's name"
+                    value={formData.name}
+                    onChange={handleChange}
+                  />
+                  {errors.name && (
+                    <span className="text-red-400">{"* " + errors.name}</span>
+                  )}
                 </div>
+              </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 sm:grid-cols-1 gap-4">
                 <div className="space-y-2">
                   <Typography variant="small" className="font-medium">
