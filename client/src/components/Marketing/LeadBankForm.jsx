@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import {
   Card,
   CardHeader,
@@ -17,6 +17,9 @@ import axios from "axios";
 import { setToastView } from "../features/toast/toastSlice";
 
 function LeadBankForm() {
+  const {user}=useSelector(state=>state.user)
+  console.log("user is:",user.id);
+  
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
@@ -92,6 +95,10 @@ function LeadBankForm() {
     if (formData.name.length < 3) {
       newErrors.name = "enter valid name";
     }
+    if(formData.phone >12 || formData.phone <7 ){
+      newErrors.class="Invalid class"
+    }
+    
     if (!/^\d{6,15}$/.test(formData.phone)) {
       newErrors.phone = "number must be in between 6-15";
     }
@@ -238,6 +245,7 @@ function LeadBankForm() {
                       label="Enter class"
                       value={formData.class}
                       onChange={handleChange}
+                      maxLength={2}
                     />
                     {errors.class && (
                       <span className="text-red-400">
