@@ -44,7 +44,7 @@ function DisplayClasses() {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:8055/class/getAllClass`, {
+        `/class/getAllClass`, {
           params: {
             page: currentPage,
             limit: limit
