@@ -97,11 +97,9 @@ function LeadBankForm() {
     if (formData.name.length < 3) {
       newErrors.name = "enter valid name";
     }
-<<<<<<< HEAD
-    if(formData.phone >12 || formData.phone <7 ){
-=======
+
     if(formData.class >12 || formData.class <7 ){
->>>>>>> origin/master
+
       newErrors.class="Invalid class"
     }
     
