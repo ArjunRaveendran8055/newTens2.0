@@ -69,8 +69,8 @@ function App() {
           {/* private route example */}
           <Route path="/assignaa" element={<Asignaa/>}/>
           <Route path="/leadbank" element={<LeadBank/>}/>
-          <Route path="/leadbankform" element={<LeadBankForm/>}/>
-          <Route path="/viewdetailedleads" element={<LeadDisplayTable/>}/>
+          <Route path="/leadbank/leadbankform" element={<LeadBankForm/>}/>
+          <Route path="/leadbank/viewdetailedleads" element={<LeadDisplayTable/>}/>
 
 
         
