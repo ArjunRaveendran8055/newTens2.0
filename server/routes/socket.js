@@ -1,9 +1,10 @@
 const { Server } = require("socket.io");
 const { RegisteredStudentModel } = require("../models/RegisteredStudentModel");
+const URL=process.env.CLIENT_URL
 const setupSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: [URL],
       methods: ["GET", "POST"],
       credentials: true,
     },

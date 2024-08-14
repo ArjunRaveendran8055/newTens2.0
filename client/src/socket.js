@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
+import { SERVER_URL } from "./server";
 
-const SOCKET_URL = "http://localhost:8055";
-const socket = io(SOCKET_URL, {
+const socket = io(SERVER_URL, {
   withCredentials: true,
   autoConnect:false
 });

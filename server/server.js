@@ -18,12 +18,6 @@ process.on("unhandledRejection", (err) => {
   process.exit(0);
 });
 
-//config
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  require("dotenv").config({
-    path: "./config/.env",
-  });
-}
 
 //create express server
 const createServer = async () => {

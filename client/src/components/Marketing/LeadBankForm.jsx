@@ -24,12 +24,14 @@ function LeadBankForm() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
+    whatsapp:"",
     class: "",
     division: "",
     syllabus: "",
     district: "",
     school: "",
     location: "",
+    addedBy:""
   });
 
   const [isKnown, setIsKnown] = useState(true);
@@ -95,7 +97,11 @@ function LeadBankForm() {
     if (formData.name.length < 3) {
       newErrors.name = "enter valid name";
     }
+<<<<<<< HEAD
     if(formData.phone >12 || formData.phone <7 ){
+=======
+    if(formData.class >12 || formData.class <7 ){
+>>>>>>> origin/master
       newErrors.class="Invalid class"
     }
     
@@ -107,7 +113,8 @@ function LeadBankForm() {
         !formData[key] &&
         key !== "school" &&
         key !== "district" &&
-        key !== "location"
+        key !== "location" &&
+        key !=="whatsapp"
       ) {
         newErrors[key] = `${key} is required`;
       }
@@ -131,10 +138,11 @@ function LeadBankForm() {
   //handle form submission
   const handleSubmit = () => {
     //function to Validate form fields
+    
     const newErrors = validate();
     //check there are no errors left in the custom error object
     if (Object.keys(newErrors).length === 0) {
-      //console.log("formData is", formData);
+      console.log("formData is", formData);
       axios
         .post("/leadBank/submitLead", formData)
         .then((res) => {
@@ -178,10 +186,10 @@ function LeadBankForm() {
           </span>
         )}
         <div className="sm:px-4 sm:pt-2 lg:px-10 lg:pt-5  flex w-ful">
-          <span className="sm:text-xl lg:text-3xl border-b-2 border-black">Lead Registation Form</span>
+          <span className="sm:text-xl lg:text-3xl border-b-[1px] border-gray-400">Lead Registration Form</span>
         </div>
 
-        <div className="flex justify-center items-center w-full sm:mt-5 lg:mt-32">
+        <div className="flex justify-center items-center w-full sm:mt-5 ">
           <Card className="w-full max-w-md md:max-w-2xl sm:p-2 md:p-8">
             <CardHeader floated={false} shadow={false} className="pb-2">
               <Typography
@@ -195,8 +203,7 @@ function LeadBankForm() {
               </Typography>
             </CardHeader>
             <CardBody className="space-y-4 capitalize">
-              <div className="grid grid-cols-1 lg:grid-cols-2 sm:grid-cols-1 gap-4">
-                <div className="space-y-2">
+            <div className="space-y-2">
                   <Typography variant="small" className="font-medium">
                     Name
                   </Typography>
@@ -213,6 +220,7 @@ function LeadBankForm() {
                     )}
                   </div>
                 </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 sm:grid-cols-1 gap-4">
                 <div className="space-y-2">
                   <Typography variant="small" className="font-medium">
                     Phone
@@ -230,6 +238,20 @@ function LeadBankForm() {
                         {"* " + errors.phone}
                       </span>
                     )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Typography variant="small" className="font-medium">
+                    whatsapp
+                  </Typography>
+                  <div>
+                    <Input
+                      id="whatsapp"
+                      type="number"
+                      label="Enter whatsapp number"
+                      value={formData.whatsapp}
+                      onChange={handleChange}
+                    />
                   </div>
                 </div>
               </div>
