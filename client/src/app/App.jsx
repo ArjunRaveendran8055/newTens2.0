@@ -29,9 +29,10 @@ import SubmitSuccess from "../layouts/SubmitSuccess";
 import LeadBankForm from "../components/Marketing/LeadBankForm";
 import LeadBank from "../components/Marketing/LeadBank";
 import LeadDisplayTable from "../components/Marketing/LeadDisplayTable";
+import { SERVER_URL } from "../server";
 
 function App() {
-  axios.defaults.baseURL = "http://localhost:8055";
+  axios.defaults.baseURL = SERVER_URL
   axios.defaults.withCredentials = true;
   return (
     <div className="">

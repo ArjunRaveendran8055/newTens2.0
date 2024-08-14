@@ -12,9 +12,19 @@ const { registrationRoutes } = require("./routes/registrationRoutes")
 const { centreRouter } = require("./routes/centreRoutes")
 const { approveRouter } = require("./routes/ApproveRoutes")
 const { leadBankRouter } = require("./routes/leadBankRoutes")
+//config
+if (process.env.NODE_ENV !== "PRODUCTION") {
+    require("dotenv").config({
+      path: "./config/.env",
+    });
+  }
+
+  const URL=process.env.CLIENT_URL
+  
+
 const app=express()
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:[URL],
     credentials:true
 }))
 app.use(morgan('dev'))
