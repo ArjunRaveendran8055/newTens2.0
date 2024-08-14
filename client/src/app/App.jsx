@@ -26,7 +26,11 @@ import Batches from "../components/CentreandBatches/Batches";
 import DisplayBatches from "../components/CentreandBatches/DisplayBatches";
 import Asignaa from "../components/classComponents/Asignaa";
 import SubmitSuccess from "../layouts/SubmitSuccess";
+import LeadBankForm from "../components/Marketing/LeadBankForm";
 import LeadBank from "../components/Marketing/LeadBank";
+import LeadDisplayTable from "../components/Marketing/LeadDisplayTable";
+import BulkUpload from "../components/Marketing/BulkUpload";
+
 function App() {
   axios.defaults.baseURL = "http://localhost:8055";
   axios.defaults.withCredentials = true;
@@ -66,6 +70,12 @@ function App() {
           {/* private route example */}
           <Route path="/assignaa" element={<Asignaa/>}/>
           <Route path="/leadbank" element={<LeadBank/>}/>
+          <Route path="/leadbank/leadbankform" element={<LeadBankForm/>}/>
+          <Route path="/leadbank/viewdetailedleads" element={<LeadDisplayTable/>}/>
+          <Route path="/leadbank/bulkupload" element={<BulkUpload/>}/>
+
+
+        
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
       </Routes>
