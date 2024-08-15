@@ -18,11 +18,13 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           echo "$SSH_PRIVATE_KEY" | ssh-add -
-          ssh $SERVER_USER@$SERVER_IP "
+          ssh -p 4545 $SERVER_USER@$SERVER_IP "
             cd /home/new10s/newTens2.0/client &&
             git pull origin production &&
             npm install &&
             npm run build &&
+            cd ../server &&
+            npm install &&
             pm2 restart all &&
             sudo systemctl reload nginx
           "
