@@ -15,20 +15,14 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
-          echo "SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY }}"  # Debug: Print SSH key variable
-          echo "SERVER_IP=${{ secrets.SERVER_IP }}"  # Debug: Print Server IP variable
-          echo "SERVER_USER=${{ secrets.SERVER_USER }}" 
+          echo "Adding SSH host to known_hosts..."
+          ssh-keyscan -p 4545 -H $SERVER_IP >> ~/.ssh/known_hosts || { echo "ssh-keyscan failed"; exit 1; }
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
 
       - name: Deploy to Server
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
           ssh -o StrictHostKeyChecking=no -p 4545 $SERVER_USER@$SERVER_IP "
             cd /home/new10s/newTens2.0/client &&
@@ -40,3 +34,7 @@ jobs:
             pm2 restart all &&
             sudo systemctl reload nginx
           "
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
