@@ -31,8 +31,7 @@ jobs:
             npm run build &&
             cd ../server &&
             npm install &&
-            pm2 restart all &&
-            systemctl reload nginx
+            pm2 restart all
           "
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
