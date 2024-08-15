@@ -24,7 +24,7 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no -p 4545 $SERVER_USER@$SERVER_IP "
+          ssh -p 4545 $SERVER_USER@$SERVER_IP "
             cd /home/new10s/newTens2.0/client &&
             git pull origin production &&
             npm install &&
