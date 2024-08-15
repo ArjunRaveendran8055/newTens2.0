@@ -11,8 +11,8 @@ import { FaWpforms,FaCloudUploadAlt } from "react-icons/fa";
 import { AiOutlineFileExcel } from "react-icons/ai";
 const LeadBank = () => {
   return (
-    <div className="relative min-h-[89vh] rounded-lg items-start flex sm:flex-col lg:flex-row sm:gap-5 lg:gap-10 md:pt-4 lg:pt-0 mt-4 ">
-      <Link to="/leadbank/leadbankform">
+    <div className="relative min-h-[89vh] rounded-lg items-start justify-center flex sm:flex-col lg:flex-row sm:gap-5 lg:gap-10 md:pt-4 lg:pt-0 sm:mt-3 lg:mt-10 ">
+      <Link to="/leadbank/leadbankform" className="sm:w-full lg:w-80">
         <Card className="border border-blue-gray-100 shadow-sm sm:w-full lg:w-80 h-36">
           <CardHeader
             variant="gradient"
@@ -40,7 +40,7 @@ const LeadBank = () => {
         </Card>
       </Link>
 
-      <Link to="/leadbank/viewdetailedleads" >
+      <Link to="/leadbank/viewdetailedleads" className="sm:w-full lg:w-80">
       <Card className="border border-blue-gray-100 shadow-sm sm:w-full lg:w-80 h-36">
         <CardHeader
           variant="gradient"
@@ -67,7 +67,7 @@ const LeadBank = () => {
       </Card>
       </Link>
 
-      <Link to="/leadbank/bulkupload" >
+      <Link to="/leadbank/bulkupload" className="sm:w-full lg:w-80">
       <Card className="border border-blue-gray-100 shadow-sm sm:w-full lg:w-80 h-36">
         <CardHeader
           variant="gradient"

@@ -57,7 +57,7 @@ function BulkUpload() {
   };
       
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="relative flex items-center justify-center lg:mt-20 sm:mt-5 bg-gray-50">
     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Bulk Upload</h1>
