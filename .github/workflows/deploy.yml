@@ -25,8 +25,9 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -p 4545 $SERVER_USER@$SERVER_IP "
-            cd /home/new10s/newTens2.0/client &&
+            cd /home/new10s/newTens2.0 &&
             git pull origin production &&
+            cd ../client &&
             npm install &&
             npm run build &&
             cd ../server &&
