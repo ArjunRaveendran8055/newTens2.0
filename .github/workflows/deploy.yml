@@ -10,15 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+          echo "SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY }}"  # Debug: Print SSH key variable
+          echo "SERVER_IP=${{ secrets.SERVER_IP }}"  # Debug: Print Server IP variable
+          echo "SERVER_USER=${{ secrets.SERVER_USER }}" 
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
 
       - name: Deploy to Server
         env:
