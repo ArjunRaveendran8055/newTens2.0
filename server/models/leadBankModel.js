@@ -4,11 +4,11 @@ const leadBankSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "name is required"],
+      required: false,
     },
     phone: {
       type: String,
-      required: [true, "phone number is required"],
+      required: false,
     },
     whatsapp:{
       type:String,
@@ -16,15 +16,15 @@ const leadBankSchema = new mongoose.Schema(
     },
     class: {
       type: String,
-      required: [true, "class is required"],
+      required: false,
     },
     division: {
       type: String,
-      required: [true, "Batch is required"],
+      required: false,
     },
     syllabus: {
       type: String,
-      required: [true, "syllabus is required"],
+      required: false,
     },
     district: {
       type: String,
