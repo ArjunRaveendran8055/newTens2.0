@@ -30,9 +30,11 @@ import LeadBankForm from "../components/Marketing/LeadBankForm";
 import LeadBank from "../components/Marketing/LeadBank";
 import LeadDisplayTable from "../components/Marketing/LeadDisplayTable";
 import ViewDetailedLeads from "../components/Marketing/ViewDetailedLeads";
+import BulkUpload from "../components/Marketing/BulkUpload";
+import { SERVER_URL } from "../server";
 
 function App() {
-  axios.defaults.baseURL = "http://localhost:8055";
+  axios.defaults.baseURL = SERVER_URL;
   axios.defaults.withCredentials = true;
   return (
     <div className="">
@@ -72,6 +74,7 @@ function App() {
           <Route path="/leadbank" element={<LeadBank/>}/>
           <Route path="/leadbank/leadbankform" element={<LeadBankForm/>}/>
           <Route path="/leadbank/viewdetailedleads" element={<ViewDetailedLeads/>}/>
+          <Route path="/leadbank/bulkupload" element={<BulkUpload/>}/>
           
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
