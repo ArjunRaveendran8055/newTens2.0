@@ -32,6 +32,8 @@ import LeadDisplayTable from "../components/Marketing/LeadDisplayTable";
 import ViewDetailedLeads from "../components/Marketing/ViewDetailedLeads";
 import BulkUpload from "../components/Marketing/BulkUpload";
 import { SERVER_URL } from "../server";
+import SkeletonStudentSearch from "../widgets/skeletonLoading/SkeletonStudentSearch";
+import Skeleton from "../widgets/skeletonLoading/Skeleton";
 
 function App() {
   axios.defaults.baseURL = SERVER_URL;
@@ -75,6 +77,7 @@ function App() {
           <Route path="/leadbank/leadbankform" element={<LeadBankForm/>}/>
           <Route path="/leadbank/viewdetailedleads" element={<ViewDetailedLeads/>}/>
           <Route path="/leadbank/bulkupload" element={<BulkUpload/>}/>
+          <Route path="/test" element={<SkeletonStudentSearch/>}/>
           
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
