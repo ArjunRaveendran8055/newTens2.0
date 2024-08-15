@@ -42,10 +42,10 @@ function ClassHome() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8055/class/getoneclass/${id}`
+        `/class/getoneclass/${id}`
       );
       const responseReports = await axios.get(
-        `http://localhost:8055/classReport/GetAllReport/${id}`
+        `/classReport/GetAllReport/${id}`
       );
       const data = response.data;
       // store report data to loop for preview
