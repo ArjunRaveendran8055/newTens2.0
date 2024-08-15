@@ -30,7 +30,7 @@ app.use(cors({
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
-
+app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use("/uploads",express.static(path.join(__dirname,'uploads')))
 
 app.use("/auth",authRoutes)
@@ -50,6 +50,7 @@ app.use("/centre",centreRouter)
 app.use("/approve",approveRouter)
 
 app.use("/leadBank",leadBankRouter)
+
 
 app.use(erroHandler)
 

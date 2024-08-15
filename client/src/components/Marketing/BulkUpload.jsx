@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import * as XLSX from "xlsx";
+import { SERVER_URL } from '../../server';
 
 function BulkUpload() {
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -41,9 +42,22 @@ function BulkUpload() {
       setError("Please select an Excel file to upload."); // Set the error message
     }
   };
+
+  const handleDownloadClick = () => {
+    // The URL of the sample Excel file on the server
+    const fileUrl = SERVER_URL+"/public/leadsample.xlsx"; // Replace with your actual file URL
+
+    // Create a link element, set the download attribute with the file URL, and click it
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = "sample.xlsx"; // Set the desired file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up the link element
+  };
       
   return (
-    <div className="relative flex items-center justify-center mt-20 bg-gray-50">
+    <div className="relative flex items-center justify-center min-h-screen bg-gray-50">
     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Bulk Upload</h1>
@@ -83,6 +97,12 @@ function BulkUpload() {
           className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
         >
           Upload
+        </button>
+        <button
+          onClick={handleDownloadClick}
+          className="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600"
+        >
+          Download Sample
         </button>
       </div>
       {uploadSuccess && (
