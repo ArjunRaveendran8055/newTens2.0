@@ -32,7 +32,7 @@ jobs:
             cd ../server &&
             npm install &&
             pm2 restart all &&
-            sudo systemctl reload nginx
+            systemctl reload nginx
           "
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
