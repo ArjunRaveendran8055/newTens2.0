@@ -18,6 +18,10 @@ const leadBankSchema = new mongoose.Schema(
       type: String,
       required: [true, "class is required"],
     },
+    year:{
+      type:String,
+      default: new Date().getFullYear()
+    },
     division: {
       type: String,
       required: [true, "Batch is required"],
@@ -58,6 +62,17 @@ leadBankSchema.pre("save", function (next) {
       this._doc[key] = this._doc[key].toLowerCase();
     }
   }
+  next();
+});
+
+leadBankSchema.pre("insertMany", function (next, docs) {
+  docs.forEach(doc => {
+    for (let key in doc) {
+      if (typeof doc[key] === "string") {
+        doc[key] = doc[key].toLowerCase();
+      }
+    }
+  });
   next();
 });
 

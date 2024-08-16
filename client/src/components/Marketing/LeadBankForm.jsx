@@ -192,8 +192,8 @@ function LeadBankForm() {
           </span>
         </div>
 
-        <div className="flex justify-center items-center w-full sm:mt-5 ">
-          <Card className="w-full max-w-md md:max-w-2xl sm:p-2 md:p-8">
+        <div className="flex justify-center items-center w-full sm:mt-5">
+          <Card className="w-full max-w-md md:max-w-2xl sm:p-2 md:p-8 shadow-2xl">
             <CardHeader floated={false} shadow={false} className="pb-2">
               <Typography
                 variant="h5"
