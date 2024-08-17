@@ -102,6 +102,7 @@ const exportLeadController = asyncWrapper(async (req, res, next) => {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Leads");
 
+  
   // Generate the Excel file
   const excelFilePath = path.join(__dirname + "/../public", "leads.xlsx");
   XLSX.writeFile(wb, excelFilePath);
