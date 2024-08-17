@@ -154,7 +154,6 @@ const uploadLeadsController = asyncWrapper(async (req, res) => {
       inserted: validLeads.length,
     });
 });
-
 module.exports = {
   uploadLeadsController,
   submitLeadController,
