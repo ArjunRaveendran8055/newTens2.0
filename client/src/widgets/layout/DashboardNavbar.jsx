@@ -49,7 +49,7 @@ const navigate=useNavigate()
       fullWidth
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
-        <div className="uppercase font-bold text-black sm:text-sm md:text-md lg:text-2xl">
+        <div className="uppercase lg:font-bold sm:font-semibold text-black sm:text-lg md:text-md lg:text-2xl">
           {user.firstname}
           {user.lastname}&nbsp;-&nbsp;{user.role}
         </div>
