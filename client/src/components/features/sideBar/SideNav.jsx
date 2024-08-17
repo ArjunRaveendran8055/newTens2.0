@@ -11,10 +11,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { routes, AAroutes, TEAMLEADroutes, MENTORroutes, MARKETINGroutes } from "../../../routes";
 import Logo from "./logo.png";
+import { setIsOpen } from "./sideNavSlice";
 
 export function Sidenav({ brandName }) {
   const { isOpen } = useSelector((state) => state.sideNav);
   const { user } = useSelector((state) => state.user);
+  const dispatch=useDispatch()
 
   return (
     <>
@@ -316,7 +318,7 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="green"
+                          color="grey"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
                         >
@@ -448,9 +450,12 @@ export function Sidenav({ brandName }) {
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
-                          color="green"
+                          color="grey"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
+                          onClick={() => {
+                            dispatch(setIsOpen());
+                          }}
                         >
                           {icon}
                           <Typography
