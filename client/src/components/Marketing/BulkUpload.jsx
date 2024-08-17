@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import * as XLSX from "xlsx";
 import { SERVER_URL } from '../../server';
+import axios from 'axios';
 
 function BulkUpload() {
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -25,17 +26,38 @@ function BulkUpload() {
     }
   };
 
-  const handleUploadClick = () => {
+  const handleUploadClick = async () => {
     if (uploadedFile) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(worksheet);
-        setJsonData(json);
-        console.log(json); // Log the JSON data to the console
-        setUploadSuccess(true);
+      reader.onload = async (e) => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          const json = XLSX.utils.sheet_to_json(worksheet);
+  
+          // Sending the JSON data to the backend
+          const response = await axios.post(SERVER_URL+'/leadBank/bulkUploadLead', { leads: json });
+  
+          if (response.status === 200) {
+            setUploadSuccess(true);
+            console.log('Upload successful:', response.data);
+  
+            // Clear the file input and reset state
+            setUploadedFile(null); // Assuming you have a state for the uploaded file
+            setJsonData([]); // Clear the JSON data state
+            document.getElementById('file-upload').value = ''; // Reset file input field
+            setTimeout(() => {
+              setUploadSuccess(false);
+            }, 3000);
+          } else {
+            setError("Error uploading data");
+            console.log('Upload failed:', response.data);
+          }
+        } catch (error) {
+          setError("An error occurred while processing the file.");
+          console.error("Error reading file or uploading data:", error);
+        }
       };
       reader.readAsArrayBuffer(uploadedFile);
     } else {

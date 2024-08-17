@@ -32,6 +32,8 @@ import LeadDisplayTable from "../components/Marketing/LeadDisplayTable";
 import ViewDetailedLeads from "../components/Marketing/ViewDetailedLeads";
 import BulkUpload from "../components/Marketing/BulkUpload";
 import { SERVER_URL } from "../server";
+import SkeletonStudentSearch from "../widgets/skeletonLoading/SkeletonStudentSearch";
+import Skeleton from "../widgets/skeletonLoading/Skeleton";
 
 function App() {
   axios.defaults.baseURL = SERVER_URL;
