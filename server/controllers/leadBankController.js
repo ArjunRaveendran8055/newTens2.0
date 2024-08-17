@@ -67,13 +67,19 @@ const exportLeadController = asyncWrapper(async (req, res, next) => {
   const { fields } = req.body;
   const { dateFrom, dateTo } = req.query;
   console.log("fields are:", fields);
+
+  //filter out keys with value zero
+  const filteredFields = Object.fromEntries(
+    Object.entries(fields).filter(([key, value]) => value !== 0)
+  );
+
   const projectionObj = {
     $project: {
       _id: 0,
-      ...fields,
+      ...filteredFields,
     },
   };
-  console.log("dates are", dateFrom, dateTo);
+  console.log("projection obj is :",projectionObj );
   let obj = {};
   if (dateFrom) {
     console.log("dum");
