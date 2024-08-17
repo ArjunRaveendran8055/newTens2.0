@@ -204,7 +204,7 @@ function AllCentres() {
         </Card>
       </Dialog>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {allCentres.map((item, index) => (
           <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm transform transition-transform hover:scale-105">
             <div className="p-4">

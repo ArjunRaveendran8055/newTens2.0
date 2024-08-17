@@ -229,11 +229,13 @@ export function Sidenav({ brandName }) {
         className={` sm:block xl:hidden ${
           !isOpen ? "-translate-x-80" : "translate-x-0"
         }
-       fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-white`}
+       fixed inset-0 z-50 my-4 ml-4 overflow-y-auto h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-white`}
       >
         <div className={`relative`}>
-          <div className="py-6 px-8 text-center">
-            <Typography variant="h6" color="black">
+          
+          <div className="py-6 px-8 text-center flex flex-row justify-center items-center gap-2">
+          <img width={"50px"} src={Logo} alt=""  />
+            <Typography variant="h5" color="black">
               {brandName}
             </Typography>
           </div>
@@ -321,6 +323,9 @@ export function Sidenav({ brandName }) {
                           color="grey"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
+                          onClick={() => {
+                            dispatch(setIsOpen());
+                          }}
                         >
                           {icon}
                           <Typography
@@ -365,6 +370,9 @@ export function Sidenav({ brandName }) {
                           color="green"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
+                          onClick={() => {
+                            dispatch(setIsOpen());
+                          }}
                         >
                           {icon}
                           <Typography
@@ -409,6 +417,9 @@ export function Sidenav({ brandName }) {
                           color="green"
                           className="flex items-center gap-4 px-4 capitalize"
                           fullWidth
+                          onClick={() => {
+                            dispatch(setIsOpen());
+                          }}
                         >
                           {icon}
                           <Typography
