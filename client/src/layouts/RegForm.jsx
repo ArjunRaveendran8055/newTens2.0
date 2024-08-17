@@ -961,6 +961,9 @@ const RegForm = () => {
                 name="whatsappNumber"
                 value={formData.whatsappNumber}
                 onChange={handleInputChange}
+
+                
+                
               />
               {errors.whatsappNumber && (
                 <span className="text-sm  text-red-500">
