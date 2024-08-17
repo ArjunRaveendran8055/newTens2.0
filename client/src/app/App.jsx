@@ -73,7 +73,6 @@ function App() {
           <Route path="/leadbank/leadbankform" element={<LeadBankForm/>}/>
           <Route path="/leadbank/viewdetailedleads" element={<ViewDetailedLeads/>}/>
           <Route path="/leadbank/bulkupload" element={<BulkUpload/>}/>
-          
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
         </Route>
       </Routes>
