@@ -197,11 +197,6 @@ function LeadBankForm() {
             <span>Updation successFul</span>
           </span>
         )}
-        <div className="sm:px-4 sm:pt-2 lg:px-10 lg:pt-5  flex w-ful">
-          <span className="sm:text-xl lg:text-3xl border-b-[1px] border-gray-400">
-            Lead Registration Form
-          </span>
-        </div>
 
         <div className="flex justify-center items-center w-full sm:mt-5">
           <Card className="w-full max-w-md md:max-w-2xl sm:p-2 md:p-8 shadow-2xl">

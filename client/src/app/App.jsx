@@ -30,6 +30,7 @@ import LeadBank from "../components/Marketing/LeadBank";
 import ViewDetailedLeads from "../components/Marketing/ViewDetailedLeads";
 import BulkUpload from "../components/Marketing/BulkUpload";
 import { SERVER_URL } from "../server";
+import SkeletonTable from "../widgets/skeletonLoading/SkeletonLeadTable";
 
 function App() {
   axios.defaults.baseURL = SERVER_URL;
