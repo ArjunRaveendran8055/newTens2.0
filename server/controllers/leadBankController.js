@@ -113,7 +113,7 @@ const exportLeadController = asyncWrapper(async (req, res, next) => {
     }
 
     // // Clean up the file after sending it
-    // fs.unlinkSync(excelFilePath);
+     fs.unlinkSync(excelFilePath);
   });
 });
 
