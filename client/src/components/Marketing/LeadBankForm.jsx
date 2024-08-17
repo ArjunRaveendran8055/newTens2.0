@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback  } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Card,
@@ -15,6 +15,7 @@ import {
 import { TiTick } from "react-icons/ti";
 import axios from "axios";
 import { setToastView } from "../features/toast/toastSlice";
+import { debounce } from "lodash";
 
 function LeadBankForm() {
   const { user } = useSelector((state) => state.user);
@@ -42,26 +43,36 @@ function LeadBankForm() {
   const [isSaved, setIsSaved] = useState(false);
   const [schoolCopy, setSchoolCopy] = useState();
 
-  const fetchSchool = async (school) => {
-    if (school?.length > 2) {
-      await axios
-        .post("/registration/getschool", {
-          syllabus: formData.syllabus,
-          search: school,
-        })
-        .then((response) => {
-          console.log(response.data.data);
-          setSchools([...response.data.data]);
-        })
-        .catch((error) => console.log(error));
-    } else {
-      setSchools([]);
-    }
-  };
+  const fetchSchool = useCallback(
+    debounce(async (school) => {
+      if (school?.length > 2) {
+        await axios
+          .post("/registration/getschool", {
+            syllabus: formData.syllabus,
+            search: school,
+          })
+          .then((response) => {
+            setSchools(response.data.data);
+          })
+          .catch((error) => {
+            console.log(error)
+            setSchools([])
+      });
+      } else {
+        setSchools([]);
+      }
+    }, 300),
+    [formData.syllabus]
+  );
 
   useEffect(() => {
-    fetchSchool(schoolCopy);
-  }, [formData.syllabus, schoolCopy]);
+    if (schoolCopy) {
+      fetchSchool(schoolCopy);
+    } else {
+      setSchools([]);
+      setIsOpen(false);
+    }
+  }, [formData.syllabus, schoolCopy, fetchSchool]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
