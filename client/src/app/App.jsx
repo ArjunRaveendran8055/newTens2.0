@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Dashboard from "../layouts/Dashboard";
 import Profile from "../pages/dashboard/Profile";
 import Notifications from "../pages/dashboard/Notifications";
@@ -18,7 +18,6 @@ import ClassHome from "../components/classComponents/ClassHome";
 import ClassReport from "../components/classComponents/ClassReport";
 import AddStudent from "../components/AddStudent/AddStudent";
 import PrivateRoute from "./PrivateRoute";
-import AccessDenied from "./AccessDenied";
 import RegForm from "../layouts/RegForm";
 import AllCentres from "../components/CentreandBatches/AllCentres";
 import ApproveStudents from "../components/ApproveStudents/ApproveStudents";
@@ -28,12 +27,9 @@ import Asignaa from "../components/classComponents/Asignaa";
 import SubmitSuccess from "../layouts/SubmitSuccess";
 import LeadBankForm from "../components/Marketing/LeadBankForm";
 import LeadBank from "../components/Marketing/LeadBank";
-import LeadDisplayTable from "../components/Marketing/LeadDisplayTable";
 import ViewDetailedLeads from "../components/Marketing/ViewDetailedLeads";
 import BulkUpload from "../components/Marketing/BulkUpload";
 import { SERVER_URL } from "../server";
-import SkeletonStudentSearch from "../widgets/skeletonLoading/SkeletonStudentSearch";
-import Skeleton from "../widgets/skeletonLoading/Skeleton";
 
 function App() {
   axios.defaults.baseURL = SERVER_URL;
