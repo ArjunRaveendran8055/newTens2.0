@@ -473,6 +473,7 @@ export function Sidenav({ brandName }) {
             ))}
 
         </div>
+        
       </aside>
     </>
   );

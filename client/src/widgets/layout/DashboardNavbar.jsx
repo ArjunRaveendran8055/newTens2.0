@@ -72,7 +72,7 @@ const navigate=useNavigate()
               color="blue-gray"
               className="grid xl:hidden"
             >
-              <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
+              <UserCircleIcon onClick={logOutHandler} className="h-5 w-5 text-blue-gray-500" />
             </IconButton>
           </Link>
           <Menu>
