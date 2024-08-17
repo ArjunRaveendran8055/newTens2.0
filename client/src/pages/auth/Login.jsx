@@ -33,10 +33,7 @@ const Login = () => {
       .then((res) => {
         console.log(res.data);
         setLoader(false);
-        navigate("/home");
-        return dispatch(
-          setToastView({ type: "success", msg: res.data.message })
-        );
+        return navigate("/home");
       })
       .catch((err) => {
         dispatch(setToastView({ type: "error", msg: err.response.data.error }));
