@@ -3,6 +3,7 @@ const { asyncWrapper } = require("../helpers/asyncWrapper");
 const { leadBankModel } = require("../models/leadBankModel");
 const fs = require("fs");
 const path = require("path");
+const XLSX = require("xlsx");
 const submitLeadController = asyncWrapper(async (req, res, next) => {
   const formData = req.body;
   if (
@@ -50,7 +51,7 @@ const getAllLeadsController = asyncWrapper(async (req, res, next) => {
     .skip(skip)
     .limit(limit);
   //console.log("leads are :", leads);
-  const totalLeads = await leadBankModel.countDocuments();
+  const totalLeads = await leadBankModel.countDocuments(obj);
   if (leads.length === 0) {
     throw new AppError(404, "Something Went Wrong");
   }
@@ -64,12 +65,56 @@ const getAllLeadsController = asyncWrapper(async (req, res, next) => {
 
 const exportLeadController = asyncWrapper(async (req, res, next) => {
   const { fields } = req.body;
+  const { dateFrom, dateTo } = req.query;
   console.log("fields are:", fields);
+  const projectionObj = {
+    $project: {
+      _id: 0,
+      ...fields,
+    },
+  };
+  console.log("dates are", dateFrom, dateTo);
+  let obj = {};
+  if (dateFrom) {
+    console.log("dum");
+    obj.createdAt = obj.createdAt || {};
+    obj.createdAt.$gte = new Date(dateFrom);
+  }
+  if (dateTo) {
+    obj.createdAt = obj.createdAt || {};
+    obj.createdAt.$lte = new Date(dateTo);
+  }
   const exportData = await leadBankModel.aggregate([
     {
-      $,
+      $match: obj,
     },
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    projectionObj,
   ]);
+  console.log("export data is :", exportData);
+
+  // Create a new workbook and worksheet
+  const ws = XLSX.utils.json_to_sheet(exportData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Leads");
+
+  // Generate the Excel file
+  const excelFilePath = path.join(__dirname + "/../public", "leads.xlsx");
+  XLSX.writeFile(wb, excelFilePath);
+  // Send the file as a response
+  res.download(excelFilePath, "leads.xlsx", (err) => {
+    if (err) {
+      console.error("Error downloading the file", err);
+      res.status(500).send("Error downloading the file");
+    }
+
+    // // Clean up the file after sending it
+    // fs.unlinkSync(excelFilePath);
+  });
 });
 
 module.exports = {

@@ -88,7 +88,7 @@ const LeadDisplayTable = ({
 
   useEffect(() => {
     fetchLeadList();
-  }, [dateFrom, dateTo,currentPage]);
+  }, [dateFrom, dateTo, currentPage]);
 
   const handleCheckboxChange = (event) => {
     const { id, checked } = event.target;
@@ -148,7 +148,22 @@ const LeadDisplayTable = ({
   //console.log("fields are:", fields);
 
   const onExport = () => {
-    axios.post("/leadbank/exportleads", { fields });
+    axios
+      .post(
+        `/leadbank/exportleads?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+        { fields },
+        { responseType: "blob" }
+      )
+      .then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "leads.xlsx"); // Set the filename
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link); // Clean up after download
+      })
+      .catch((err) => console.log("Error downloading File!"));
   };
 
   return (
@@ -381,8 +396,12 @@ const LeadDisplayTable = ({
         )}
       </Card>
       <div className="flex w-full flex-row justify-center gap-5">
-        <Button disabled={currentPage === 1} className="py-3 px-5"
-        onClick={()=>{setCurrentPage(prev=>prev-1)}}
+        <Button
+          disabled={currentPage === 1}
+          className="py-3 px-5"
+          onClick={() => {
+            setCurrentPage((prev) => prev - 1);
+          }}
         >
           Prev
         </Button>
