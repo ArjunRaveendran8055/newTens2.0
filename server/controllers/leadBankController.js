@@ -67,13 +67,19 @@ const exportLeadController = asyncWrapper(async (req, res, next) => {
   const { fields } = req.body;
   const { dateFrom, dateTo } = req.query;
   console.log("fields are:", fields);
+
+  //filter out keys with value zero
+  const filteredFields = Object.fromEntries(
+    Object.entries(fields).filter(([key, value]) => value !== 0)
+  );
+
   const projectionObj = {
     $project: {
       _id: 0,
-      ...fields,
+      ...filteredFields,
     },
   };
-  console.log("dates are", dateFrom, dateTo);
+  console.log("projection obj is :",projectionObj );
   let obj = {};
   if (dateFrom) {
     console.log("dum");
@@ -147,14 +153,12 @@ const uploadLeadsController = asyncWrapper(async (req, res) => {
     if (validLeads.length > 0) {
       await leadBankModel.insertMany(validLeads);
     }
-
     // Send back a response with the count of inserted leads
     return res.status(200).json({
       message: "Upload completed",
       inserted: validLeads.length,
     });
 });
-
 module.exports = {
   uploadLeadsController,
   submitLeadController,
