@@ -147,7 +147,6 @@ const uploadLeadsController = asyncWrapper(async (req, res) => {
     if (validLeads.length > 0) {
       await leadBankModel.insertMany(validLeads);
     }
-
     // Send back a response with the count of inserted leads
     return res.status(200).json({
       message: "Upload completed",
