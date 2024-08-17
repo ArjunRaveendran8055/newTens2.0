@@ -197,11 +197,11 @@ function LeadBankForm() {
             <CardHeader floated={false} shadow={false} className="pb-2">
               <Typography
                 variant="h5"
-                className="text-xl md:text-2xl font-bold"
+                className="text-xl md:text-2xl font-bold text-red-700"
               >
                 Student Lead Collection
               </Typography>
-              <Typography variant="paragraph">
+              <Typography variant="paragraph" className="text-black">
                 Fill out the form to enroll a new student.
               </Typography>
             </CardHeader>
