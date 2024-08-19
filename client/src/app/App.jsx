@@ -30,7 +30,7 @@ import LeadBank from "../components/Marketing/LeadBank";
 import ViewDetailedLeads from "../components/Marketing/ViewDetailedLeads";
 import BulkUpload from "../components/Marketing/BulkUpload";
 import { SERVER_URL } from "../server";
-import SkeletonTable from "../widgets/skeletonLoading/SkeletonLeadTable";
+import AllStudentsView from "../components/studentComponents/allStudentsView/AllStudentsView";
 
 function App() {
   axios.defaults.baseURL = SERVER_URL;
@@ -64,6 +64,7 @@ function App() {
           <Route path="/classes/classhome/:id" element={<ClassHome/>}/>
           <Route path="/classes/classreport/:id" element={<ClassReport/>}/>
           <Route path="/approvestudents" element={<ApproveStudents/>} />
+          <Route path="/allStudents" element={<AllStudentsView/>} />
           {/* components inside allcentres */}
           <Route path="/allcentres" element={<AllCentres/>} />
           <Route path="/allcentres/batches/:id" element={<Batches/>} />

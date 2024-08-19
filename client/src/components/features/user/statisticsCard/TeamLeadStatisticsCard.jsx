@@ -49,12 +49,13 @@ const TeamLeadStatisticsCard = () => {
     {
       color: "gray",
       icon: UsersIcon,
-      title: "STUDENTS",
-      value: "CRM",
+      title: "ALL STUDENTS",
+      path:"/allStudents",
+      value: "Details",
       footer: {
         color: "text-green-500",
         value: "+3%",
-        label: "usage than last month",
+        label: "new students",
       },
     },
   ];
