@@ -9,6 +9,7 @@ import allSyllabus from "./syllabus.json";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setToastView } from "../features/toast/toastSlice";
+import { countries } from "./countries";
 
 const FormView = ({
   formData,
@@ -44,12 +45,15 @@ const FormView = ({
   const dispatch = useDispatch();
   const [isClassDropdownVisible, setIsClassDropdownVisible] = useState(false);
   const [isLevelDropdownVisible, setIsLevelDropdownVisible] = useState(false);
+  const [isCountryDropdownVisible, setIsCountryDropdownVisible] =
+    useState(false);
   const [isStateDropdownVisible, setIsStateDropdownVisible] = useState(false);
   const [isDistDropdownVisible, setIsDistDropdownVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const ClassDropdownRef = useRef(null);
   const levelDropdonwRef = useRef(null);
+  const countryDropdownRef = useRef(null);
   const stateDropdownRef = useRef(null);
   const distDropdownRef = useRef(null);
 
@@ -70,6 +74,16 @@ const FormView = ({
       !ClassDropdownRef.current.contains(event.target)
     ) {
       setIsClassDropdownVisible(false);
+    }
+  };
+
+  //check the mouse is clicked outside state list
+  const CountryListClickOutside = (event) => {
+    if (
+      countryDropdownRef.current &&
+      !countryDropdownRef.current.contains(event.target)
+    ) {
+      setIsCountryDropdownVisible(false);
     }
   };
 
@@ -97,11 +111,13 @@ const FormView = ({
   useEffect(() => {
     document.addEventListener("mousedown", LevelListClickOutside);
     document.addEventListener("mousedown", ClassListClickOutside);
+    document.addEventListener("mousedown", CountryListClickOutside);
     document.addEventListener("mousedown", StateListClickOutside);
     document.addEventListener("mousedown", DistListClickOutside);
     return () => {
       document.removeEventListener("mousedown", LevelListClickOutside);
       document.removeEventListener("mousedown", ClassListClickOutside);
+      document.removeEventListener("mousedown", CountryListClickOutside);
       document.removeEventListener("mousedown", StateListClickOutside);
       document.removeEventListener("mousedown", DistListClickOutside);
     };
@@ -149,26 +165,32 @@ const FormView = ({
 
   //function to fetch all the states
   const fetchStates = () => {
-    const states = allStates.map((item) => item.state);
-    //console.log("states are: ", states);
-    setStatesIn([...states]);
+    if (formData.country !== "india") {
+      setStatesIn(["others"]);
+    } else {
+      const states = allStates.map((item) => item.state);
+      //console.log("states are: ", states);
+      setStatesIn([...states]);
+    }
   };
 
   //function to fetch districts base on the stateOpted
 
   const fetchAllDists = () => {
-    const dists = allStates.find(
-      (data) => data.state.toLowerCase() === formData.state.toLowerCase()
-    ).districts;
-    setDistrictsIn([...dists]);
-  };
+      if(formData.state!="others" && formData.state.length >0){
+        const dists = allStates.find(
+          (data) => data.state.toLowerCase() === formData.state.toLowerCase()
+        ).districts;
+        return setDistrictsIn([...dists]);
+      }
+    }
 
   //useEffect to fetch states and Districts for dropDown
 
   useEffect(() => {
     fetchStates();
     fetchAllDists();
-  }, [formData.state]);
+  }, [formData.country, formData.state]);
 
   //useEffect to fetch schools accordingly
   useEffect(() => {
@@ -198,6 +220,10 @@ const FormView = ({
 
   const handleClassButtonClick = () => {
     setIsClassDropdownVisible((prev) => !prev);
+  };
+
+  const handleCountryBtnClick = () => {
+    setIsCountryDropdownVisible((prev) => !prev);
   };
 
   const handleStateBtnClick = () => {
@@ -251,8 +277,26 @@ const FormView = ({
         class: null,
         syllabus: value,
       });
-    if (name === "state")
+    if (name === "state") {
+      console.log("tutututututututut...");
       return setFormData({ ...formData, district: "", state: value });
+    }
+    if (name === "country" && value === "india") {
+      return setFormData({
+        ...formData,
+        district: "",
+        state: "",
+        country: value,
+      });
+    }
+    if (name === "country" && value !== "india") {
+      return setFormData({
+        ...formData,
+        district: "others",
+        state: "others",
+        country: value,
+      });
+    }
     setFormData({
       ...formData,
       [name]: value,
@@ -740,44 +784,6 @@ const FormView = ({
 
           <div className="">
             <div className="">
-              <div className="my-4">
-                <div className="space-y-2 ">
-                  <div className=" flex rounded-md">
-                    <label className="block text-lg w-full font-medium text-gray-700">
-                      Studying in India or abroad?
-                    </label>
-                    <div className=" flex gap-3 w-full">
-                      <label className="flex items-center">
-                        <input
-                          onChange={handleInputChange}
-                          type="radio"
-                          checked={formData.country === "india" && true}
-                          className="form-radio h-4 w-4 text-blue-600"
-                          name="country"
-                          value="india"
-                        />
-                        <span className="ml-2 text-gray-900">India</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          onChange={handleInputChange}
-                          type="radio"
-                          checked={formData.country === "abroad" && true}
-                          className="form-radio h-4 w-4 text-blue-600"
-                          name="country"
-                          value="abroad"
-                        />
-                        <span className="ml-2  text-gray-900">Abroad</span>
-                      </label>
-                    </div>
-                  </div>
-                  {errors.country && (
-                    <span className="text-sm text-red-500">
-                      {" * " + errors.country}
-                    </span>
-                  )}
-                </div>
-              </div>
               <div className="  rounded  relative">
                 <div className="mb-4">
                   <label
@@ -889,6 +895,62 @@ const FormView = ({
             </div>
           </div>
 
+          {/* //country */}
+
+          <div className="flex w-full">
+            <label className="flex w-full" htmlFor="gender">
+              Country
+            </label>
+            <div className="flex flex-col w-full">
+              <button
+                ref={countryDropdownRef}
+                onClick={handleCountryBtnClick}
+                value={formData.country}
+                className={`relative w-full h-10 border-[1px] border-gray-500  rounded-md ${
+                  isCountryDropdownVisible &&
+                  "rounded-b-none border-b-0 border-gray-700 "
+                } flex px-4 py-2`}
+              >
+                {formData.country}
+                <div
+                  className={`classlists transition-scale duration-150 h-[25vh] overflow-y-scroll ${
+                    isCountryDropdownVisible
+                      ? "scale-100 opacity-100"
+                      : "sr-only scale-90 opacity-75"
+                  } flex absolute bg-white w-full top-12 z-20 right-0 rounded-md border-[1px] border-gray-200 flex-col px-2 py-2 shadow-md`}
+                >
+                  {countries
+                    ?.filter(
+                      (item) =>
+                        item.value.toLowerCase() !==
+                        formData.country.toLowerCase()
+                    )
+                    .map((item, key) => (
+                      <span
+                        className="bg-white w-full flex px-2 py-2 hover:bg-gray-200 rounded-md"
+                        key={key}
+                        onClick={() =>
+                          handleInputChange({
+                            target: { name: "country", value: item.value },
+                          })
+                        }
+                        value={item.value}
+                      >
+                        {item.name}
+                      </span>
+                    ))}
+                </div>
+              </button>
+              {errors.country && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.country}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* //country */}
+
           <div className="flex w-full">
             <label className="flex w-full" htmlFor="gender">
               State
@@ -897,6 +959,7 @@ const FormView = ({
               <button
                 ref={stateDropdownRef}
                 onClick={handleStateBtnClick}
+                disabled={formData.country !== "india"}
                 value={formData.state}
                 className={`relative w-full h-10 border-[1px] border-gray-500  rounded-md ${
                   isStateDropdownVisible &&
@@ -905,7 +968,11 @@ const FormView = ({
               >
                 {formData.state}
                 <div
-                  className={`classlists transition-scale duration-150 h-[25vh] overflow-y-scroll ${
+                  className={`classlists transition-scale duration-150 max-h-[25vh] ${
+                    statesIn.length > 1
+                      ? "overflow-y-scroll"
+                      : "overflow-y-hidden"
+                  } ${
                     isStateDropdownVisible
                       ? "scale-100 opacity-100"
                       : "sr-only scale-90 opacity-75"
@@ -946,6 +1013,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <button
+                disabled={formData.country !== "india" || formData.state.length===0}
                 ref={distDropdownRef}
                 onClick={handleDistBtnClick}
                 value={formData.district}
