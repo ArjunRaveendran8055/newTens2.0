@@ -3,7 +3,6 @@ import { Select, Option, Button, IconButton } from "@material-tailwind/react";
 import axios from "axios";
 import socket from "../../socket";
 import { allStates } from "./statesdistricts";
-import addImg from "./addimg.jpg";
 import compressImage from "browser-image-compression";
 import allSyllabus from "./syllabus.json";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +42,7 @@ const FormView = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [actualSchool, setActualSchool] = useState("");
   const [isClassDropdownVisible, setIsClassDropdownVisible] = useState(false);
   const [isLevelDropdownVisible, setIsLevelDropdownVisible] = useState(false);
   const [isCountryDropdownVisible, setIsCountryDropdownVisible] =
@@ -123,14 +123,6 @@ const FormView = ({
     };
   }, []);
 
-  // //useEffect to fetch the Blob of the stored image
-  // useEffect(()=>{
-  //   axios.get(imageUrl,{responseType:'blob'})
-  //   .then((res)=>{
-  //     console.log(res);
-  //   })
-  // },[])
-
   const fetchLevels = () => {
     const levels = allSyllabus
       .find((item) => item.syllabus === formData.syllabus)
@@ -177,13 +169,13 @@ const FormView = ({
   //function to fetch districts base on the stateOpted
 
   const fetchAllDists = () => {
-      if(formData.state!="others" && formData.state.length >0){
-        const dists = allStates.find(
-          (data) => data.state.toLowerCase() === formData.state.toLowerCase()
-        ).districts;
-        return setDistrictsIn([...dists]);
-      }
+    if (formData.state != "others" && formData.state.length > 0) {
+      const dists = allStates.find(
+        (data) => data.state.toLowerCase() === formData.state.toLowerCase()
+      ).districts;
+      return setDistrictsIn([...dists]);
     }
+  };
 
   //useEffect to fetch states and Districts for dropDown
 
@@ -192,27 +184,27 @@ const FormView = ({
     fetchAllDists();
   }, [formData.country, formData.state]);
 
-  //useEffect to fetch schools accordingly
-  useEffect(() => {
-    const fetchSchool = async (scl) => {
-      if (scl.length > 2) {
-        await axios
-          .post("/registration/getschool", { syllabus: syllabus, search: scl })
-          .then((response) => {
-            console.log(response.data.data);
-            setSchools([...response.data.data]);
-          })
-          .catch((error) => {
-            console.log(error.message);
-            setIsOpen(false);
-          });
-      } else {
-        setSchools([]);
-        setIsOpen(false);
-      }
-    };
-    fetchSchool(selectedSchool);
-  }, [formData.syllabus, selectedSchool]);
+  // //useEffect to fetch schools accordingly
+  // useEffect(() => {
+  //   const fetchSchool = async (scl) => {
+  //     if (scl.length > 2) {
+  //       await axios
+  //         .post("/registration/getschool", { syllabus: syllabus, search: scl })
+  //         .then((response) => {
+  //           console.log(response.data.data);
+  //           setSchools([...response.data.data]);
+  //         })
+  //         .catch((error) => {
+  //           console.log(error.message);
+  //           setIsOpen(false);
+  //         });
+  //     } else {
+  //       setSchools([]);
+  //       setIsOpen(false);
+  //     }
+  //   };
+  //   //fetchSchool(selectedSchool);
+  // }, [formData.syllabus, selectedSchool]);
 
   const handleLevelButtonClick = () => {
     setIsLevelDropdownVisible((prev) => !prev);
@@ -388,17 +380,30 @@ const FormView = ({
 
   const handleSchoolChange = (schoolName) => {
     setErrors({ ...errors, school: "" });
-    console.log(schoolName);
+    console.log("entered school name:", schoolName.length);
+    setActualSchool(schoolName);
     if (schoolName.length >= 3) {
-      setIsOpen(true);
+      const fetchSchool = (schoolName) => {
+          axios
+            .post("/registration/getschool", {
+              syllabus: syllabus,
+              search: schoolName,
+            })
+            .then((response) => {
+              console.log(response.data.data);
+              setSchools([...response.data.data]);
+            })
+            .catch((error) => {
+              console.log(error.message);
+              setIsOpen(false);
+            });
+        
+          setSchools([]);
+          setIsOpen(false);
+        
+      };
+      fetchSchool();
     }
-    setSelectedSchool(schoolName.toLowerCase());
-    // Close the school list after selection
-    // Set the selected school in the input field
-    setFormData({
-      ...formData,
-      school: schoolName.toLowerCase(),
-    });
   };
 
   const handleSchoolChange2 = (schoolName) => {
@@ -782,6 +787,7 @@ const FormView = ({
             </div>
           </div>
 
+          {/* //onEdit */}
           <div className="">
             <div className="">
               <div className="  rounded  relative">
@@ -790,17 +796,41 @@ const FormView = ({
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="school"
                   >
-                    Select Your School
+                    Entered School Name :
+                  </label>
+                  <div
+                    name="schoolName"
+                    className="flex justify-center shadow uppercase appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="schoolName"
+                  >
+                    <span>{selectedSchool}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* </Stack> */}
+            </div>
+          </div>
+
+          <div className="">
+            <div className="">
+              <div className="  rounded  relative">
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="school"
+                  >
+                    Select Actual School
                   </label>
                   <input
                     name="school"
                     className="shadow uppercase appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="school"
-                    type="search"
+                    type="input"
                     placeholder="Search for your school"
                     // Open the school list on input focus
                     onChange={(event) => handleSchoolChange(event.target.value)}
-                    value={selectedSchool}
+                    value={actualSchool}
                   />
                   {errors.school && (
                     <span className="text-sm  text-red-500">
@@ -1013,7 +1043,9 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <button
-                disabled={formData.country !== "india" || formData.state.length===0}
+                disabled={
+                  formData.country !== "india" || formData.state.length === 0
+                }
                 ref={distDropdownRef}
                 onClick={handleDistBtnClick}
                 value={formData.district}
