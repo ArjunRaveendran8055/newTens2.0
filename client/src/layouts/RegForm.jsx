@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Select, Option, Button, IconButton } from "@material-tailwind/react";
 import axios from "axios";
 import allStates from "./statesdistricts.json";
@@ -7,6 +7,7 @@ import Logo from "./logo.png";
 import compressImage from "browser-image-compression";
 import allSyllabus from "./syllabus.json";
 import { useNavigate } from "react-router-dom";
+import {debounce} from "lodash";
 
 const RegForm = () => {
 
@@ -201,25 +202,42 @@ const RegForm = () => {
 
   const [selectedSchool, setSelectedSchool] = useState([]);
 
+  
+
+
+  const fetchSchool = async (scl) => {
+    if (scl.length > 2) {
+      try {
+        const response = await axios.post("/registration/getschool", { syllabus: syllabus, search: scl });
+        if (response) {
+          console.log(response.data.data);
+          setSchools([...response.data.data]);
+        } else  {
+          console.log(response.data.data, "sds");
+          setSchools([]);
+        }
+      } catch (error) {
+        console.log(error);
+        setSchools([]);
+      }
+    } else {
+      setSchools([]);
+    }
+  };
+  
+  const debouncedFetchSchool = useCallback(debounce(fetchSchool, 300), []);
+  
   useEffect(() => {
     console.log(addImg);
     console.log(fetchDistricts(statesIn));
-    const fetchSchool = async (scl) => {
-      if (scl.length > 2) {
-        await axios
-          .post("/registration/getschool", { syllabus: syllabus, search: scl })
-          .then((response) => {
-            console.log(response.data.data);
-            setSchools([...response.data.data]);
-          })
-          .catch((error) => console.log(error));
-      } else {
-        setSchools([]);
-      }
+  
+    debouncedFetchSchool(selectedSchool);
+  
+    return () => {
+      debouncedFetchSchool.cancel(); // Cancel any pending debounced calls
     };
-
-    fetchSchool(selectedSchool);
   }, [formData.syllabus, selectedSchool]);
+
 
   useEffect(() => {
     if(formFlag==true){
