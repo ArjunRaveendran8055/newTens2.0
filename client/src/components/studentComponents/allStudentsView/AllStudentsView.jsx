@@ -108,14 +108,14 @@ function AllStudentsView() {
       const columns = Object.keys(users[0]);
 
   return (
-<section className="container mx-auto p-6 font-mono">
+<section className="container mx-auto pt-6 font-mono">
       <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
         <div className="w-full overflow-x-auto">
           <table className="w-full min-h-[600px] whitespace-no-wrap bg-gray shadow-md rounded-lg overflow-hidden">
             <thead className="bg-gradient-to-r from-gray-900 to-gray-900 text-white">
-              <tr className="text-md font-semibold whitespace-nowrap tracking-wide text-left uppercase border-b border-gray-200">
+              <tr className="text-md sm:text-sm font-semibold whitespace-nowrap tracking-wide text-left uppercase border-b border-gray-200">
                 {columns.map((column, index) => (
-                  <th key={index} className="px-4 py-3">
+                  <th key={index} align='center' className="px-4 py-3">
                     {column.replace(/_/g, ' ')}
                   </th>
                 ))}
@@ -125,7 +125,7 @@ function AllStudentsView() {
               {users.map((user, index) => (
                 <tr className="hover:bg-gray-100" key={index}>
                   {columns.map((column, index) => (
-                    <td key={index} align='center' className="px-4 py-3 border-t border-gray-200 text-m text-black">
+                    <td key={index} align='center' className="px-4 py-3 border-t border-gray-200 text-m sm:text-sm text-black">
                       {column === 'student_status' ? (
                         user.student_status ? (
                           <span className="px-2 py-1 text-sm font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
