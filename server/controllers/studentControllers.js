@@ -1,7 +1,10 @@
 const { AppError } = require("../AppError");
 const { asyncWrapper } = require("../helpers/asyncWrapper");
+const { ApproveStudentModel } = require("../models/ApproveStudentModel");
 const { StudentModel } = require("../models/StudentModel");
 const mongoose = require("mongoose");
+
+
 
 //fetch all students
 const getAllStudentsController = asyncWrapper(async (req, res, next) => {
@@ -28,7 +31,7 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
     father_no:1
     } });
 
-  const result = await StudentModel.aggregate(pipeline);
+  const result = await ApproveStudentModel.aggregate(pipeline);
 
   if (result.length === 0) {
     throw new AppError(400, "No Match Found.");
@@ -44,7 +47,7 @@ const getStudentDetailsController = asyncWrapper(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new AppError(400, "Invalid StudentID.");
   }
-  const result = await StudentModel.findById(id);
+  const result = await ApproveStudentModel.findById(id);
   if (!result) {
     throw new AppError(400, "SomeThing wrong with StudentID.");
   }
@@ -66,7 +69,7 @@ const addReportController = asyncWrapper(async (req, res, next) => {
     handledBy,
     time: new Date(Date.now()),
   };
-  const result = await StudentModel.findByIdAndUpdate(id, {
+  const result = await ApproveStudentModel.findByIdAndUpdate(id, {
     $push: { report: reportObj },
   });
   if (!result) {
@@ -85,7 +88,7 @@ const fetchStudentReportsController = asyncWrapper(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new AppError(400, "Invalid StudentID.");
   }
-  const result = await StudentModel.findById(id);
+  const result = await ApproveStudentModel.findById(id);
   console.log("result is", result);
   if (!result) {
     throw new AppError(400, "SomeThing wrong with StudentID.");
