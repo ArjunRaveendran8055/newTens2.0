@@ -3,6 +3,8 @@ const { asyncWrapper } = require("../helpers/asyncWrapper");
 const { ClassModel } = require("../models/ClassModel");
 const mongoose = require("mongoose");
 const { StudentModel } = require("../models/StudentModel");
+const { ApproveStudentModel } = require("../models/ApproveStudentModel");
+
 
 const createReportController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
@@ -124,7 +126,7 @@ const getClassStudentDetailsController = asyncWrapper(
       throw new AppError(400, "SomeThing wrong with ClassID.");
     } else {
       if (roll) {
-        students = await StudentModel.find({
+        students = await ApproveStudentModel.find({
           syllabus: result.classsyllabus.toUpperCase(),
           class: result.classname,
           roll_no: roll,
@@ -134,7 +136,7 @@ const getClassStudentDetailsController = asyncWrapper(
           throw new AppError(404, "Invalid Roll Number!");
         }
       } else {
-        students = await StudentModel.find({
+        students = await ApproveStudentModel.find({
           syllabus: result.classsyllabus.toUpperCase(),
           class: result.classname,
         });
@@ -171,7 +173,7 @@ const addMentorResponseController = asyncWrapper(async (req, res, next) => {
     handledBy,
     time: new Date(Date.now()),
   };
-  const result = await StudentModel.findByIdAndUpdate(
+  const result = await ApproveStudentModel.findByIdAndUpdate(
     { _id: studentId },
     {
       $push: { report: reportObj },
