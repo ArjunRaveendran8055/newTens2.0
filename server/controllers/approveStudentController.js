@@ -112,7 +112,7 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
   }
    //sending mail using nodeMailer
    sendMail({
-    email: email,
+    email: approvedResult.email,
     subject: "NEW10S APPROVE CONFIRMATION",
     text: `Dear ${approvedResult.student_name}, \n \t\t\t\t\t From now you are a student at New10s EduTech Private Limited.\n\nContact Details\nMentor Name: Simi VK\nContact Number:9446722008`,
   })
@@ -251,7 +251,7 @@ const staffApprovalWithPhotoController = asyncWrapper(
     }
      //sending mail using nodeMailer
   sendMail({
-    email: email,
+    email: approvedResult.email,
     subject: "NEW10S APPROVE CONFIRMATION",
     text: `Dear ${approvedResult.student_name}, \n \t\t\t\t\t From now you are a student at New10s EduTech Private Limited.\n\nContact Details\nMentor Name: Simi VK\nContact Number:9446722008`,
   })
