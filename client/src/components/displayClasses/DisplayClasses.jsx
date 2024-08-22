@@ -157,7 +157,7 @@ function DisplayClasses() {
             </Typography>
             <div className="w-100">
               <Select
-                label="Class"
+                label="Syllabus"
                 onChange={(value) =>
                   handleInputChange("selectedSyllabus", value)
                 }
@@ -238,8 +238,8 @@ function DisplayClasses() {
           </CardFooter>
         </Card>
       </Dialog>
-
-      <div className="flex flex-wrap justify-center">
+     
+      <div className="flex flex-wrap ml-10 sm:ml-7">
         {isLoading ? (
           Array.from({ length: limit }).map((_, index) => (
             <Skeleton key={index} />
@@ -252,7 +252,7 @@ function DisplayClasses() {
           ))
         )}
       </div>
-
+      
       <div className="flex justify-center mt-4">
         <ButtonGroup>
           <Button
