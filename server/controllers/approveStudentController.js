@@ -267,9 +267,7 @@ const staffApprovalWithPhotoController = asyncWrapper(
         .status(200)
         .json({approvedResult, mailSend:false });
     });
-    res
-      .status(200)
-      .json({ id, approvedStudent: approvedResult, success: true });
+  
   }
 );
 
