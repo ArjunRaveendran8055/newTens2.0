@@ -88,12 +88,44 @@ function AllStudentsView() {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      const response = await axios({
+        url: '/student/downloadStudentsExcel', // Replace with your server URL
+        method: 'POST',
+        responseType: 'blob', // Ensure the response is treated as binary data
+        data: {
+          syllabus: selectedSyllabus, // Replace with actual filtering criteria
+          classs: selectedClass,
+          country:selectedCountry,
+          district:selectedDistrict,
+          medium:selectedMedium,
+        },
+        onDownloadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          console.log(`Download Progress: ${percentCompleted}%`);
+        },
+      });
+ 
+      // Create a temporary link and trigger download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'students.csv'); // Specify the file name
+      link.click();
+      window.URL.revokeObjectURL(url); // Clean up the URL object
+    } catch (error) {
+      console.error('Error downloading the file:', error);
+    }
+  };
+
 
   return (
 <section className="container mx-auto pt-6 font-mono">
       <div className='flex gap-5'>
         <Button
           className="flex mb-4 sm:gap-1 lg:gap-2 justify-center items-center bg-black sm:w-20 lg:w-32 sm:h-10 lg:h-10 text-white"
+          onClick={handleDownload}
         >
           <span>Export</span>
         </Button>

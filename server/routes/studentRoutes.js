@@ -20,7 +20,7 @@ studentRoutes.get("/fetchStudentReports/:id",authorizeGenuinity, fetchStudentRep
 
 studentRoutes.post("/getAllStudentsDetailed", authorizeGenuinity , getAllStudentsDetailedController )
 
-studentRoutes.get("/downloadStudentsExcel", authorizeGenuinity , downloadStudentsCSVController )
+studentRoutes.post("/downloadStudentsExcel", authorizeGenuinity , downloadStudentsCSVController )
 
 module.exports = {
   studentRoutes,
