@@ -45,7 +45,7 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
 
 const getAllStudentsDetailedController = asyncWrapper(async (req, res, next) => {
   // Destructure query parameters and pagination parameters
-  const { syllabus, classs, centre, school_name, school_location, district, medium, page = 1, limit = 10 } = req.body;
+  const { syllabus, classs, centre, school_name, school_location, district, medium, page = 1, limit = 10 , id = false } = req.body;
 
   // Build a filter object dynamically
   let filter = {};
@@ -58,6 +58,8 @@ const getAllStudentsDetailedController = asyncWrapper(async (req, res, next) => 
   if (school_location) filter.school_location = school_location;
   if (district) filter.district = district;
   if (medium) filter.medium = medium;
+
+  let val = (id) ? 1 : 0;
 
   // Specify the fields you want to retrieve from the database
   const projection = {
@@ -78,7 +80,9 @@ const getAllStudentsDetailedController = asyncWrapper(async (req, res, next) => 
     father_no: 1,
     mother_no: 1,
     centre: 1,
-    whatsapp: 1
+    whatsapp: 1,
+    _id: val,
+
   };
 
   // Calculate the number of documents to skip based on the current page

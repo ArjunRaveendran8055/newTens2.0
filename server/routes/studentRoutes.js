@@ -17,7 +17,7 @@ studentRoutes.post("/addReport",authorizeGenuinity, addReportController);
 
 studentRoutes.get("/fetchStudentReports/:id",authorizeGenuinity, fetchStudentReportsController);
 
-studentRoutes.get("/getAllStudentsDetailed", authorizeGenuinity , getAllStudentsDetailedController )
+studentRoutes.post("/getAllStudentsDetailed", authorizeGenuinity , getAllStudentsDetailedController )
 
 module.exports = {
   studentRoutes,
