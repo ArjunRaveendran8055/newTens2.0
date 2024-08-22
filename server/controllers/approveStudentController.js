@@ -99,6 +99,7 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
     },
   ]);
 
+  
   if (result.length === 0) {
     throw new AppError(404, "Something went Wrong!");
   }
