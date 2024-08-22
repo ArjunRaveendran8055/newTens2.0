@@ -12,7 +12,7 @@ const schoolSchema = new mongoose.Schema(
     },
     district: {
         type: String,
-        required: [true, "district is required"],
+        required: false,
       },
     syllabus: {
         type: String,
@@ -20,7 +20,7 @@ const schoolSchema = new mongoose.Schema(
       },
       state: {
         type: String,
-        required: [true, "state is required"],
+        required: false,
       },
    
   },
@@ -28,6 +28,16 @@ const schoolSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+
+schoolSchema.pre("save", function (next) {
+  for (let key in this._doc) {
+    if (typeof this._doc[key] === "string") {
+      this._doc[key] = this._doc[key].toLowerCase();
+    }
+  }
+  next();
+});
 
 const SchoolModel = mongoose.model("schools", schoolSchema);
 

@@ -1,5 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Select, Option, Button, IconButton } from "@material-tailwind/react";
+import {
+  Select,
+  Option,
+  Button,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
 import axios from "axios";
 import socket from "../../socket";
 import { allStates } from "./statesdistricts";
@@ -9,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setToastView } from "../features/toast/toastSlice";
 import { countries } from "./countries";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 const FormView = ({
   formData,
@@ -43,6 +52,15 @@ const FormView = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [actualSchool, setActualSchool] = useState("");
+  const [isAddSchool, setIsAddSchool] = useState(false);
+  const [dialog, setDialog] = useState(false);
+  const [schoolData,setSchoolData]=useState({
+    title:"",
+    syllabus:"",
+    location:"",
+    district:"",
+    state:""
+  })
   const [isClassDropdownVisible, setIsClassDropdownVisible] = useState(false);
   const [isLevelDropdownVisible, setIsLevelDropdownVisible] = useState(false);
   const [isCountryDropdownVisible, setIsCountryDropdownVisible] =
@@ -354,9 +372,9 @@ const FormView = ({
       newErrors.whatsappNumber = "WhatsApp number must be 10 digits";
     }
     setErrors(newErrors);
+    console.log("errors are:", newErrors);
     return newErrors;
   };
-  console.log("errors are", errors);
 
   const scrollToElement = (name) => {
     console.log("Name of element is:", name);
@@ -378,50 +396,81 @@ const FormView = ({
     }
   };
 
+  //dialog open controller
+
+  const HandleOpenDialog = () => {
+    setDialog((cur) => !cur);
+  };
+
+  const fetchSchools = (scl) => {
+    axios
+      .post("/registration/getschool", {
+        syllabus: formData.syllabus,
+        search: scl,
+      })
+      .then((response) => {
+        console.log("schools are", response.data.data);
+        setSchools([...response.data.data]);
+        setIsAddSchool(false);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setIsOpen(false);
+        setSchools([]);
+        setErrors({ ...errors, school: "School Not found" });
+        setIsAddSchool(true);
+      });
+  };
+
   const handleSchoolChange = (schoolName) => {
-    setErrors({ ...errors, school: "" });
+    setErrors({ ...errors, school: "", schoolLocation: "" });
     console.log("entered school name:", schoolName.length);
-    setActualSchool(schoolName);
-    if (schoolName.length >= 3) {
-      const fetchSchool = (schoolName) => {
-          axios
-            .post("/registration/getschool", {
-              syllabus: syllabus,
-              search: schoolName,
-            })
-            .then((response) => {
-              console.log(response.data.data);
-              setSchools([...response.data.data]);
-            })
-            .catch((error) => {
-              console.log(error.message);
-              setIsOpen(false);
-            });
-        
-          setSchools([]);
-          setIsOpen(false);
-        
-      };
-      fetchSchool();
+    setActualSchool(schoolName || "");
+    if (schoolName.length > 3) {
+      setIsOpen(true);
+      fetchSchools(schoolName);
+    } else {
+      setIsOpen(false);
+      setIsAddSchool(false);
+      setFormData({
+        ...formData,
+        school: "",
+        schoolLocation: "",
+      });
     }
   };
 
-  const handleSchoolChange2 = (schoolName) => {
-    console.log(schoolName);
-    setErrors({ ...errors, schools: "" });
-    setSelectedSchool(schoolName.toLowerCase());
+  console.log("actualSchool value:", actualSchool);
 
+  const handleSchoolChange2 = (school) => {
+    console.log("selected school is", school.name, school.loc);
+    setErrors({ ...errors, schools: "" });
     setFormData({
       ...formData,
-      school: schoolName.toLowerCase(),
+      school: school.name,
+      schoolLocation: school.loc,
     });
-
-    setIsOpen(true); // Close the school list after selection
-    // Set the selected school in the input field
+    setActualSchool(school.name || "");
+    setIsOpen(false);
   };
 
-  console.log("formData is: ", formData);
+  //code realted to add school
 
+
+  const onSchoolSave=()=>{
+    if(!schoolData.title || !schoolData.syllabus || !schoolData.location){
+      
+    }
+    axios.post("/school/addSchool")
+  }
+
+
+   //code realted to add school
+
+
+
+
+   
   const preSubmissionHandle = async () => {
     console.log("duttuttu...");
     let errs = validateForm();
@@ -812,25 +861,112 @@ const FormView = ({
             </div>
           </div>
 
+          <Dialog
+            open={dialog}
+            handler={HandleOpenDialog}
+            size="md"
+            className="p-4 rounded-lg capitalize"
+          >
+            <DialogHeader className="text-xl font-semibold text-center">
+              Add School
+            </DialogHeader>
+            <DialogBody divider className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="reason"
+                  className="text-gray-700 text-sm font-medium"
+                >
+                  School Title
+                </label>
+                <input
+                  id="reason"
+                  type="text"
+                  placeholder="Enter the reason..."
+                  className="border capitalize border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="callType"
+                  className="text-gray-700 text-sm font-medium"
+                >
+                  Syllabus
+                </label>
+                <Select>
+                  <Option value="state">STATE</Option>
+                  <Option value="cbse">CBSE</Option>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="reason"
+                  className="text-gray-700 text-sm font-medium"
+                >
+                  Location
+                </label>
+                <input
+                  id="reason"
+                  type="text"
+                  placeholder="Enter the Specific Location."
+                  className="border capitalize border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="response"
+                  className="text-gray-700 text-sm font-medium"
+                >
+                  District
+                </label>
+                <input
+                  id="response"
+                  type="text"
+                  placeholder="Enter the district "
+                  className="border capitalize border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </DialogBody>
+            <DialogFooter className="flex justify-center gap-4">
+              <button className="bg-gray-200 text-gray-700 rounded px-4 py-2 hover:bg-gray-300"
+              onClick={()=>{setDialog(false)}}
+              >
+                Cancel
+              </button>
+              <button className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600"
+              onClick={onSchoolSave}
+              >
+                Save Report
+              </button>
+            </DialogFooter>
+          </Dialog>
+
           <div className="">
             <div className="">
               <div className="  rounded  relative">
                 <div className="mb-4">
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                    htmlFor="school"
-                  >
-                    Select Actual School
-                  </label>
+                  <div className="w-full flex justify-between items-end">
+                    <label
+                      className="block whitespace-nowrap text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="school"
+                    >
+                      Select Actual School
+                    </label>
+                    {isAddSchool && (
+                      <div className="w-full flex justify-end">
+                        <Button onClick={HandleOpenDialog} className="flex mb-2 justify-center items-center gap-2 px-2 py-1 border rounded-md bg-red-500">
+                          <span>Add</span>
+                          <IoIosAddCircleOutline size={25} />{" "}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                   <input
-                    name="school"
                     className="shadow uppercase appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="school"
                     type="input"
                     placeholder="Search for your school"
                     // Open the school list on input focus
                     onChange={(event) => handleSchoolChange(event.target.value)}
-                    value={actualSchool}
+                    value={actualSchool || ""} //setting fallBack value
                   />
                   {errors.school && (
                     <span className="text-sm  text-red-500">
@@ -847,21 +983,9 @@ const FormView = ({
                           selectedSchool === school.name ? "bg-gray-100" : ""
                         }`}
                         onClick={() => {
-                          handleSchoolChange2(
-                            school.name + " " + school.location
-                          );
-
-                          handleInputChange({
-                            target: {
-                              name: "schoolLocation",
-                              value: school.location,
-                            },
-                          });
-
-                          setFormData({
-                            ...formData,
-                            school: school.name + " " + school.location,
-                            schoolLocation: school.location,
+                          handleSchoolChange2({
+                            name: school.name,
+                            loc: school.location,
                           });
                         }}
                       >
@@ -883,6 +1007,7 @@ const FormView = ({
             <div className="flex flex-col w-full">
               <div className="w-full">
                 <input
+                  disabled={true}
                   name="schoolLocation"
                   className="flex uppercase h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   id="school-location"
@@ -1264,7 +1389,6 @@ const FormView = ({
               Centre
             </label>
             <div className="flex flex-col w-full">
-              {console.log(formData)}
               <div className="w-full">
                 <Select
                   className="border-gray-200 border-[1px]"
