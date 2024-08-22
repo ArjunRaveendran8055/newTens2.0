@@ -1,15 +1,15 @@
-const { response } = require("express");
 const mongoose = require("mongoose");
 
-const ApprovedStudentSchema = new mongoose.Schema({
-  roll_no: {
-    type: String,
-    required: [true, "roll number required"],
-  },
-  admission_no: {
-    type: Number,
-    required: false
-  },
+const ApprovedStudentSchema = new mongoose.Schema(
+  {
+    roll_no: {
+      type: String,
+      required: [true, "roll number required"],
+    },
+    admission_no: {
+      type: Number,
+      required: false,
+    },
     student_name: {
       type: String,
       required: [true, "student name required"],
@@ -22,9 +22,9 @@ const ApprovedStudentSchema = new mongoose.Schema({
       type: String,
       required: [true, "address required"],
     },
-    pin_code:{
-      type:String,
-      required:[true,"pincode required"]
+    pin_code: {
+      type: String,
+      required: [true, "pincode required"],
     },
     district: {
       type: String,
@@ -110,7 +110,7 @@ const ApprovedStudentSchema = new mongoose.Schema({
     },
     remark: {
       type: String,
-      required: false
+      required: false,
     },
     academic_status: {
       type: String,
@@ -120,13 +120,13 @@ const ApprovedStudentSchema = new mongoose.Schema({
       type: String,
       required: [true, "source requrired"],
     },
-    image:{
-      type:String,
-      required:false
+    image: {
+      type: String,
+      required: false,
     },
     centre: {
       type: String,
-      default:""
+      default: "",
     },
     responseId: {
       type: String,
@@ -141,25 +141,24 @@ const ApprovedStudentSchema = new mongoose.Schema({
       type: Boolean,
       default: false,
     },
-},
-{
-  timestamps: true // This adds `createdAt` and `updatedAt` fields
-}
-
-
+  },
+  {
+    timestamps: true, // This adds `createdAt` and `updatedAt` fields
+  }
 );
 
-ApprovedStudentSchema.pre('save', function (next) {
+ApprovedStudentSchema.pre("save", function (next) {
   for (let key in this._doc) {
-    if (typeof this._doc[key] === 'string' && this._doc[key] != 'image' ) {
+    if (typeof this._doc[key] === "string" && this._doc[key] != "image") {
       this._doc[key] = this._doc[key].toLowerCase();
     }
   }
   next();
 });
 
+const ApproveStudentModel = mongoose.model(
+  "approvedstudents",
+  ApprovedStudentSchema
+);
 
-const ApproveStudentModel=mongoose.model("approvedstudents",ApprovedStudentSchema)
-
-
-module.exports={ApproveStudentModel}
+module.exports = { ApproveStudentModel };

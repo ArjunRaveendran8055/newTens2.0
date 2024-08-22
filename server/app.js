@@ -12,6 +12,7 @@ const { registrationRoutes } = require("./routes/registrationRoutes")
 const { centreRouter } = require("./routes/centreRoutes")
 const { approveRouter } = require("./routes/ApproveRoutes")
 const { leadBankRouter } = require("./routes/leadBankRoutes")
+const { schoolRouter } = require("./routes/schoolRoutes")
 //config
 if (process.env.NODE_ENV !== "PRODUCTION") {
     require("dotenv").config({
@@ -50,6 +51,8 @@ app.use("/centre",centreRouter)
 app.use("/approve",approveRouter)
 
 app.use("/leadBank",leadBankRouter)
+
+app.use("/school",schoolRouter)
 
 
 app.use(erroHandler)

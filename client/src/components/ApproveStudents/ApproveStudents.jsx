@@ -138,7 +138,6 @@ const ApproveStudents = () => {
     };
   }, []);
 
-  console.log("selectedIndexIs:", selectedIndex);
 
   const previewHandler = (item, index) => {
     const isoStringToInputValue = (isoString) => {
@@ -153,7 +152,6 @@ const ApproveStudents = () => {
     const actDate = isoStringToInputValue(item.dob);
     setSelectedIndex(item._id);
     setOpenPreview(true);
-    console.log("selected student is:", item);
     const imageName = item.image;
     if (imageName.length === 0) {
       setImageUrl(addImg);
@@ -171,8 +169,6 @@ const ApproveStudents = () => {
       class: item.class,
       syllabus: item.syllabus,
       centre: item.centre,
-      school: item.school_name,
-      schoolLocation: item.school_location,
       medium: item.medium,
       district: item.district,
       state: item.state,
