@@ -17,6 +17,12 @@ function AllStudentsView() {
   const [columns, setColumns] = useState([]);
   const [error, setError] = useState(null);
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalDocuments, setTotalDocuments] = useState(0);
+    const [limit] = useState(10);
+
   const toggleOverlay = () => {
     setIsOverlayOpen(!isOverlayOpen);
   };
@@ -28,27 +34,32 @@ function AllStudentsView() {
         classs: selectedClass,
         country: selectedCountry,
         district: selectedDistrict,
-        medium:selectedMedium,
+        medium: selectedMedium,
+        page: currentPage, 
+        limit
       });
-
+  
       // Extract data from response
-      const { students } = response.data;
+      const { students, currentPagee, totalPages, totalDocuments } = response.data;
       setStudents(students);
-
+      setCurrentPage(currentPagee);
+      setTotalPages(totalPages);
+      setTotalDocuments(totalDocuments);
+  
       // Dynamically set columns based on the student data
       if (students.length > 0) {
         setColumns(Object.keys(students[0]));
       }
     } catch (error) {
       console.error('Error fetching students:', error);
-      setStudents([])
+      setStudents([]);
       setError('Failed to fetch students');
     }
   };
 
   useEffect(() => {
-     handleSubmit();
-  }, []);
+    handleSubmit();
+  }, [currentPage]);
 
 
   const districts = [
@@ -70,6 +81,12 @@ function AllStudentsView() {
   const classes = ["7","8","9","10","11","12"];
   const syllabi = ["cbse","state"];
   const country = ["india", "usa", "quatar"];
+
+  const handlePageChange = (page) => {
+    if (page > 0 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
 
   return (
@@ -133,6 +150,25 @@ function AllStudentsView() {
             </tbody>
           </table>
         </div>
+      </div>
+
+       {/* Pagination Controls */}
+       <div className="flex justify-center gap-3 items-center">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
+        >
+          Previous
+        </button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
+        >
+          Next
+        </button>
       </div>
 
       {/* Sliding Overlay */}
