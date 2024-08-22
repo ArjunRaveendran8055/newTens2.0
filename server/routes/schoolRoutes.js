@@ -1,5 +1,5 @@
 const express=require("express")
-const { addSchoolController } = require("../controllers/schoolController")
+const { addSchoolController } = require("../controllers/schoolcontroller")
 
 const schoolRouter=express.Router()
 
