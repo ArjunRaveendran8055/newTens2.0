@@ -8,6 +8,8 @@ import socket from "../../socket";
 import { CgSandClock } from "react-icons/cg";
 import addImg from "./addimg.jpg";
 import { TiTick } from "react-icons/ti";
+import { SERVER_URL } from "../../server";
+
 const ApproveStudents = () => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -156,7 +158,7 @@ const ApproveStudents = () => {
     if (imageName.length === 0) {
       setImageUrl(addImg);
     }
-    const url = `http://localhost:8055/uploads/students/${imageName}`;
+    const url = `${SERVER_URL}/uploads/students/${imageName}`;
     setImageUrl(url);
     setFormData({
       _id: item._id,
