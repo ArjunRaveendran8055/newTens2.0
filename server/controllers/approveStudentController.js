@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const { ApproveStudentModel } = require("../models/ApproveStudentModel");
 const { AppError } = require("../AppError");
 const { RegisteredStudentModel } = require("../models/RegisteredStudentModel");
-const fs=require("fs")
+const fs = require("fs");
+const { sendMail } = require("../utils/nodeMailer");
 
 const staffApprovalController = asyncWrapper(async (req, res, next) => {
   const { formData } = req.body;
@@ -101,16 +102,35 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
   if (result.length === 0) {
     throw new AppError(404, "Something went Wrong!");
   }
-  const realStudent = { ...result[0] };
+  const batch = formData.rollNumber.charAt(1);
+  const realStudent = { ...result[0], batch };
   const newApprovedStudent = new ApproveStudentModel(realStudent);
   const approvedResult = await newApprovedStudent.save();
   //   console.log("approved result is", approvedResult);
   if (!approvedResult) {
     throw new AppError(500, "Approval Failed!");
   }
-  res
-    .status(200)
-    .json({ id: _id, approvedStudent: approvedResult, success: true });
+   //sending mail using nodeMailer
+   sendMail({
+    email: email,
+    subject: "NEW10S APPROVE CONFIRMATION",
+    text: `Dear ${approvedResult.student_name}, \n \t\t\t\t\t From now you are a student at New10s EduTech Private Limited.\n\nContact Details\nMentor Name: Simi VK\nContact Number:9446722008`,
+  })
+    .then(() => {
+      console.log("mail sent successfully.");
+      return res
+        .status(200)
+        .json({approvedResult, mailsend:true });
+    })
+    .catch(() => {
+      console.log("error sending mail.");
+      return res
+        .status(200)
+        .json({approvedResult, mailSend:false });
+    });
+    res
+      .status(200)
+      .json({ id, approvedStudent: approvedResult, success: true });
 });
 
 const staffApprovalWithPhotoController = asyncWrapper(
@@ -132,8 +152,7 @@ const staffApprovalWithPhotoController = asyncWrapper(
     const prevFile = prevData.image;
     const item = `${destination}/${prevFile}`;
     fs.unlink(item, (err) => {
-      if (err)
-       console.log(err.message)
+      if (err) console.log(err.message);
     });
     let updatedDetails = {
       student_name: formData.fullName,
@@ -164,7 +183,7 @@ const staffApprovalWithPhotoController = asyncWrapper(
       approveStatus: true,
     };
     const updatedUser = await RegisteredStudentModel.findByIdAndUpdate(
-      {_id:id},
+      { _id: id },
       updatedDetails,
       { new: true }
     );
@@ -215,21 +234,42 @@ const staffApprovalWithPhotoController = asyncWrapper(
           report: 1,
           active_status: 1,
           student_status: 1,
-        },
+        }, 
       },
     ]);
 
     if (result.length === 0) {
       throw new AppError(404, "Something went Wrong!");
     }
-    const realStudent = { ...result[0] };
+    const batch = formData.rollNumber.charAt(1);
+    const realStudent = { ...result[0], batch };
+
     const newApprovedStudent = new ApproveStudentModel(realStudent);
     const approvedResult = await newApprovedStudent.save();
     if (!approvedResult) {
       throw new AppError(500, "Approval Failed!");
     }
-    res.status(200).json({ id, approvedStudent: approvedResult, success: true })
-    
+     //sending mail using nodeMailer
+  sendMail({
+    email: email,
+    subject: "NEW10S APPROVE CONFIRMATION",
+    text: `Dear ${approvedResult.student_name}, \n \t\t\t\t\t From now you are a student at New10s EduTech Private Limited.\n\nContact Details\nMentor Name: Simi VK\nContact Number:9446722008`,
+  })
+    .then(() => {
+      console.log("mail sent successfully.");
+      return res
+        .status(200)
+        .json({approvedResult, mailsend:true });
+    })
+    .catch(() => {
+      console.log("error sending mail.");
+      return res
+        .status(200)
+        .json({approvedResult, mailSend:false });
+    });
+    res
+      .status(200)
+      .json({ id, approvedStudent: approvedResult, success: true });
   }
 );
 

@@ -19,6 +19,24 @@ import { setToastView } from "../features/toast/toastSlice";
 import { countries } from "./countries";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
+const districtsInKerala = [
+  "Others",
+  "Alappuzha",
+  "Ernakulam",
+  "Idukki",
+  "Kannur",
+  "Kasaragod",
+  "Kollam",
+  "Kottayam",
+  "Kozhikode",
+  "Malappuram",
+  "Palakkad",
+  "Pathanamthitta",
+  "Thiruvananthapuram",
+  "Thrissur",
+  "Wayanad",
+];
+
 const FormView = ({
   formData,
   setFormData,
@@ -54,17 +72,18 @@ const FormView = ({
   const [actualSchool, setActualSchool] = useState("");
   const [isAddSchool, setIsAddSchool] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const [schoolData,setSchoolData]=useState({
-    title:"",
-    syllabus:"",
-    location:"",
-    district:"",
-    state:""
-  })
+  const [schoolData, setSchoolData] = useState({
+    title: "",
+    syllabus: "",
+    location: "",
+    district: "",
+    state: "kerala",
+  });
   const [isClassDropdownVisible, setIsClassDropdownVisible] = useState(false);
   const [isLevelDropdownVisible, setIsLevelDropdownVisible] = useState(false);
   const [isCountryDropdownVisible, setIsCountryDropdownVisible] =
     useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const [isStateDropdownVisible, setIsStateDropdownVisible] = useState(false);
   const [isDistDropdownVisible, setIsDistDropdownVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -201,28 +220,6 @@ const FormView = ({
     fetchStates();
     fetchAllDists();
   }, [formData.country, formData.state]);
-
-  // //useEffect to fetch schools accordingly
-  // useEffect(() => {
-  //   const fetchSchool = async (scl) => {
-  //     if (scl.length > 2) {
-  //       await axios
-  //         .post("/registration/getschool", { syllabus: syllabus, search: scl })
-  //         .then((response) => {
-  //           console.log(response.data.data);
-  //           setSchools([...response.data.data]);
-  //         })
-  //         .catch((error) => {
-  //           console.log(error.message);
-  //           setIsOpen(false);
-  //         });
-  //     } else {
-  //       setSchools([]);
-  //       setIsOpen(false);
-  //     }
-  //   };
-  //   //fetchSchool(selectedSchool);
-  // }, [formData.syllabus, selectedSchool]);
 
   const handleLevelButtonClick = () => {
     setIsLevelDropdownVisible((prev) => !prev);
@@ -456,21 +453,115 @@ const FormView = ({
 
   //code realted to add school
 
+  const validateSchoolForm = () => {
+    const errors = {};
+    const regex = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
 
-  const onSchoolSave=()=>{
-    if(!schoolData.title || !schoolData.syllabus || !schoolData.location){
-      
+    if (!schoolData.title.trim()) {
+      errors.title = "School Title is required";
+    } else if (!regex.test(schoolData.title)) {
+      errors.title =
+        "School Title cannot contain numbers or special characters";
     }
-    axios.post("/school/addSchool")
-  }
 
+    if (!schoolData.syllabus.trim()) {
+      errors.syllabus = "Syllabus is required";
+    } else if (!regex.test(schoolData.syllabus)) {
+      errors.syllabus = "Syllabus cannot contain numbers or special characters";
+    }
 
-   //code realted to add school
+    if (!schoolData.location.trim()) {
+      errors.location = "Location is required";
+    } else if (!regex.test(schoolData.location)) {
+      errors.location = "Location cannot contain numbers or special characters";
+    }
 
+    if (!schoolData.district.trim()) {
+      errors.district = "District is required";
+    } else if (!regex.test(schoolData.district)) {
+      errors.district = "District cannot contain numbers or special characters";
+    }
 
+    setFormErrors(errors);
 
+    // Return true if no errors, false otherwise
+    return Object.keys(errors).length === 0;
+  };
 
-   
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+
+    // Update the schoolData state
+    setSchoolData({
+      ...schoolData,
+      [id]: value,
+    });
+
+    // Clear the error for the specific field being edited
+    if (formErrors[id]) {
+      setFormErrors({
+        ...formErrors,
+        [id]: "",
+      });
+    }
+  };
+
+  const handleSyllabusChange = (value) => {
+    // Update the syllabus in schoolData
+    setSchoolData({
+      ...schoolData,
+      syllabus: value,
+    });
+
+    // Clear the syllabus error if it exists
+    if (formErrors.syllabus) {
+      setFormErrors({
+        ...formErrors,
+        syllabus: "",
+      });
+    }
+  };
+  //handle change distict || state
+  const handleSelectChange = (field, value) => {
+    console.log("balu is:", value);
+    setSchoolData({
+      ...schoolData,
+      [field]: value,
+    });
+    if (formErrors.district) {
+      setFormErrors({
+        ...formErrors,
+        district: "",
+      });
+    }
+  };
+  console.log("school data is:", schoolData);
+
+  const handleSchoolSave = () => {
+    if (validateSchoolForm()) {
+      axios
+        .post("/school/addSchool", { schoolData })
+        .then((res) => {
+          setDialog(false);
+          setActualSchool("");
+          setSchoolData({
+            title: "",
+            syllabus: "",
+            location: "",
+            district: "",
+            state: "kerala",
+          });
+        })
+        .catch((err) => {
+          dispatch(
+            setToastView({ type: "error", msg: err.response.data.error })
+          );
+        });
+    }
+  };
+
+  //code realted to add school end here//
+
   const preSubmissionHandle = async () => {
     console.log("duttuttu...");
     let errs = validateForm();
@@ -499,6 +590,10 @@ const FormView = ({
           setIsUpdatedMsg(true);
           setTimeout(() => setIsUpdatedMsg(false), 3000);
           socket.emit("student-updated", { id });
+          const {mailSend}=res.data
+          if(!mailSend){
+            return dispatch(setToastView({type:"error",msg:"Mail limit Exceeded!"}))
+          }
         })
         .catch((err) => {
           setIsModalOpen(false);
@@ -531,6 +626,10 @@ const FormView = ({
           setIsUpdatedMsg(true);
           setTimeout(() => setIsUpdatedMsg(false), 3000);
           socket.emit("student-updated", { id });
+          const {mailSend}=res.data
+          if(!mailSend){
+            return dispatch(setToastView({type:"error",msg:"Mail limit Exceeded!"}))
+          }
         })
         .catch((err) => {
           setIsModalOpen(false);
@@ -863,7 +962,7 @@ const FormView = ({
 
           <Dialog
             open={dialog}
-            handler={HandleOpenDialog}
+            handler={() => setDialog(false)}
             size="md"
             className="p-4 rounded-lg capitalize"
           >
@@ -873,67 +972,127 @@ const FormView = ({
             <DialogBody divider className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <label
-                  htmlFor="reason"
+                  htmlFor="schoolTitle"
                   className="text-gray-700 text-sm font-medium"
                 >
                   School Title
                 </label>
                 <input
-                  id="reason"
+                  id="title"
                   type="text"
-                  placeholder="Enter the reason..."
+                  placeholder="Enter the school title..."
+                  value={schoolData.title}
+                  onChange={handleChange}
                   className="border capitalize border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
                 />
+                {formErrors.title && (
+                  <span className="text-red-500 text-xs">
+                    {formErrors.title}
+                  </span>
+                )}
               </div>
+
               <div className="flex flex-col gap-2">
                 <label
-                  htmlFor="callType"
+                  htmlFor="syllabus"
                   className="text-gray-700 text-sm font-medium"
                 >
                   Syllabus
                 </label>
-                <Select>
+                <Select
+                  id="syllabus"
+                  value={schoolData.syllabus}
+                  onChange={handleSyllabusChange}
+                >
                   <Option value="state">STATE</Option>
                   <Option value="cbse">CBSE</Option>
                 </Select>
+                {formErrors.syllabus && (
+                  <span className="text-red-500 text-xs">
+                    {formErrors.syllabus}
+                  </span>
+                )}
               </div>
+
               <div className="flex flex-col gap-2">
                 <label
-                  htmlFor="reason"
+                  htmlFor="location"
                   className="text-gray-700 text-sm font-medium"
                 >
                   Location
                 </label>
                 <input
-                  id="reason"
+                  id="location"
                   type="text"
-                  placeholder="Enter the Specific Location."
+                  placeholder="Enter the specific location..."
+                  value={schoolData.location}
+                  onChange={handleChange}
                   className="border capitalize border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
                 />
+                {formErrors.location && (
+                  <span className="text-red-500 text-xs">
+                    {formErrors.location}
+                  </span>
+                )}
               </div>
+
               <div className="flex flex-col gap-2">
                 <label
-                  htmlFor="response"
+                  htmlFor="district"
                   className="text-gray-700 text-sm font-medium"
                 >
                   District
                 </label>
-                <input
-                  id="response"
-                  type="text"
-                  placeholder="Enter the district "
-                  className="border capitalize border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
-                />
+                <Select
+                  id="district"
+                  value={schoolData.district}
+                  onChange={(value) => handleSelectChange("district", value)}
+                >
+                  {districtsInKerala.map((district) => (
+                    <Option key={district} value={district}>
+                      {district}
+                    </Option>
+                  ))}
+                </Select>
+                {formErrors.district && (
+                  <span className="text-red-500 text-xs">
+                    {formErrors.district}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="state"
+                  className="text-gray-700 text-sm font-medium"
+                >
+                  State
+                </label>
+                <Select
+                  id="state"
+                  value={schoolData.state}
+                  onChange={(value) => handleSelectChange("state", value)}
+                >
+                  <Option value="kerala">Kerala</Option>
+                  <Option value="others">Others</Option>
+                </Select>
+                {formErrors.state && (
+                  <span className="text-red-500 text-xs">
+                    {formErrors.state}
+                  </span>
+                )}
               </div>
             </DialogBody>
             <DialogFooter className="flex justify-center gap-4">
-              <button className="bg-gray-200 text-gray-700 rounded px-4 py-2 hover:bg-gray-300"
-              onClick={()=>{setDialog(false)}}
+              <button
+                className="bg-gray-200 text-gray-700 rounded px-4 py-2 hover:bg-gray-300"
+                onClick={() => setDialog(false)}
               >
                 Cancel
               </button>
-              <button className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600"
-              onClick={onSchoolSave}
+              <button
+                className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600"
+                onClick={handleSchoolSave}
               >
                 Save Report
               </button>
@@ -953,7 +1112,10 @@ const FormView = ({
                     </label>
                     {isAddSchool && (
                       <div className="w-full flex justify-end">
-                        <Button onClick={HandleOpenDialog} className="flex mb-2 justify-center items-center gap-2 px-2 py-1 border rounded-md bg-red-500">
+                        <Button
+                          onClick={HandleOpenDialog}
+                          className="flex mb-2 justify-center items-center gap-2 px-2 py-1 border rounded-md bg-red-500"
+                        >
                           <span>Add</span>
                           <IoIosAddCircleOutline size={25} />{" "}
                         </Button>

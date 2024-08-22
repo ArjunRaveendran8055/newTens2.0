@@ -6,6 +6,11 @@ const ApprovedStudentSchema = new mongoose.Schema(
       type: String,
       required: [true, "roll number required"],
     },
+    batch:{
+      type:String,
+      default:"",
+      required:false
+    },
     admission_no: {
       type: Number,
       required: false,
