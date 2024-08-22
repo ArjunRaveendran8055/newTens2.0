@@ -9,6 +9,7 @@ function AllStudentsView() {
 
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedMedium, setMedium] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
   const [selectedSyllabus, setSelectedSyllabus] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
@@ -26,7 +27,8 @@ function AllStudentsView() {
         syllabus: selectedSyllabus,
         classs: selectedClass,
         country: selectedCountry,
-        district: selectedDistrict
+        district: selectedDistrict,
+        medium:selectedMedium,
       });
 
       // Extract data from response
@@ -39,6 +41,7 @@ function AllStudentsView() {
       }
     } catch (error) {
       console.error('Error fetching students:', error);
+      setStudents([])
       setError('Failed to fetch students');
     }
   };
@@ -48,10 +51,25 @@ function AllStudentsView() {
   }, []);
 
 
-  const districts = [...new Set(students.map(student => student.district))];
-  const classes = [...new Set(students.map(student => student.class))];
-  const syllabi = [...new Set(students.map(student => student.syllabus))];
-  const country = ["INDIA", "USA", "QATAR"];
+  const districts = [
+    "Thiruvananthapuram",
+    "Kollam",
+    "Pathanamthitta",
+    "Alappuzha",
+    "Kottayam",
+    "Idukki",
+    "Ernakulam",
+    "Thrissur",
+    "Palakkad",
+    "Malappuram",
+    "Kozhikode",
+    "Wayanad",
+    "Kannur",
+    "Kasargod"
+  ];
+  const classes = ["7","8","9","10","11","12"];
+  const syllabi = ["cbse","state"];
+  const country = ["india", "usa", "quatar"];
 
 
   return (
@@ -91,7 +109,7 @@ function AllStudentsView() {
                     <td
                       key={index}
                       align="center"
-                      className="px-4 py-3 border-t border-gray-200 text-m sm:text-sm text-black"
+                      className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black"
                     >
                       {column === 'student_status' ? (
                         student.student_status ? (
@@ -145,7 +163,7 @@ function AllStudentsView() {
               <option value="">Select Syllabus</option>
               {syllabi.map((syllabus, index) => (
                 <option key={index} value={syllabus}>
-                  {syllabus}
+                  {syllabus.toLocaleUpperCase()}
                 </option>
               ))}
             </select>
@@ -171,6 +189,27 @@ function AllStudentsView() {
             </select>
           </div>
 
+              {/* Medium Dropdown */}
+              <div className="mb-4">
+            <label htmlFor="medium" className="block text-sm font-medium text-gray-700">
+              Medium
+            </label>
+            <select
+              id="medium"
+              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              value={selectedMedium}
+              onChange={(e) => setMedium(e.target.value)}
+            >
+                <option value="english">
+                  English
+                </option>
+                <option value="malayalam">
+                  Malayalam
+                </option>
+              
+            </select>
+          </div>
+
           {/* Country Dropdown */}
           <div className="mb-4">
             <label htmlFor="country" className="block text-sm font-medium text-gray-700">
@@ -185,7 +224,7 @@ function AllStudentsView() {
               <option value="">Select Country</option>
               {country.map((country, index) => (
                 <option key={index} value={country}>
-                  {country}
+                  {country.toLocaleUpperCase()}
                 </option>
               ))}
             </select>
@@ -205,12 +244,13 @@ function AllStudentsView() {
               <option value="">Select District</option>
               {districts.map((district, index) => (
                 <option key={index} value={district}>
-                  {district}
+                  {district.toLocaleUpperCase()}
                 </option>
               ))}
             </select>
           </div>
 
+        
           {/* Submit Button */}
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
