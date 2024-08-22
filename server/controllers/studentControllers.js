@@ -40,6 +40,80 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ data: result, success: true });
 });
 
+
+
+
+const getAllStudentsDetailedController = asyncWrapper(async (req, res, next) => {
+  // Destructure query parameters and pagination parameters
+  const { syllabus, classs, centre, school_name, school_location, district, medium, page = 1, limit = 10 } = req.body;
+
+  // Build a filter object dynamically
+  let filter = {};
+
+  // Add each present query parameter to the filter object
+  if (syllabus) filter.syllabus = syllabus;
+  if (classs) filter.class = classs;
+  if (centre) filter.centre = centre;
+  if (school_name) filter.school_name = school_name;
+  if (school_location) filter.school_location = school_location;
+  if (district) filter.district = district;
+  if (medium) filter.medium = medium;
+
+  // Specify the fields you want to retrieve from the database
+  const projection = {
+    roll_no: 1,
+    student_name: 1,
+    gender: 1,
+    address: 1,
+    class: 1,
+    syllabus: 1,
+    student_status: 1,
+    medium: 1,
+    school_name: 1,
+    school_location: 1,
+    district: 1,
+    pin_code: 1,
+    mother: 1,
+    father: 1,
+    father_no: 1,
+    mother_no: 1,
+    centre: 1,
+    whatsapp: 1
+  };
+
+  // Calculate the number of documents to skip based on the current page
+  const skip = (page - 1) * limit;
+
+  // Fetch data from the MongoDB model based on the filter, pagination, and only the required fields
+  const students = await ApproveStudentModel.find(filter, projection)
+    .skip(skip)
+    .limit(parseInt(limit));
+
+  // Check if no matching records are found
+  if (students.length === 0) {
+    throw new AppError(400, "No Match Found.");
+  }
+
+  // Get the total count of documents matching the filter (for pagination)
+  const totalDocuments = await ApproveStudentModel.countDocuments(filter);
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(totalDocuments / limit);
+
+  // Return the filtered data along with pagination info
+  res.json({
+    currentPage: parseInt(page),
+    totalPages,
+    limit: parseInt(limit),
+    totalDocuments,
+    students
+  });
+});
+
+
+
+
+
 //student details using student id as params
 const getStudentDetailsController = asyncWrapper(async (req, res, next) => {
   const { id } = req.params;
@@ -106,4 +180,5 @@ module.exports = {
   getStudentDetailsController,
   addReportController,
   fetchStudentReportsController,
+  getAllStudentsDetailedController
 };
