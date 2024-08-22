@@ -64,7 +64,7 @@ const time12HourFormat = `${hour12}:${minutes < 10 ? '0' : ''}${minutes} ${merid
       <div className="relative text-white px-6 pb-6 mt-6">
               <span className="block opacity-75 -mb-1">{item.classDetail.classsyllabus}</span>
         <div className="flex justify-between">
-          <span className="block font-semibold text-xl">{item.classDetail.classname}</span>
+          <span className="block font-semibold text-xl">{item.classDetail.classname}TH</span>
           <span className=" bg-white rounded-full text-teal-500 text-xs font-bold px-3 py-2 leading-none flex items-center">
             {time12HourFormat}
           </span>
