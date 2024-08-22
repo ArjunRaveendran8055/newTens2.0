@@ -3,6 +3,10 @@ const { asyncWrapper } = require("../helpers/asyncWrapper");
 const { ApproveStudentModel } = require("../models/ApproveStudentModel");
 const { StudentModel } = require("../models/StudentModel");
 const mongoose = require("mongoose");
+const XLSX = require('xlsx');
+
+const { Transform } = require('stream');
+const { Parser } = require('json2csv');
 
 
 
@@ -160,6 +164,84 @@ const addReportController = asyncWrapper(async (req, res, next) => {
   });
 });
 
+
+
+
+// to download students details as csv format
+
+const downloadStudentsCSVController = asyncWrapper(async (req, res, next) => {
+  // Destructure filtering criteria from req.body
+  const { syllabus, classs, centre, school_name, school_location, district, medium, id = false } = req.body;
+
+  // Build a match stage dynamically for filtering
+  let matchStage = {};
+
+  if (syllabus) matchStage.syllabus = syllabus;
+  if (classs) matchStage.class = classs;
+  if (centre) matchStage.centre = centre;
+  if (school_name) matchStage.school_name = school_name;
+  if (school_location) matchStage.school_location = school_location;
+  if (district) matchStage.district = district;
+  if (medium) matchStage.medium = medium;
+
+  let val = (id) ? 1 : 0;
+
+  // Build the aggregation pipeline
+  const pipeline = [
+    { $match: matchStage },
+    {
+      $project: {
+        roll_no: 1,
+        student_name: 1,
+        gender: 1,
+        address: 1,
+        class: 1,
+        syllabus: 1,
+        student_status: 1,
+        medium: 1,
+        school_name: 1,
+        school_location: 1,
+        district: 1,
+        pin_code: 1,
+        mother: 1,
+        father: 1,
+        father_no: 1,
+        mother_no: 1,
+        centre: 1,
+        whatsapp: 1,
+        _id: val
+      }
+    }
+  ];
+
+  // Fetch data from the database
+  const cursor = ApproveStudentModel.aggregate(pipeline).cursor();
+
+  // Create a CSV parser and transform stream
+  const parser = new Parser();
+  const transformStream = new Transform({
+    objectMode: true,
+    transform: (chunk, encoding, callback) => {
+      // Convert each chunk to CSV and push to the readable stream
+      callback(null, parser.parse(chunk));
+    }
+  });
+
+  // Set response headers for downloading the CSV file
+  res.setHeader('Content-Disposition', 'attachment; filename="students.csv"');
+  res.setHeader('Content-Type', 'text/csv');
+
+  // Pipe the cursor to the transform stream and then to the response
+  cursor.pipe(transformStream).pipe(res);
+});
+
+
+
+
+
+
+
+
 //getSsrReport of a student using id as params
 const fetchStudentReportsController = asyncWrapper(async (req, res, next) => {
   const { id } = req.params;
@@ -184,5 +266,6 @@ module.exports = {
   getStudentDetailsController,
   addReportController,
   fetchStudentReportsController,
-  getAllStudentsDetailedController
+  getAllStudentsDetailedController,
+  downloadStudentsCSVController
 };

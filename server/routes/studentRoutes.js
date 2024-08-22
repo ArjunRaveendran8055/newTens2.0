@@ -5,6 +5,7 @@ const {
   addReportController,
   fetchStudentReportsController,
   getAllStudentsDetailedController,
+  downloadStudentsCSVController,
 } = require("../controllers/studentControllers");
 
 const { authorizeGenuinity }=require("../middleware/authorizeGenuinity")
@@ -18,6 +19,8 @@ studentRoutes.post("/addReport",authorizeGenuinity, addReportController);
 studentRoutes.get("/fetchStudentReports/:id",authorizeGenuinity, fetchStudentReportsController);
 
 studentRoutes.post("/getAllStudentsDetailed", authorizeGenuinity , getAllStudentsDetailedController )
+
+studentRoutes.get("/downloadStudentsExcel", authorizeGenuinity , downloadStudentsCSVController )
 
 module.exports = {
   studentRoutes,
