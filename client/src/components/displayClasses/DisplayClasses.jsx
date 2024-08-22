@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import Skeleton from "../../widgets/skeletonLoading/Skeleton";
 import { Link } from "react-router-dom";
+import { MdDelete } from "react-icons/md";
 
 function DisplayClasses() {
   const [open, setOpen] = useState(false);
@@ -34,6 +35,8 @@ function DisplayClasses() {
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [classToDelete, setClassToDelete] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -128,6 +131,28 @@ function DisplayClasses() {
 
   const handleNextPage = () => {
     setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  const confirmDelete = () => {
+    if (classToDelete) {
+      axios
+        .delete(`/class/deleteClass/${classToDelete}`)
+        .then(() => {
+          fetchData(); // Refresh the list of classes after deletion
+          closeDeleteDialog();
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const openDeleteDialog = (classId) => {
+    setClassToDelete(classId);
+    setIsDeleteDialogOpen(true);
+  };
+  
+  const closeDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+    setClassToDelete(null);
   };
 
   return (
@@ -246,9 +271,40 @@ function DisplayClasses() {
           ))
         ) : (
           classes.map((item) => (
-            <Link key={item._id} to={`/classes/classhome/${item._id}`}>
-              <ClassCard classDetail={item} key={item._id} />
+            <div key={item._id} className="relative group">
+            <Link to={`/classes/classhome/${item._id}`}>
+              <ClassCard classDetail={item} />
             </Link>
+            <button
+              onClick={() => openDeleteDialog(item._id)}
+              className="absolute bottom-7 right-8 text-red-500 transition-opacity"
+            >
+              {/* Replace with your preferred delete icon */}
+             <MdDelete color="white" size={26}/>
+            </button>
+          
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={isDeleteDialogOpen} handler={closeDeleteDialog}>
+              <Card>
+                <CardBody>
+                  <Typography variant="h5" color="blue-gray">
+                    Confirm Deletion
+                  </Typography>
+                  <Typography>
+                    Are you sure you want to delete this class? This action cannot be undone.
+                  </Typography>
+                </CardBody>
+                <CardFooter className="flex justify-end gap-4">
+                  <Button color="blue-gray" onClick={closeDeleteDialog}>
+                    Cancel
+                  </Button>
+                  <Button color="red" onClick={confirmDelete}>
+                    Delete
+                  </Button>
+                </CardFooter>
+              </Card>
+            </Dialog>
+          </div>
           ))
         )}
       </div>
