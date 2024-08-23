@@ -12,7 +12,7 @@ const Loader = () => {
       <div className=" relative rounded-full flex justify-center items-center">
         <div className="backdrop:blur-md">
           <img
-            src="/icons/appleLogo.gif"
+            src="/icons/appleLoader.gif"
             alt="appleLogo"
             className="w-48 h-48 brightness-95 contrast-200 animate-bounce"
           />
