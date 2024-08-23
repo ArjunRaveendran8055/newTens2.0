@@ -33,8 +33,9 @@ const signUpController = asyncWrapper(async (req, res, next) => {
   };
 
   //creating token for mail verification
+  const CLIENT_URL=process.env.CLIENT_URL
   const activationToken = activationJwt(obj);
-  const activationUrl = `http://localhost:5173/activation/${activationToken}`;
+  const activationUrl = `${CLIENT_URL}/activation/${activationToken}`;
 
   //sending mail using nodeMailer
   sendMail({
