@@ -121,13 +121,13 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
       console.log("mail sent successfully.");
       return res
         .status(200)
-        .json({approvedResult, mailsend:true });
+        .json({id:_id,approvedResult, mailSend:true });
     })
     .catch(() => {
       console.log("error sending mail.");
       return res
         .status(200)
-        .json({approvedResult, mailSend:false });
+        .json({id:_id,approvedResult, mailSend:false });
     });
     
 });
@@ -258,13 +258,13 @@ const staffApprovalWithPhotoController = asyncWrapper(
       console.log("mail sent successfully.");
       return res
         .status(200)
-        .json({approvedResult, mailsend:true });
+        .json({id:_id,approvedResult, mailSend:true });
     })
     .catch(() => {
       console.log("error sending mail.");
       return res
         .status(200)
-        .json({approvedResult, mailSend:false });
+        .json({id:_id,approvedResult, mailSend:false });
     });
   
   }

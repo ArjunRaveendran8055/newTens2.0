@@ -582,6 +582,7 @@ const FormView = ({
         .post("/approve/staffApproval", { formData })
         .then((res) => {
           const { id } = res.data;
+          console.log("response is :",res.data)
           console.log("ithanne alle angod ayache", id);
           setIsModalOpen(false);
           setIsSaving(false);
@@ -618,6 +619,7 @@ const FormView = ({
         .post("/approve/staffApprovalWithPhoto", finalFormData, config)
         .then((res) => {
           const { id } = res.data;
+          console.log("response is:",res.data)
           console.log("ithanne alle angod ayache", id);
           setIsModalOpen(false);
           setIsSaving(false);
