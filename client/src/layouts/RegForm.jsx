@@ -432,7 +432,6 @@ const RegForm = () => {
             Student Registration Form
           </h2>
         </div>
-
         <form className="mt-6 space-y-4 mb-5">
           <div name="photo" className="w-52 p-2 mx-auto mb-10 rounded ">
             <label htmlFor="imageUpload">
