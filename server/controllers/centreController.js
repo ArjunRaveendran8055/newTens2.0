@@ -112,16 +112,19 @@ const deleteClassController = asyncWrapper(async (req,res)=>{
 const addBatchController = asyncWrapper(async (req, res) => {
   try {
     const { id, className2, stream, batch } = req.body;
-
+    console.log(stream,"stream");
+    
+    
     // Find the document by _id
     const document = await CentreModel.findById(id);
 
     if (!document) {
       return res.status(404).json({ message: 'Document not found' });
     }
+    console.log(document);
 
     // Find the class to update
-    const classToUpdate = document.classes.find(c => c.class === className2 && c.stream === stream);
+    const classToUpdate = document.classes.find(c => c.class === parseInt(className2,10) && c.stream === stream);
 
     if (classToUpdate) {
       if (!classToUpdate.batches) {
@@ -165,7 +168,7 @@ const getBatchController = asyncWrapper(async (req, res) => {
 
     // Find the matching class within the classes array
     const matchingClass = centre.classes.find(
-      (cls) => cls.class === className && cls.stream === stream
+      (cls) => cls.class === parseInt(className,10) && cls.stream === stream
     );
 
     if (!matchingClass) {
@@ -193,7 +196,7 @@ const addAAcontroller = asyncWrapper(async (req, res) => {
     }
 
     // Find the class object matching the class and stream
-    const classObj = centre.classes.find(c => c.class === className2 && c.stream === stream);
+    const classObj = centre.classes.find(c => c.class === parseInt(className2,10) && c.stream === stream);
 
     if (!classObj) {
       return res.status(404).json({ message: 'Class not found' });
@@ -224,7 +227,7 @@ const getAAcontroller = asyncWrapper(async (req, res) => {
     }
 
     const classInfo = centre.classes.find(
-      (c) => c.class === className && c.stream === stream
+      (c) => c.class === parseInt(className,10) && c.stream === stream
     );
 
     if (!classInfo) {
@@ -248,7 +251,7 @@ const updateMentorController = asyncWrapper(async (req, res) => {
     }
 
     // Find the class object matching the class and stream
-    const classObj = centre.classes.find(c => c.class === className2 && c.stream === stream);
+    const classObj = centre.classes.find(c => c.class === parseInt(className2,10) && c.stream === stream);
 
     if (!classObj) {
       return res.status(404).json({ message: 'Class not found' });
