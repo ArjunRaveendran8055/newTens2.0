@@ -429,7 +429,7 @@ const RegForm = () => {
           <img src={Logo} alt="" style={{ height: "70px" }} />
           <h2 className="text-2xl font-bold">
             <i className="fa-solid fa-graduation-cap mr-3"></i>
-            Student Resistration Form
+            Student Registration Form
           </h2>
         </div>
 
