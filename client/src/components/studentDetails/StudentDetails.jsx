@@ -8,7 +8,16 @@ import { Dialog, Select, Option, button } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import { setToastView } from "../features/toast/toastSlice";
-
+import {
+  PhoneIcon,
+  MailIcon,
+  MapPinIcon,
+  BookOpenIcon,
+  MapIcon,
+  UserIcon,
+  GraduationCapIcon,
+  BookmarkIcon,
+} from "lucide-react";
 import { SsrReportView } from "./ssrReportView/SsrReportView";
 
 const StudentDetails = () => {
@@ -27,6 +36,7 @@ const StudentDetails = () => {
   const [openViewReports, setOpenViewReports] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [btnLoader, setBtnLoader] = useState(false);
+  const [activeTab, setActiveTab] = useState("info");
 
   const { id } = useParams();
   useEffect(() => {
@@ -184,151 +194,262 @@ const StudentDetails = () => {
 
       {/* view Report div */}
 
-      <div className="leftdiv sm:h-[95vh] lg:h-[92vh]  sm:w-full lg:w-[35%] flex flex-col sm:gap-2 lg:gap-3 xl:gap-10 sm:p-1 md:p-3 lg:p-2  xl:p-10">
-        <div className="profilecard bg-white shadow-lg flex flex-col w-full sm:h-[70%] lg:h-[65%] rounded-3xl  justify-around">
-          <div className="imagediv flex flex-col w-full justify-center items-center gap-2">
-            <div className=" font-extrabold sm:text-lg md:text-xl lg:text-lg  decoration-black underline underline-offset-4">
-              STUDENT DETAILS
+      <div className="w-full h-screen bg-gray-100 sm:p-2 lg:p-0">
+        <div className="w-full mx-auto">
+          <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">
+            FAYAZAZEEZ - AA
+          </h1>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div className="lg:col-span-1 bg-gradient-to-br from-white to-gray-100 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="p-6 text-center">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                  STUDENT DETAILS
+                </h2>
+                <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white shadow-lg mb-4">
+                  <img
+                    src="/placeholder.svg?height=128&width=128"
+                    alt="Student"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h2 className="text-2xl font-bold mb-2 text-gray-800">
+                  jaya t p
+                </h2>
+                <p className="text-gray-600 mb-1">Class: 8 | Roll: ca019</p>
+                <p className="text-gray-600 mb-4">Center: cbse</p>
+                <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200 px-4 py-2 rounded-md">
+                    Add Report
+                  </button>
+                  <button className="text-blue-500 border border-blue-500 hover:bg-blue-50 transition-colors duration-200 px-4 py-2 rounded-md">
+                    View Reports
+                  </button>
+                </div>
+              </div>
             </div>
-            <img
-              src="/icons/studentBoy.avif"
-              alt="studentBoy"
-              className="rounded-full sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-28 lg:h-28 xl:w-36 xl:h-36 shadow-2xl shadow-black"
-            />
-          </div>
-          <div className="basicdetails flex flex-col w-full justify-center items-center gap-3 font-bold text-black">
-            <p className=" font-Playfiar sm:text-md md:text-2xl lg:text-xl">
-              NAME : {student.student_name}
-            </p>
-            <p className="flex gap-5 sm:text-xl md:text-2xl lg:text-xl  font-sans">
-              <span className="sm:text-md md:text-3xl lg:text-xl">
-                ClASS : {student.class}
-              </span>{" "}
-              <span className="sm:text-md md:text-3xl lg:text-xl">
-                ROLL : {student.roll_no}
-              </span>{" "}
-            </p>
-            <p className="sm:text-md md:text-3xl lg:text-xl">
-              CENTER : {student.centre}
-            </p>
-          </div>
-          <div className="buttondiv flex items-center justify-center gap-5">
-            <button
-              className="px-4 py-2 bg-custblue text-white font-bold rounded-md hover:shadow-custdarkblue hover:shadow-md  duration-75"
-              onClick={() => setOpenAddReport(!openAddReport)}
-            >
-              Add Report
-            </button>
 
-            {!openViewReports ? (
-              <button
-                className="px-4 py-2 bg-custblue text-white font-bold rounded-md hover:shadow-custdarkblue hover:shadow-md hover:scale-105 duration-75"
-                onClick={handleOpenViewReports}
-              >
-                View Reports
-              </button>
-            ) : (
-              <button
-                className="px-4 py-2 bg-custblue text-white font-bold rounded-md hover:shadow-custdarkblue hover:shadow-md hover:scale-105 duration-75"
-                onClick={handleOpenViewReports}
-              >
-                Hide Reports
-              </button>
-            )}
+            <div className="lg:col-span-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                  Student Information
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <InfoItem
+                    icon={<UserIcon className="w-5 h-5 text-blue-500" />}
+                    label="Father's Name"
+                    value="purushothaman t k"
+                  />
+                  <InfoItem
+                    icon={<UserIcon className="w-5 h-5 text-blue-500" />}
+                    label="Mother's Name"
+                    value="sumathi t p"
+                  />
+                  <InfoItem
+                    icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
+                    label="Address"
+                    value="thundiyil house, cherai p o, cherai"
+                  />
+                  <InfoItem
+                    icon={
+                      <GraduationCapIcon className="w-5 h-5 text-blue-500" />
+                    }
+                    label="Pin Code"
+                    value="683521"
+                  />
+                  <InfoItem
+                    icon={<BookOpenIcon className="w-5 h-5 text-blue-500" />}
+                    label="Syllabus"
+                    value="cbse"
+                  />
+                  <InfoItem
+                    icon={<BookmarkIcon className="w-5 h-5 text-blue-500" />}
+                    label="Medium"
+                    value="english"
+                  />
+                  <InfoItem
+                    label="School Name"
+                    value="raja rajeswari central school"
+                  />
+                  <InfoItem
+                    icon={<MapIcon className="w-5 h-5 text-blue-500" />}
+                    label="School Location"
+                    value="kodukulanji"
+                  />
+                  <InfoItem
+                    icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
+                    label="District"
+                    value="bengaluru (bangalore) urban"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="contactcard flex flex-col w-full h-[38%] border-2 rounded-3xl shadow-2xl">
-          <div className="headingdiv flex w-full px-10 sm:py-3 lg:py-5">
-            <p className="underline underline-offset-4 text-black font-bold sm:text-md md:text-xl lg:text-xl">
-              CONTACT DETAILS
-            </p>
-          </div>
-          <div className="w-full h-full pb-10  flex flex-col items-center justify-around font-Playfiar sm:text-md md:text-xl lg:text-sm">
-            <p className="w-full flex items-center justify-center gap-5">
-              <span>WHATSAPP NO :</span>
-              <span> {student.whatsapp_no}</span>
-              <FaPhoneSquareAlt color="green" />
-            </p>
 
-            <p className="w-full border-black flex items-center justify-center gap-5 ">
-              <span>FATHER'S NO :</span>
-              <span> {student.father_no}</span>{" "}
-              <FaPhoneSquareAlt color="green" />
-            </p>
-            <p className="w-full  border-black flex items-center justify-center gap-5">
-              <span>MOTHER'S NO :</span>
-              <span> {student.mother_no}</span>{" "}
-              <FaPhoneSquareAlt color="green" />
-            </p>
-            <p className="w-full  border-black flex items-center justify-center gap-5">
-              <span>EMAIL ID:</span>
-              <span> No content for email id.</span>
-            </p>
+          <div className="block lg:hidden mb-6">
+            <div className="border-b border-gray-200">
+              <nav className="-mb-px flex" aria-label="Tabs">
+                {["info", "contact"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm ${
+                      activeTab === tab
+                        ? "border-blue-500 text-blue-600"
+                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    }`}
+                  >
+                    {tab === "info" ? "Student Info" : "Contact Details"}
+                  </button>
+                ))}
+              </nav>
+            </div>
+            <div className="mt-4">
+              {activeTab === "info" ? (
+                <MobileInfoCard />
+              ) : (
+                <MobileContactCard />
+              )}
+            </div>
+          </div>
+
+          <div className="hidden lg:block">
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                  Contact Details
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <InfoItem
+                    icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
+                    label="WhatsApp No"
+                    value="Not provided"
+                  />
+                  <InfoItem
+                    icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
+                    label="Father's No"
+                    value="9497678645"
+                  />
+                  <InfoItem
+                    icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
+                    label="Mother's No"
+                    value="9992225551"
+                  />
+                  <InfoItem
+                    icon={<MailIcon className="w-5 h-5 text-blue-500" />}
+                    label="Email ID"
+                    value="No content for email id."
+                    className="sm:col-span-3"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div className="rightdiv min-h-[92vh] sm:w-full lg:w-[65%]  flex flex-col lg:gap-10 sm:p-1 md:p-3 lg:py-2 lg:px-0  xl:p-10">
-        {!openViewReports ? (
-          <>
-            <div className="descDiv basis-1/2 font-enriq sm:text-xl md:text-2xl lg:text-md w-full  rounded-3xl lg:p-10 sm:p-3 md:p-5 flex flex-col gap-2 shadow-2xl">
-              <span className="flex flex-row border-b-[1px] border-gray-400">
-                <p>Father's Name </p>&nbsp;:&nbsp;<p>{student.father}</p>
-              </span>
-              <span className="flex flex-row border-b-[1px] border-gray-400">
-                <p>Mother's Name </p>&nbsp;:&nbsp;
-                <p>
-                  {student.mother?.length === 0 ? "Not Given" : student.mother}
-                </p>
-              </span>
-              <span className="flex flex-row border-b-[1px] border-gray-400">
-                <p>Address </p>&nbsp;:&nbsp;
-                <p>{student.address}</p>
-              </span>
-              <span className="flex flex-row  border-b-[1px] border-gray-400">
-                <p>PinCode </p>&nbsp;:&nbsp;
-                <p>
-                  {student.pin_code?.length === 0
-                    ? "Not Given"
-                    : student.pin_code}
-                </p>
-              </span>
-              <span className="flex flex-row border-b-[1px] border-gray-400">
-                <p>Syllabus: </p>&nbsp;:&nbsp;<p>{student.syllabus}</p>
-              </span>
-              <span className="flex flex-row border-b-[1px] border-gray-400">
-                <p>Medium </p>&nbsp;:&nbsp;<p>{student.medium}</p>
-              </span>
-              <span className="flex flex-row border-b-[1px] border-gray-400">
-                <p>School Name </p>&nbsp;:&nbsp;<p> {student.school_name}</p>
-              </span>
-              <span className="flex flex-row border-b-[1px] border-gray-400">
-                <p>School Location </p>&nbsp;:&nbsp;
-                <p>{student.school_location}</p>
-              </span>
-              <span className="flex flex-row border-b-[1px] border-gray-400">
-                <p>District </p>&nbsp;:&nbsp;<p>{student.district}</p>
-              </span>
-            </div>
-            <div className="mainReportsContainer basis-1/2 w-fullrounded-3xl flex sm:flex-col lg:flex-row gap-5 lg:px-5">
-              <div className="lg:basis-[33%] sm:basis-1  rounded-3xl shadow-md p-5">
-                card1
-              </div>
-              <div className="lg:basis-[33%] sm:basis-1b  rounded-3xl shadow-md p-5">
-                card2
-              </div>
-              <div className="lg:basis-[33%] sm:basis-1 rounded-3xl shadow-md p-5">
-                card3
-              </div>
-            </div>
-          </>
-        ) : (
-          <div>
-            <SsrReportView id={id} />
-          </div>
-        )}
-      </div>
+
+      {/* view Report div */}
     </div>
   );
 };
+
+function MobileInfoCard() {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+      <div className="grid grid-cols-1 gap-4">
+        <InfoItem
+          icon={<UserIcon className="w-5 h-5 text-blue-500" />}
+          label="Father's Name"
+          value="purushothaman t k"
+        />
+        <InfoItem
+          icon={<UserIcon className="w-5 h-5 text-blue-500" />}
+          label="Mother's Name"
+          value="sumathi t p"
+        />
+        <InfoItem
+          icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
+          label="Address"
+          value="thundiyil house, cherai p o, cherai"
+        />
+        <InfoItem
+          icon={<GraduationCapIcon className="w-5 h-5 text-blue-500" />}
+          label="Pin Code"
+          value="683521"
+        />
+        <InfoItem
+          icon={<BookOpenIcon className="w-5 h-5 text-blue-500" />}
+          label="Syllabus"
+          value="cbse"
+        />
+        <InfoItem
+          icon={<BookmarkIcon className="w-5 h-5 text-blue-500" />}
+          label="Medium"
+          value="english"
+        />
+        <InfoItem label="School Name" value="raja rajeswari central school" />
+        <InfoItem
+          icon={<MapIcon className="w-5 h-5 text-blue-500" />}
+          label="School Location"
+          value="kodukulanji"
+        />
+        <InfoItem
+          icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
+          label="District"
+          value="bengaluru (bangalore) urban"
+        />
+      </div>
+    </div>
+  );
+}
+
+function MobileContactCard() {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+      <div className="grid grid-cols-1 gap-4">
+        <InfoItem
+          icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
+          label="WhatsApp No"
+          value="Not provided"
+        />
+        <InfoItem
+          icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
+          label="Father's No"
+          value="9497678645"
+        />
+        <InfoItem
+          icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
+          label="Mother's No"
+          value="9992225551"
+        />
+        <InfoItem
+          icon={<MailIcon className="w-5 h-5 text-blue-500" />}
+          label="Email ID"
+          value="No content for email id."
+        />
+      </div>
+    </div>
+  );
+}
+
+function InfoItem({ icon, label, value, className = "" }) {
+  return (
+    <div
+      className={`flex items-center space-x-3 group p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200 ${className}`}
+    >
+      <div className="text-blue-500 group-hover:text-blue-600 transition-colors duration-200">
+        {icon}
+      </div>
+      <div>
+        <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700 transition-colors duration-200">
+          {label}
+        </p>
+        <p className="text-gray-800 group-hover:text-gray-900 transition-colors duration-200">
+          {value}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default StudentDetails;
