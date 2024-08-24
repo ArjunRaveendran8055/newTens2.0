@@ -51,8 +51,6 @@ const FormView = ({
   isOpen,
   setIsOpen,
   selectedSchool,
-  setSelectedSchool,
-  syllabus,
   setSyllabus,
   statesIn,
   setStatesIn,
@@ -646,7 +644,7 @@ const FormView = ({
 
   return (
     <>
-      <div className="max-w-4xl mx-auto  p-4 bg-white rounded-lg shadow-lg">
+      <div className="max-w-4xl mx-auto text-black  p-4 bg-white rounded-lg shadow-lg">
         <div className="mt-6 space-y-4">
           <div className="w-52 p-2 mx-auto  rounded">
             <label name="photo" htmlFor="imageUpload" className="">
@@ -688,7 +686,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full capitalize rounded-md border border-input bg-background px-3 py-2 text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="full-name"
                 placeholder="Full Name"
                 name="fullName"
@@ -710,7 +708,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <Select
-                className="border-gray-200 border-[1px]"
+                className="border-gray-200 text-black text-l border-[1px]"
                 name="gender"
                 value={formData.gender}
                 onChange={(e) =>
@@ -731,7 +729,7 @@ const FormView = ({
           <div>
             <label htmlFor="address">Address</label>
             <input
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-10 w-full text-l rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="address"
               placeholder="Address"
               name="address"
@@ -751,7 +749,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="pin-code"
                 placeholder="Pin Code"
                 name="pinCode"
@@ -794,7 +792,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="email"
                 placeholder="Enter your email"
                 type="email"
@@ -818,7 +816,7 @@ const FormView = ({
               <div className="w-full">
                 <Select
                   value={formData.syllabus}
-                  className="border-gray-200 border-[1px]"
+                  className="border-gray-200 text-black text-l border-[1px]"
                   name="syllabus"
                   onChange={(e) => {
                     setSyllabus(e);
@@ -843,7 +841,7 @@ const FormView = ({
             <label className="flex w-full" htmlFor="gender" name="level">
               Level of Education
             </label>
-            <div className="flex flex-col w-full text-[12px]">
+            <div className="flex flex-col w-full text-l">
               <button
                 ref={levelDropdonwRef}
                 onClick={handleLevelButtonClick}
@@ -950,7 +948,7 @@ const FormView = ({
                   </label>
                   <div
                     name="schoolName"
-                    className="flex justify-center shadow uppercase appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="flex justify-center shadow uppercase appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                     id="schoolName"
                   >
                     <span>{selectedSchool}</span>
@@ -1195,7 +1193,7 @@ const FormView = ({
             <div className="flex flex-col w-full">
               <div className="w-full">
                 <Select
-                  className="border-gray-200 border-[1px]"
+                  className="border-gray-200 text-black border-[1px]"
                   value={formData.medium}
                   name="medium"
                   onChange={(e) =>
@@ -1386,7 +1384,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input capitalize bg-background px-3 py-2 text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="father-name"
                 placeholder="Father's Name"
                 name="fatherName"
@@ -1407,7 +1405,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 capitalize py-2 text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="mother-name"
                 placeholder="Mother's Name"
                 name="motherName"
@@ -1428,7 +1426,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background capitalize px-3 py-2 text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="father-occupation"
                 placeholder="Father's Occupation"
                 name="fatherOccupation"
@@ -1449,7 +1447,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 capitalize text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="mother-occupation"
                 placeholder="Mother's Occupation"
                 name="motherOccupation"
@@ -1470,7 +1468,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 uppercase text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="roll-number"
                 placeholder="Assign Roll Number (5 digit)"
                 name="rollNumber"
@@ -1491,7 +1489,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="father-number"
                 placeholder="Father's Number"
                 name="fatherNumber"
@@ -1512,7 +1510,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="mother-number"
                 placeholder="Mother's Number"
                 name="motherNumber"
@@ -1533,7 +1531,7 @@ const FormView = ({
             </label>
             <div className="flex flex-col w-full">
               <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-l ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="whatsapp-number"
                 placeholder="Whatsapp Number"
                 name="whatsappNumber"
@@ -1555,7 +1553,7 @@ const FormView = ({
             <div className="flex flex-col w-full">
               <div className="w-full">
                 <Select
-                  className="border-gray-200 border-[1px]"
+                  className="border-gray-200 text-black text-l border-[1px]"
                   value={formData.centre}
                   name="centre"
                   onChange={(e) =>
@@ -1563,8 +1561,8 @@ const FormView = ({
                   }
                 >
                   {allCentre.map((item, key) => (
-                    <Option key={key} value={item.centre}>
-                      {item.centre}
+                    <Option className="text-black" key={key} value={item.centre}>
+                      {item.centre.toUpperCase()}
                     </Option>
                   ))}
                 </Select>

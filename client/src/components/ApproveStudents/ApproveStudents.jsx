@@ -240,8 +240,8 @@ const ApproveStudents = () => {
         </span>
       )}
 
-      <div className="sm:hidden lg:flex w-full h-[88vh] pt-3 gap-2">
-        <div className="leftcontainer w-[35%] bg-white rounded-lg flex flex-col h-full pt-4  px-2">
+      <div className="sm:hidden lg:flex w-full lg:h-[84vh] 2xl:h-[88vh] overflow-y-hidden pt-3 gap-2">
+        <div className="leftcontainer w-[30%] bg-white rounded-lg flex flex-col h-full pt-4  px-2">
           <div className="sortcontainer flex justify-end  items-center mb-2">
             <div className="w-full flex justify-center items-center gap-2">
               <input
@@ -292,13 +292,13 @@ const ApproveStudents = () => {
                       className={` ${
                         selectedIndex === item._id &&
                         " bg-blue-gray-900 text-white"
-                      } flex cursor-pointer flex-row w-full text-xl text-gray-700 rounded-md p-2 border-black border-[1px] gap-2`}
+                      } flex cursor-pointer flex-row w-full text-xl h-10 text-gray-700 rounded-md p-2 border-black border-[1px] gap-2`}
                       onClick={() => previewHandler(item, index)}
                       key={index}
                       disabled={selectedStudents.includes(item._id)}
                     >
-                      <div className="w-[20%] uppercase">{item.roll_no}</div>
-                      <div className="w-[80%] capitalize flex">
+                      <div className="w-[20%] text-lg uppercase">{item.roll_no}</div>
+                      <div className="w-[80%] text-lg capitalize flex">
                         {item.student_name}
                       </div>
                       {selectedStudents.includes(item._id) && (
@@ -314,7 +314,8 @@ const ApproveStudents = () => {
           )}
         </div>
         <div className="vrtline w-[1px]  bg-black" />
-        <div className="previewcontainer relative w-[65%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">
+        
+        <div className="previewcontainer relative w-[70%] bg-white rounded-lg  flex flex-col h-full overflow-y-scroll pt-4 px-2">
           <div className="previewtitlecontainer flex h-10 w-full justify-center items-center">
             <span className="text-2xl ">
               <h2 className=" border-gray-300 border-b-2 px-2 font-enriq">
@@ -363,6 +364,7 @@ const ApproveStudents = () => {
             )}
           </div>
         </div>
+
       </div>
       <div className="lg:hidden flex h-[75vh] justify-center items-center">
         <div className="">Not optimized for mobile screen</div>
