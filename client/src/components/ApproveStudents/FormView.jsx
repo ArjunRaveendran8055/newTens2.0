@@ -1223,7 +1223,7 @@ const FormView = ({
                 ref={countryDropdownRef}
                 onClick={handleCountryBtnClick}
                 value={formData.country}
-                className={`relative w-full h-10 border-[1px] border-gray-500  rounded-md ${
+                className={`relative w-full capitalize h-10 border-[1px] border-gray-500  rounded-md ${
                   isCountryDropdownVisible &&
                   "rounded-b-none border-b-0 border-gray-700 "
                 } flex px-4 py-2`}
@@ -1278,7 +1278,7 @@ const FormView = ({
                 onClick={handleStateBtnClick}
                 disabled={formData.country !== "india"}
                 value={formData.state}
-                className={`relative w-full h-10 border-[1px] border-gray-500  rounded-md ${
+                className={`relative w-full capitalize h-10 border-[1px] border-gray-500  rounded-md ${
                   isStateDropdownVisible &&
                   "rounded-b-none border-b-0 border-gray-700 "
                 } flex px-4 py-2`}
@@ -1336,7 +1336,7 @@ const FormView = ({
                 ref={distDropdownRef}
                 onClick={handleDistBtnClick}
                 value={formData.district}
-                className={`relative w-full h-10 border-[1px] border-gray-500  rounded-md ${
+                className={`relative w-full capitalize h-10 border-[1px] border-gray-500  rounded-md ${
                   isDistDropdownVisible &&
                   "rounded-b-none border-b-0 border-gray-700 "
                 } flex px-4 py-2`}
