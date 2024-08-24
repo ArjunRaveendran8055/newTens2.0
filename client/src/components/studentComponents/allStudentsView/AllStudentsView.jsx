@@ -17,14 +17,18 @@ function AllStudentsView() {
   const [columns, setColumns] = useState([]);
   const [error, setError] = useState(null);
 
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalDocuments, setTotalDocuments] = useState(0);
-    const [limit] = useState(10);
+  // Pagination state
+  const [currentPagee, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalDocuments, setTotalDocuments] = useState(0);
+  const [selectedLimit, setSelectedLimit] = useState(5);
 
   const toggleOverlay = () => {
     setIsOverlayOpen(!isOverlayOpen);
+  };
+
+  const handleLimitChange = (e) => {
+    setSelectedLimit(Number(e.target.value));
   };
 
   const handleSubmit = async () => {
@@ -35,17 +39,21 @@ function AllStudentsView() {
         country: selectedCountry,
         district: selectedDistrict,
         medium: selectedMedium,
-        page: currentPage, 
-        limit
+        page: currentPagee,
+        limit: selectedLimit
       });
-  
+
       // Extract data from response
-      const { students, currentPagee, totalPages, totalDocuments } = response.data;
+      const { students, currentPage, totalPages, totalDocuments } = response.data;
       setStudents(students);
-      setCurrentPage(currentPagee);
+
+      // Debugging statements to ensure state update
+      console.log('Setting current page to:', currentPage);
+      setCurrentPage(currentPage);
+
       setTotalPages(totalPages);
       setTotalDocuments(totalDocuments);
-  
+
       // Dynamically set columns based on the student data
       if (students.length > 0) {
         setColumns(Object.keys(students[0]));
@@ -59,7 +67,7 @@ function AllStudentsView() {
 
   useEffect(() => {
     handleSubmit();
-  }, [currentPage]);
+  }, [currentPagee, selectedLimit]);
 
 
   const districts = [
@@ -78,8 +86,8 @@ function AllStudentsView() {
     "Kannur",
     "Kasargod"
   ];
-  const classes = ["7","8","9","10","11","12"];
-  const syllabi = ["cbse","state"];
+  const classes = ["7", "8", "9", "10", "11", "12"];
+  const syllabi = ["cbse", "state"];
   const country = ["india", "usa", "quatar"];
 
   const handlePageChange = (page) => {
@@ -97,16 +105,16 @@ function AllStudentsView() {
         data: {
           syllabus: selectedSyllabus, // Replace with actual filtering criteria
           classs: selectedClass,
-          country:selectedCountry,
-          district:selectedDistrict,
-          medium:selectedMedium,
+          country: selectedCountry,
+          district: selectedDistrict,
+          medium: selectedMedium,
         },
         onDownloadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           console.log(`Download Progress: ${percentCompleted}%`);
         },
       });
- 
+
       // Create a temporary link and trigger download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -121,7 +129,7 @@ function AllStudentsView() {
 
 
   return (
-<section className="container mx-auto pt-6 font-mono">
+    <section className="container mx-auto pt-6 font-mono">
       <div className='flex gap-5'>
         <Button
           className="flex mb-4 sm:gap-1 lg:gap-2 justify-center items-center bg-black sm:w-20 lg:w-32 sm:h-10 lg:h-10 text-white"
@@ -129,12 +137,25 @@ function AllStudentsView() {
         >
           <span>Export</span>
         </Button>
+
         <Button
           className="flex mb-2 sm:gap-1 lg:gap-2 justify-center items-center bg-black sm:w-20 lg:w-32 sm:h-10 lg:h-10 text-white"
           onClick={toggleOverlay}
         >
           <span>Sort Data</span>
         </Button>
+
+        {/* Limit Selection Dropdown */}
+        <select
+          value={selectedLimit}
+          onChange={handleLimitChange}
+          className="bg-white border h-10 border-gray-300 rounded-md shadow-sm py-2 px-3"
+        >
+          <option value={2}>2</option>
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+        </select>
+
       </div>
 
       {error && <div className="text-red-500">{error}</div>}
@@ -184,19 +205,19 @@ function AllStudentsView() {
         </div>
       </div>
 
-       {/* Pagination Controls */}
-       <div className="flex justify-center gap-3 items-center">
+      {/* Pagination Controls */}
+      <div className="flex justify-center gap-3 items-center">
         <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPagee - 1)}
+          disabled={currentPagee === 1}
           className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
         >
           Previous
         </button>
-        <span>Page {currentPage} of {totalPages}</span>
+        <span>Page {currentPagee} of {totalPages}</span>
         <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPagee + 1)}
+          disabled={currentPagee === totalPages}
           className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
         >
           Next
@@ -257,8 +278,8 @@ function AllStudentsView() {
             </select>
           </div>
 
-              {/* Medium Dropdown */}
-              <div className="mb-4">
+          {/* Medium Dropdown */}
+          <div className="mb-4">
             <label htmlFor="medium" className="block text-sm font-medium text-gray-700">
               Medium
             </label>
@@ -268,13 +289,13 @@ function AllStudentsView() {
               value={selectedMedium}
               onChange={(e) => setMedium(e.target.value)}
             >
-                <option value="english">
-                  English
-                </option>
-                <option value="malayalam">
-                  Malayalam
-                </option>
-              
+              <option value="english">
+                English
+              </option>
+              <option value="malayalam">
+                Malayalam
+              </option>
+
             </select>
           </div>
 
@@ -318,7 +339,7 @@ function AllStudentsView() {
             </select>
           </div>
 
-        
+
           {/* Submit Button */}
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
