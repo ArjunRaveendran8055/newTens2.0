@@ -47,6 +47,7 @@ function Search() {
         //console.log(res.data.data);
         setNoUsers(false);
         setStudentList(res.data.data);
+        console.log("res array is:",res.data.data)
         setIsLoading(false);
       })
       .catch((err) => {
@@ -65,6 +66,8 @@ function Search() {
       setStudentList([]);
     }
   }, [roll, no, name]);
+
+  console.log("state Array is:",studentList)
 
   //function to set selected student details
   const selectHandler = (student) => { };
