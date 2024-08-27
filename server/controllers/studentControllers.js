@@ -7,7 +7,6 @@ const XLSX = require("xlsx");
 const { Transform } = require("stream");
 const { Parser } = require("json2csv");
 const { fetchAAbasedClasses } = require("../helpers/FetchRoleBasedClassess");
-// const {}=require("../helpers/FetchRoleBasedClassess")
 
 //fetch all students
 const getAllStudentsController = asyncWrapper(async (req, res, next) => {
@@ -18,6 +17,11 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
   const matchStage = {};
   if (role === "AA") {
     const classes = await fetchAAbasedClasses(id);
+    console.log("classes", classes);
+    if (classes.length === 0) {
+      console.log("kudum");
+      throw new AppError(400, "No match F!");
+    }
     const exactClasses = classes.map((item) => ({
       centre: item.centre,
       level: item.level,
@@ -25,13 +29,17 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
       batch: item.batch,
     }));
     //match for fetching the student that only matches the batch assinged to that perticulat AA
-    return pipeline.push({
+    pipeline.push({
       $match: {
         $or: exactClasses,
       },
     });
   } else if (role === "MENTOR") {
     const classes = await fetchAAbasedClasses(id);
+    if (classes.length === 0) {
+      console.log("kudum");
+      throw new AppError(400, "No match Found!");
+    }
     const exactClasses = classes.map((item) => ({
       centre: item.centre,
       level: item.level,
@@ -39,7 +47,7 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
       batch: item.batch,
     }));
     //match for fetching the student that only matches the batch assinged to that perticulat MENTOR
-    return pipeline.push({
+    pipeline.push({
       $match: {
         $or: exactClasses,
       },
@@ -69,10 +77,11 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
 
   const result = await ApproveStudentModel.aggregate(pipeline);
 
+  console.log("result is:", result);
   if (result.length === 0) {
     throw new AppError(400, "No Match Found!.");
   }
-  // console.log("result is:",result)
+  console.log("result is:", result);
   res.status(200).json({ data: result, success: true });
 });
 
