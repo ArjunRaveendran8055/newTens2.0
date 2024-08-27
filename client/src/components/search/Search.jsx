@@ -176,9 +176,9 @@ function Search() {
                 ))
               ) :
                 (
-                  studentList.map((student) => (
+                  studentList.map((student,key) => (
                     <li
-                      key={student.roll_no}
+                      key={key}
                       className="col-span-1 divide-y divide-gray-500 rounded-lg bg-white shadow-lg "
                     >
                       <div className="flex w-full items-center justify-between space-x-6 sm:p-12 lg:p-10">
