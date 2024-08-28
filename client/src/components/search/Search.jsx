@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Tabs, TabsHeader, Tab } from "@material-tailwind/react";
+import { debounce } from "lodash";
 import boyIcon from "/icons/boyIcon.png";
 import girlIcon from "/icons/girlIcon.png";
 import { PiStudentBold } from "react-icons/pi";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 import { MdPhoneAndroid } from "react-icons/md";
 import axios from "axios";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 import SkeletonStudent from "../../widgets/skeletonLoading/SkeletonStudentSearch";
 
 function Search() {
@@ -40,14 +41,13 @@ function Search() {
 
   //Api to fetch students according to the search string
   const searchStudents = () => {
-    setIsLoading(true);
     axios
       .get(`/student/getAllStudents?roll=${roll}&name=${name}&phno=${no}`)
       .then((res) => {
         //console.log(res.data.data);
         setNoUsers(false);
         setStudentList(res.data.data);
-        console.log("res array is:",res.data.data)
+        console.log("res array is:", res.data.data);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -60,17 +60,23 @@ function Search() {
 
   useEffect(() => {
     if (roll.length >= 3 || no.length >= 3 || name.length >= 3) {
+      setIsLoading(true);
       searchStudents();
     } else {
-      setNoUsers(false);
-      setStudentList([]);
+      const timeoutId = setTimeout(() => {
+        setNoUsers(false);
+        setStudentList([]);
+        setIsLoading(false);
+      }, 300);
+      // Cleanup the timeout if the dependencies change before the timeout completes
+      return () => clearTimeout(timeoutId);
     }
   }, [roll, no, name]);
 
-  console.log("state Array is:",studentList)
+  console.log("state Array is:", studentList);
 
   //function to set selected student details
-  const selectHandler = (student) => { };
+  const selectHandler = (student) => {};
 
   return (
     <div>
@@ -170,99 +176,106 @@ function Search() {
               role="list"
               className="grid sm:gap-10 lg:gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
             >
-              {isLoading ? (
-                Array.from({ length: 6 }).map((_, index) => (
-                  <SkeletonStudent key={index}/>
-                ))
-              ) :
-                (
-                  studentList.map((student,key) => (
-                    <li
-                      key={key}
-                      className="col-span-1 divide-y divide-gray-500 rounded-lg bg-white shadow-lg "
-                    >
-                      <div className="flex w-full items-center justify-between space-x-6 sm:p-12 lg:p-10">
-                        <div className="flex-1 truncate">
-                          <div className="flex items-center space-x-3">
-                            <h3 className="truncate text-sm font-medium text-gray-900 uppercase">
-                              {student.student_name}
-                            </h3>
-                          </div>
-                          <div className="mt-1 truncate text-md text-gray-700 flex gap-2 w-full px-2 justify-between">
-                            <span className="inline-flex flex-shrink-0 items-center rounded-full bg-custdarkblue px-1.5 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-green-500">
-                              {student.roll_no}
-                            </span>
-                            <p>{student.class}</p>
-                          </div>
-                        </div>
-                        <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center ring-2 ring-black">
-                          <img
-                            src={`${student.gender === "FEMALE" ? girlIcon : boyIcon
-                              }`}
-                            alt=""
-                            className="object-contain"
-                          />
-                        </div>
+              {studentList.map((student, key) => (
+                <li
+                  key={key}
+                  className="col-span-1 divide-y divide-gray-500 rounded-lg bg-white shadow-lg "
+                >
+                  <div className="flex w-full items-center justify-between space-x-6 sm:p-12 lg:p-10">
+                    <div className="flex-1 truncate">
+                      <div className="flex items-center space-x-3">
+                        <h3 className="truncate text-sm font-medium text-gray-900 uppercase">
+                          {student.student_name}
+                        </h3>
                       </div>
-                      <div>
-                        <div className="-mt-px flex divide-x divide-gray-200">
-                          <Link className="flex w-0 flex-1 " to={`/search/studentdetails/${student._id}`}>
-                            <div
-                              className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                              onClick={() => {
-                                selectHandler(student);
-                              }}
-                            >
-                              <svg
-                                className="h-5 w-5 text-gray-400"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
-                                <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
-                              </svg>
-                              View
-                            </div>
-                          </Link>
+                      <div className="mt-1 truncate text-md text-gray-700 flex gap-2 w-full px-2 justify-between">
+                        <span className="inline-flex flex-shrink-0 items-center rounded-full bg-custdarkblue px-1.5 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-green-500">
+                          {student.roll_no}
+                        </span>
+                        <p>{student.class}</p>
+                      </div>
+                    </div>
+                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center ring-2 ring-black">
+                      <img
+                        src={`${
+                          student.gender === "FEMALE" ? girlIcon : boyIcon
+                        }`}
+                        alt=""
+                        className="object-contain"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="-mt-px flex divide-x divide-gray-200">
+                      <Link
+                        className="flex w-0 flex-1 "
+                        to={`/search/studentdetails/${student._id}`}
+                      >
+                        <div
+                          className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+                          onClick={() => {
+                            selectHandler(student);
+                          }}
+                        >
+                          <svg
+                            className="h-5 w-5 text-gray-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
+                            <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
+                          </svg>
+                          View
+                        </div>
+                      </Link>
 
-                          <div className="-ml-px flex w-0 flex-1">
-                            <a
-                              href="tel:+1-202-555-0170"
-                              className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                            >
-                              <svg
-                                className="h-5 w-5 text-gray-400"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                              Call
-                            </a>
-                          </div>
-                        </div>
+                      <div className="-ml-px flex w-0 flex-1">
+                        <a
+                          href="tel:+1-202-555-0170"
+                          className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+                        >
+                          <svg
+                            className="h-5 w-5 text-gray-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Call
+                        </a>
                       </div>
-                    </li>
-                  ))
-                )}
-              
+                    </div>
+                  </div>
+                </li>
+              ))}
+
               {/* More people... */}
             </ul>
           </div>
-        ) : !noUsers ? (
-          <div className="sm:text-md lg:text-3xl w-full flex justify-center items-center mt-20">
-            <h1>Enter Atleast 3 Characters...</h1>
-          </div>
         ) : (
-          <div className="text-3xl w-full flex justify-center items-center mt-20">
-            <h1>No users Found...</h1>
-          </div>
+          <>
+            {isLoading ? (
+              <div className="grid sm:gap-10 lg:gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <SkeletonStudent key={index} />
+                ))}
+              </div>
+            ) : !noUsers ? (
+              <div className="sm:text-md lg:text-3xl w-full flex flex-wrap justify-center items-center mt-20">
+                <h1>Enter Atleast 3 Characters...</h1>
+              </div>
+            ) : (
+              <div className="sm:text-md lg:text-3xl w-full flex flex-wrap justify-center items-center mt-20">
+                <div>No users found</div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
