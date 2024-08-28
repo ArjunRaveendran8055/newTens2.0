@@ -18,6 +18,11 @@ function ClassReport() {
       roll: "",
       name: "",
       studentId: "",
+      syllabus:"",
+      class:"",
+      stream:"",
+      batch:"",
+      centre:"",
       report: [], 
       remark: "",
       reportedBy: "",
@@ -44,13 +49,13 @@ function ClassReport() {
    const fetchData = async () => {
     if (searchRoll.length === 5) {
         try {
-            const responseReport = await axios.get(`http://localhost:8055/classReport/GetAllReport/${id}?roll=${searchRoll}`);
-            const response = await axios.get(`http://localhost:8055/classReport/GetClassStudentDetails/${id}?roll=${searchRoll}`);
+            const responseReport = await axios.get(`/classReport/GetAllReport/${id}?roll=${searchRoll}`);
+            const response = await axios.get(`/classReport/GetClassStudentDetails/${id}?roll=${searchRoll}`);
             console.log(response)
             const fetchedReportData = responseReport.data.report; 
-            console.log(fetchedReportData)
+            // console.log(fetchedReportData)
             const fetchedStudentName = response.data.data[0].student_name;
-            console.log(response.data.data[0]._id)
+            // console.log(response.data.data[0]._id)
             
             if(fetchedReportData){
               setStudentId(fetchedReportData._id);
@@ -59,6 +64,11 @@ function ClassReport() {
                 ...prevState,
                 name: fetchedStudentName,
                 roll: searchRoll,
+                syllabus:fetchedReportData.syllabus,
+                classs:fetchedReportData.class,
+                centre:fetchedReportData.centre,
+                batch:fetchedReportData.batch,
+                level:fetchedReportData.level,
                 studentId: fetchedReportData._id,
                 report: fetchedReportData.report,
                 remark: fetchedReportData.remark,
@@ -89,6 +99,11 @@ function ClassReport() {
         setReportData({
           roll: "",
           name: "",
+          syllabus:"",
+          classs:"",
+          centre:"",
+          batch:"",
+          level:"",
           studentId: "",
           report: [], 
           remark: "",
@@ -99,6 +114,8 @@ function ClassReport() {
         })
         setIsDataFetched(false); // Disable the save button
     }
+    console.log(reportData);
+    
 };
 
     const handleCheckboxChange = (e) => {
@@ -141,7 +158,7 @@ function ClassReport() {
 
 // POST REQUEST TO SERVER
    const handleSave = async() => {
-   await axios.post(`http://localhost:8055/classReport/CreateReport/${id}`,{
+   await axios.post(`/classReport/CreateReport/${id}`,{
     ...reportData,
     studentId,
   })
