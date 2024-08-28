@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState,} from "react";
 import { Tabs, TabsHeader, Tab } from "@material-tailwind/react";
-import { debounce } from "lodash";
 import boyIcon from "/icons/boyIcon.png";
 import girlIcon from "/icons/girlIcon.png";
 import { PiStudentBold } from "react-icons/pi";
@@ -59,18 +58,18 @@ function Search() {
   };
 
   useEffect(() => {
-    if (roll.length >= 3 || no.length >= 3 || name.length >= 3) {
-      setIsLoading(true);
-      searchStudents();
-    } else {
-      const timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
+      if (roll.length >= 3 || no.length >= 3 || name.length >= 3) {
+        setIsLoading(true);
+        searchStudents();
+      } else {
         setNoUsers(false);
         setStudentList([]);
         setIsLoading(false);
-      }, 300);
-      // Cleanup the timeout if the dependencies change before the timeout completes
-      return () => clearTimeout(timeoutId);
-    }
+      }
+    }, 100);
+    // Cleanup the timeout if the dependencies change before the timeout completes
+    return () => clearTimeout(timeoutId);
   }, [roll, no, name]);
 
   console.log("state Array is:", studentList);
