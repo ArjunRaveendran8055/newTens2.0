@@ -51,11 +51,25 @@ function ClassReport() {
         try {
             const responseReport = await axios.get(`/classReport/GetAllReport/${id}?roll=${searchRoll}`);
             const response = await axios.get(`/classReport/GetClassStudentDetails/${id}?roll=${searchRoll}`);
-            console.log(response)
+            console.log(response.data.data,"ress")
             const fetchedReportData = responseReport.data.report; 
             // console.log(fetchedReportData)
             const fetchedStudentName = response.data.data[0].student_name;
             // console.log(response.data.data[0]._id)
+            if(response.data.data[0]){
+              console.log(response.data.data[0].syllabus,"pppp");
+              setReportData(prevState => ({
+                ...prevState,
+                syllabus:response.data.data[0].syllabus,
+                classs:response.data.data[0].class,
+                centre:response.data.data[0].centre,
+                batch:response.data.data[0].batch,
+                level:response.data.data[0].level,
+              }));
+            }
+
+            console.log(reportData,"reportt");
+            
             
             if(fetchedReportData){
               setStudentId(fetchedReportData._id);
@@ -64,11 +78,6 @@ function ClassReport() {
                 ...prevState,
                 name: fetchedStudentName,
                 roll: searchRoll,
-                syllabus:fetchedReportData.syllabus,
-                classs:fetchedReportData.class,
-                centre:fetchedReportData.centre,
-                batch:fetchedReportData.batch,
-                level:fetchedReportData.level,
                 studentId: fetchedReportData._id,
                 report: fetchedReportData.report,
                 remark: fetchedReportData.remark,
@@ -114,7 +123,6 @@ function ClassReport() {
         })
         setIsDataFetched(false); // Disable the save button
     }
-    console.log(reportData);
     
 };
 
