@@ -19,6 +19,11 @@ const createReportController = asyncWrapper(async (req, res, next) => {
     followUp,
     response,
     respondedBy,
+    classs,
+    syllabus,
+    centre,
+    batch,
+    level
   } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(classId)) {
@@ -35,6 +40,11 @@ const createReportController = asyncWrapper(async (req, res, next) => {
       $set: {
         "classreport.$.name": name,
         "classreport.$.studentId": studentId,
+        "classreport.$.class": classs,
+        "classreport.$.syllabus": syllabus,
+        "classreport.$.centre": centre,
+        "classreport.$.batch": batch,
+        "classreport.$.level": level,
         "classreport.$.report": report,
         "classreport.$.remark": remark,
         "classreport.$.reportedBy": reportedBy,
@@ -52,6 +62,11 @@ const createReportController = asyncWrapper(async (req, res, next) => {
       roll,
       name,
       studentId,
+      class: classs,
+      syllabus,
+      centre,
+      batch,
+      level,
       report,
       remark,
       reportedBy,
@@ -132,6 +147,9 @@ const getClassStudentDetailsController = asyncWrapper(
           syllabus: result.classsyllabus.toLowerCase(),
           class: result.classname,
           roll_no: roll,
+          stream: result.stream,
+          batch : result.stream
+
         });
 
         if (students.length == 0) {
