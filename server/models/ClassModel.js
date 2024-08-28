@@ -26,6 +26,10 @@ const newclassSchema = new mongoose.Schema(
       type: String,
       required: [true, "syllabus required"],
     },
+    classstream:{
+      type: String,
+      required: [true, "stream required"],
+    },
     classfeed: {
       mainhost: String,
       teacher: String,

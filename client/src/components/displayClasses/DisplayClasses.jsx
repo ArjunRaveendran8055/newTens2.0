@@ -17,12 +17,14 @@ import axios from "axios";
 import Skeleton from "../../widgets/skeletonLoading/Skeleton";
 import { Link } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
+import allSyllabus from "../../layouts/syllabus.json";
 
 function DisplayClasses() {
   const [open, setOpen] = useState(false);
   const [load, setLoad] = useState(false);
   const [classDetails, setClassDetails] = useState({
     selectedSyllabus: "",
+    selectedStream:"",
     selectedClass: "",
     selectedSubject: "",
     tutorName: "",
@@ -37,10 +39,17 @@ function DisplayClasses() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [classToDelete, setClassToDelete] = useState(null);
+  const [availableStreams, setAvailableStreams] = useState([]);
 
   useEffect(() => {
     fetchData();
   }, [currentPage, limit, load]);
+
+  useEffect(() => {
+    const defaultSyllabus = "state"; // Or "state" if you prefer
+    const syllabusData = allSyllabus.find(syllabus => syllabus.syllabus === defaultSyllabus);
+    setAvailableStreams(syllabusData ? syllabusData.levels : []);
+  }, []);
 
   // FUNCTION TO FETCH ALL CLASSES
   const fetchData = async () => {
@@ -55,6 +64,8 @@ function DisplayClasses() {
         }
       );
       const data = response.data;
+      console.log(data);
+      
       setClasses(data.classes);
       if (data.pagination && data.pagination.next) {
         setTotalPages(data.pagination.next.page);
@@ -62,8 +73,10 @@ function DisplayClasses() {
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-    }
+    }    
   };
+
+
 
 
   const handleOpen = () => {
@@ -95,7 +108,8 @@ function DisplayClasses() {
       classDetails.selectedSubject.trim() === "" ||
       classDetails.tutorName.trim() === "" ||
       classDetails.scheduleTime.trim() === "" ||
-      classDetails.selectedSyllabus.trim() === ""
+      classDetails.selectedSyllabus.trim() === "" ||
+      classDetails.selectedStream.trim() === ""
     ) {
       alert("Please fill in all fields.");
       return;
@@ -109,12 +123,14 @@ function DisplayClasses() {
         classexam: classDetails.isExam,
         classsyllabus: classDetails.selectedSyllabus,
         classsubject: classDetails.selectedSubject,
+        classstream: classDetails.selectedStream,
       })
       .then((res) => {
         console.log(res.data);
         handleLoad();
         setClassDetails({
           selectedSyllabus: "",
+          selectedStream:"",
           selectedClass: "",
           selectedSubject: "",
           tutorName: "",
@@ -191,6 +207,23 @@ function DisplayClasses() {
                 <Option value="cbse">CBSE</Option>
               </Select>
             </div>
+
+            <Typography className="-mb-2" variant="h6">
+              Select Stream
+            </Typography>
+            <div className="w-100">
+              <Select
+                label="Stream"
+                onChange={(value) =>
+                  handleInputChange("selectedStream", value)
+                }
+              >
+              {availableStreams.map((stream, index) => (
+            <Option key={index} value={stream.level}>{stream.txt}</Option>
+          ))}
+              </Select>
+            </div>
+
 
             <Typography className="-mb-2" variant="h6">
               Select Class
@@ -308,26 +341,32 @@ function DisplayClasses() {
           ))
         )}
       </div>
-      
-      <div className="flex justify-center mt-4">
-        <ButtonGroup>
-          <Button
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1}
-            className="mr-2"
-          >
-            Previous Page
-          </Button>
-          <Button>{`${currentPage} of ${totalPages}`}</Button>
-          <Button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className="ml-2"
-          >
-            Next Page
-          </Button>
-        </ButtonGroup>
-      </div>
+      {
+        !!totalPages &&
+        <>
+              <div className="flex justify-center mt-4">
+              <ButtonGroup>
+                <Button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  className="mr-2"
+                >
+                  Previous Page
+                </Button>
+                <Button>{`${currentPage} of ${totalPages}`}</Button>
+                <Button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="ml-2"
+                >
+                  Next Page
+                </Button>
+              </ButtonGroup>
+            </div>
+            </>
+
+      }
+
     </div>
   );
 }

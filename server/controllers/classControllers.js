@@ -11,6 +11,7 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     classexam,
     classsyllabus,
     classsubject,
+    classstream
   } = req.body;
 
   if (
@@ -18,7 +19,8 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     classname == "" ||
     classdate == "" ||
     classsyllabus == "" ||
-    classsubject == ""
+    classsubject == "" ||
+    classstream == ""
   ) {
     throw new AppError(400, "required all fields!");
   }
@@ -30,6 +32,7 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     classexam,
     classsyllabus,
     classsubject,
+    classstream
   });
 
   const savedClass = await newClass.save();
@@ -114,9 +117,10 @@ const getAllClassesController = asyncWrapper(async (req, res, next) => {
   if (syllabus) {
     classes = await ClassModel.find({ classsyllabus: syllabus })
       .skip(startIndex)
-      .limit(limit);
+      .limit(limit)
+      .sort({createdAt:-1});
   } else {
-    classes = await ClassModel.find().skip(startIndex).limit(limit);
+    classes = await ClassModel.find().skip(startIndex).limit(limit).sort({createdAt:-1});
   }
 
   const pagination = {};
