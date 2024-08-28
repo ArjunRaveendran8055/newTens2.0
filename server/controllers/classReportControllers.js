@@ -8,7 +8,9 @@ const { ApproveStudentModel } = require("../models/ApproveStudentModel");
 
 const createReportController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
-
+ 
+   
+  console.log(req.body)
   const {
     roll,
     name,
@@ -146,11 +148,10 @@ const getClassStudentDetailsController = asyncWrapper(
         students = await ApproveStudentModel.find({
           syllabus: result.classsyllabus.toLowerCase(),
           class: result.classname,
-          roll_no: roll,
-          stream: result.stream,
-          batch : result.stream
-
+          roll_no: roll.toLowerCase(),
+          level: result.classstream,
         });
+
 
         if (students.length == 0) {
           throw new AppError(404, "Invalid Roll Number!");
