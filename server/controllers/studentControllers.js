@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const XLSX = require("xlsx");
 const { Transform } = require("stream");
 const { Parser } = require("json2csv");
-const { fetchAAbasedClasses } = require("../helpers/FetchRoleBasedClassess");
+const { fetchAAbasedClasses, fetchMentorBasedClasses } = require("../helpers/FetchRoleBasedClassess");
 
 //fetch all students
 const getAllStudentsController = asyncWrapper(async (req, res, next) => {
@@ -20,7 +20,7 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
     console.log("classes", classes);
     if (classes.length === 0) {
       console.log("kudum");
-      throw new AppError(400, "No match F!");
+      throw new AppError(400, "No match Found!");
     }
     const exactClasses = classes.map((item) => ({
       centre: item.centre,
@@ -35,7 +35,7 @@ const getAllStudentsController = asyncWrapper(async (req, res, next) => {
       },
     });
   } else if (role === "MENTOR") {
-    const classes = await fetchAAbasedClasses(id);
+    const classes = await fetchMentorBasedClasses(id);
     if (classes.length === 0) {
       console.log("kudum");
       throw new AppError(400, "No match Found!");
