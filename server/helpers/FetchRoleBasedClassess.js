@@ -39,13 +39,60 @@ const fetchAAbasedClasses = async (id) => {
   try {
     const result = await CentreModel.aggregate(pipeline);
     // console.log("result form Fetch is:", result);
-    return result
+    return result;
   } catch (error) {
     console.log(error.message);
-    return []
+    return [];
+  }
+};
+
+const fetchMentorBasedClasses = async (id) => {
+  const pipeline = [
+    {
+      $unwind: {
+        path: "$classes",
+      },
+    },
+    {
+      $unwind: {
+        path: "$classes.batches",
+      },
+    },
+    {
+      $unwind: {
+        path: "$classes.batches.mentors",
+      },
+    },
+    {
+      $match: {
+        "classes.batches.mentors.id": {
+          $regex: id,
+        },
+      },
+    },
+
+    {
+      $project: {
+        _id: 0,
+        aa: "$classes.batches.mentors.name",
+        centre: "$centrename",
+        class: "$classes.class",
+        batch: "$classes.batches.name",
+        level: "$classes.stream",
+      },
+    },
+  ];
+  try {
+    const result = await CentreModel.aggregate(pipeline);
+    // console.log("result form Fetch is:", result);
+    return result;
+  } catch (error) {
+    console.log(error.message);
+    return [];
   }
 };
 
 module.exports = {
   fetchAAbasedClasses,
+  fetchMentorBasedClasses,
 };
