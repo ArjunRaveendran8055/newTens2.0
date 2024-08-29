@@ -250,7 +250,7 @@ const downloadStudentsCSVController = asyncWrapper(async (req, res, next) => {
         address: 1,
         class: 1,
         syllabus: 1,
-        batch :1,
+        batch: 1,
         student_status: 1,
         medium: 1,
         school_name: 1,
@@ -271,13 +271,27 @@ const downloadStudentsCSVController = asyncWrapper(async (req, res, next) => {
   // Fetch data from the database
   const cursor = ApproveStudentModel.aggregate(pipeline).cursor();
 
-  // Create a CSV parser and transform stream
-  const parser = new Parser();
+  // Create a CSV parser without automatically including headers
+  const parser = new Parser({ header: false });
+  
+  // Boolean to track if headers have been written
+  let headersWritten = false;
+
+  // Create a transform stream
   const transformStream = new Transform({
     objectMode: true,
     transform: (chunk, encoding, callback) => {
-      // Convert each chunk to CSV and push to the readable stream
-      callback(null, parser.parse(chunk));
+      let csvChunk = '';
+      
+      // Add headers only for the first chunk
+      if (!headersWritten) {
+        csvChunk += parser.parse(chunk, { header: true }) + '\n';
+        headersWritten = true;
+      } else {
+        csvChunk += parser.parse(chunk) + '\n';
+      }
+
+      callback(null, csvChunk);
     },
   });
 
@@ -288,6 +302,9 @@ const downloadStudentsCSVController = asyncWrapper(async (req, res, next) => {
   // Pipe the cursor to the transform stream and then to the response
   cursor.pipe(transformStream).pipe(res);
 });
+
+module.exports = downloadStudentsCSVController;
+
 
 //getSsrReport of a student using id as params
 const fetchStudentReportsController = asyncWrapper(async (req, res, next) => {
