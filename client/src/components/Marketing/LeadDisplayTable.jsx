@@ -148,6 +148,16 @@ const LeadDisplayTable = ({
   //console.log("fields are:", fields);
 
   const onExport = () => {
+
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    const today = new Date();
+
     axios
       .post(
         `/leadbank/exportleads?dateFrom=${dateFrom}&dateTo=${dateTo}`,
@@ -158,7 +168,7 @@ const LeadDisplayTable = ({
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "leads.csv"); // Update filename to CSV
+        link.setAttribute("download", `leads_${formatDate(today)}_.csv`); // Update filename to CSV
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link); // Clean up after download
