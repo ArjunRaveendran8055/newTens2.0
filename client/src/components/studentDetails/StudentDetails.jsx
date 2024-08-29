@@ -231,6 +231,7 @@ const StudentDetails = () => {
             </div>
 
             <div className="sm:hidden lg:block lg:col-span-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+            {!openViewReports ? (
               <div className="p-6 capitalize">
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">
                   Student Information
@@ -285,12 +286,18 @@ const StudentDetails = () => {
                   />
                 </div>
               </div>
+              ):(
+                <div className="h-full">
+                <SsrReportView id={student._id} />
+                </div>
+              )}
             </div>
-                          {openViewReports && (
+          
+                          {/* {openViewReports && (
         <div className="absolute right-0 w-1/2 bg-white border border-gray-200 rounded-lg shadow-md transform transition-transform duration-500 ease-in-out translate-x-full lg:translate-x-0">
           <SsrReportView id={student._id} />
         </div>
-      )}
+      )} */}
 
  
           </div>
