@@ -152,19 +152,20 @@ const LeadDisplayTable = ({
       .post(
         `/leadbank/exportleads?dateFrom=${dateFrom}&dateTo=${dateTo}`,
         { fields },
-        { responseType: "blob" }
+        { responseType: "blob" } // Ensure the response is treated as a binary blob
       )
       .then((res) => {
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "leads.xlsx"); // Set the filename
+        link.setAttribute("download", "leads.csv"); // Update filename to CSV
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link); // Clean up after download
       })
-      .catch((err) => console.log("Error downloading File!"));
+      .catch((err) => console.log("Error downloading file:", err));
   };
+  
 
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
