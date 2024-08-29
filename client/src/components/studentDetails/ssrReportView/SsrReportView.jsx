@@ -34,7 +34,7 @@ export function SsrReportView({ id }) {
   console.log("id is :", id);
   useEffect(() => {
     axios
-      .get(`/student//fetchStudentReports/${id}`)
+      .get(`/student/fetchStudentReports/${id}`)
       .then((res) => {
         console.log(res.data.data);
         setSsrReports(res.data.data);
