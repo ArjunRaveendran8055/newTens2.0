@@ -20,7 +20,7 @@ function Search() {
   });
   const [studentList, setStudentList] = useState([]);
   const [noUsers, setNoUsers] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const inputChangeHandler = (e) => {
     if (input.value === "roll") {
@@ -67,7 +67,7 @@ function Search() {
         setStudentList([]);
         setIsLoading(false);
       }
-    }, 100);
+    }, 300);
     // Cleanup the timeout if the dependencies change before the timeout completes
     return () => clearTimeout(timeoutId);
   }, [roll, no, name]);
