@@ -48,7 +48,9 @@ function ClassHome() {
         `/classReport/GetAllReport/${id}`
       );
       const data = response.data;
+      // console.log("reports are",data)
       // store report data to loop for preview
+      console.log("filtered report",responseReports.data.report)
       setReportData(responseReports.data.report);
       setReportDataCopy(responseReports.data.report);
       dispatch(removeLoader());

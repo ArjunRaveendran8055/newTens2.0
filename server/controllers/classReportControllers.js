@@ -4,13 +4,16 @@ const { ClassModel } = require("../models/ClassModel");
 const mongoose = require("mongoose");
 const { StudentModel } = require("../models/StudentModel");
 const { ApproveStudentModel } = require("../models/ApproveStudentModel");
-
+const { pipeline } = require("stream");
+const {
+  fetchAAbasedClasses,
+  fetchMentorBasedClasses,
+} = require("../helpers/FetchRoleBasedClassess");
 
 const createReportController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
- 
-   
-  console.log(req.body)
+
+  console.log(req.body);
   const {
     roll,
     name,
@@ -25,7 +28,7 @@ const createReportController = asyncWrapper(async (req, res, next) => {
     syllabus,
     centre,
     batch,
-    level
+    level,
   } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(classId)) {
@@ -102,16 +105,129 @@ const createReportController = asyncWrapper(async (req, res, next) => {
   });
 });
 
+//get all report in that perticular class using classId
 const getReportController = asyncWrapper(async (req, res, next) => {
-  const id = req.params.id;
+  const classId = req.params.id;
   const roll = req.query.roll ? req.query.roll.toLowerCase() : "";
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  const { id, role } = res.user;
+  console.log("id and role", id, role);
+  const pipeline = [];
+  if (!mongoose.Types.ObjectId.isValid(classId)) {
     throw new AppError(400, "Invalid class Id!");
   }
 
-  const reports = await ClassModel.findById(id);
+  console.log("class id is :", classId);
+  const documentId = new mongoose.Types.ObjectId(classId);
 
+  pipeline.push({
+    $match: {
+      _id: documentId,
+    },
+  });
+
+  if (role === "AA") {
+    const classes = await fetchAAbasedClasses(id);
+    if (classes.length === 0) {
+      console.log("kudum");
+      throw new AppError(400, "No Data Found!");
+    }
+    const exactClasses = classes.map((item) => ({
+      centre: item.centre,
+      class: String(item.class),
+      batch: item.batch,
+    }));
+
+    //console.log("exact classes:", exactClasses);
+
+    pipeline.push({
+      $addFields: {
+        classreport: {
+          $let: {
+            vars: {
+              filters: exactClasses,
+            },
+            in: {
+              $cond: {
+                if: { $eq: [{ $size: "$$filters" }, 0] },
+                then: "$classreport",
+                else: {
+                  $filter: {
+                    input: "$classreport",
+                    as: "report",
+                    cond: {
+                      $in: [
+                        {
+                          centre: "$$report.centre",
+                          class: "$$report.class",
+                          batch: "$$report.batch",
+                        },
+                        "$$filters",
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  if (role === "MENTOR") {
+    const classes = await fetchMentorBasedClasses(id);
+    if (classes.length === 0) {
+      console.log("kudum");
+      throw new AppError(400, "No Data Found!");
+    }
+    const exactClasses = classes.map((item) => ({
+      centre: item.centre,
+      class: String(item.class),
+      batch: item.batch,
+    }));
+
+    pipeline.push({
+      $addFields: {
+        classreport: {
+          $let: {
+            vars: {
+              filters: exactClasses,
+            },
+            in: {
+              $cond: {
+                if: { $eq: [{ $size: "$$filters" }, 0] },
+                then: "$classreport",
+                else: {
+                  $filter: {
+                    input: "$classreport",
+                    as: "report",
+                    cond: {
+                      $in: [
+                        {
+                          centre: "$$report.centre",
+                          class: "$$report.class",
+                          batch: "$$report.batch",
+                        },
+                        "$$filters",
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  const result = await ClassModel.aggregate(pipeline);
+
+  const reports = {
+    ...result[0],
+  };
+
+  console.log("result is :", reports);
   if (reports) {
     if (roll) {
       const Data = reports.classreport.find((e) => e.roll == roll);
@@ -133,8 +249,6 @@ const getClassStudentDetailsController = asyncWrapper(
     const roll = req.query.roll ? req.query.roll.toLowerCase() : "";
     let students;
 
-    
-
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new AppError(400, "Invalid ClassId.");
     }
@@ -151,7 +265,6 @@ const getClassStudentDetailsController = asyncWrapper(
           roll_no: roll.toLowerCase(),
           level: result.classstream,
         });
-
 
         if (students.length == 0) {
           throw new AppError(404, "Invalid Roll Number!");
