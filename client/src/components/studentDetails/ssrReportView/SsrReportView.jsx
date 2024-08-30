@@ -34,7 +34,7 @@ export function SsrReportView({ id }) {
   console.log("id is :", id);
   useEffect(() => {
     axios
-      .get(`/student//fetchStudentReports/${id}`)
+      .get(`/student/fetchStudentReports/${id}`)
       .then((res) => {
         console.log(res.data.data);
         setSsrReports(res.data.data);
@@ -53,7 +53,7 @@ export function SsrReportView({ id }) {
   };
   return (
     <div>
-      <div className="descDiv basis-1/2 font-enriq sm:text-xl md:text-2xl lg:text-md w-full  rounded-3xl lg:p-10 sm:p-3 md:p-5 flex flex-col gap-2 shadow-2xl h-[83vh] overflow-y-scroll">
+      <div className="descDiv basis-1/2 font-enriq sm:text-xl md:text-2xl lg:text-md w-full  rounded-3xl lg:p-10 sm:p-3 md:p-5 flex flex-col gap-2 shadow-2xl h-[59vh] overflow-y-scroll">
         {ssrReport.length > 0 ? (
           ssrReport?.map((report, key) => (
             <Accordion

@@ -9,12 +9,11 @@ import {
   Input,
 } from "@material-tailwind/react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { removeLoader, setLoader } from "../features/Loader/loaderSlice";
 import { Link } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
+
 function AllCentres() {
-  const dispatch = useDispatch();
   const [allCentres, setAllCentres] = useState([]);
   const [openAddCentre, setOpenAddCentre] = useState(false);
 
@@ -27,6 +26,7 @@ function AllCentres() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const openModal = (item) => {
     setItemToDelete(item);
@@ -90,16 +90,14 @@ function AllCentres() {
   };
 
   useEffect(() => {
-    dispatch(setLoader());
     axios
       .get("/centre/getAllCentres")
       .then((res) => {
         setAllCentres(res.data.result);
-        dispatch(removeLoader());
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err.response);
-        dispatch(removeLoader());
       });
       if (isFormSubmitted) {
         setIsFormSubmitted(false);
@@ -126,14 +124,6 @@ function AllCentres() {
   return (
     <div className="p-6 rounded-lg">
       <div className="flex items-center justify-center pb-6 mb-6 border-black border-b-[1px]">
-        {/* <div className="relative">
-          <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
-          <input
-            className="bg-white dark:bg-gray-800 pl-10 pr-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:border-gray-700 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-            placeholder="Search Centre..."
-            type="text"
-          />
-        </div> */}
         <button
           type="button"
           className="text-white bg-blue-700 hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
@@ -205,6 +195,14 @@ function AllCentres() {
       </Dialog>
 
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {isLoading
+        ?
+
+        Array.from({ length: 4 }).map((_, index) => (
+                  <SkeletonCardCentre key={index} />
+                ))
+        :
+        <>
         {allCentres.map((item, index) => (
           <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm transform transition-transform hover:scale-105">
             <div className="p-4">
@@ -230,6 +228,9 @@ function AllCentres() {
             </div>
           </div>
         ))}
+                </>
+        }
+       
 
       </div>
       {isModalOpen && (
@@ -250,6 +251,27 @@ function AllCentres() {
       )}
     </div>
     
+  );
+}
+
+
+function SkeletonCardCentre() {
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm transform transition-transform hover:scale-105 animate-pulse">
+      <div className="p-4">
+        <div className="flex justify-between align-middle">
+          <div className="h-5 bg-gray-300 rounded w-1/2 mb-2"></div>
+          <div className="w-5 h-5 bg-gray-300 rounded-full"></div>
+        </div>
+        
+        <div className="h-4 bg-gray-300 rounded w-3/4 mb-4"></div>
+
+        <div className="flex items-center justify-between">
+          <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+          <div className="h-8 w-20 bg-gray-300 rounded-full"></div>
+        </div>
+      </div>
+    </div>
   );
 }
 

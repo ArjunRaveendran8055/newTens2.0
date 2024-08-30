@@ -271,37 +271,39 @@ const downloadStudentsCSVController = asyncWrapper(async (req, res, next) => {
   // Fetch data from the database
   const cursor = ApproveStudentModel.aggregate(pipeline).cursor();
 
-  // Create a CSV parser without automatically including headers
-  const parser = new Parser({ header: false });
-  
-  // Boolean to track if headers have been written
-  let headersWritten = false;
-
-  // Create a transform stream
-  const transformStream = new Transform({
-    objectMode: true,
-    transform: (chunk, encoding, callback) => {
-      let csvChunk = '';
-      
-      // Add headers only for the first chunk
-      if (!headersWritten) {
-        csvChunk += parser.parse(chunk, { header: true }) + '\n';
-        headersWritten = true;
-      } else {
-        csvChunk += parser.parse(chunk) + '\n';
-      }
-
-      callback(null, csvChunk);
-    },
-  });
-
   // Set response headers for downloading the CSV file
   res.setHeader("Content-Disposition", 'attachment; filename="students.csv"');
   res.setHeader("Content-Type", "text/csv");
 
+  // Write the headers to the response first
+  const csvHeaders = [
+    "roll_no", "batch", "student_name", "address", "pin_code", "district", "gender", 
+    "syllabus", "class", "medium", "school_name", "school_location", "father", 
+    "mother", "father_no", "mother_no", "whatsapp", "centre", "student_status"
+  ];
+  
+  res.write(csvHeaders.join(',') + '\n');
+
+  // Create a transform stream to convert documents to CSV rows
+  const transformStream = new Transform({
+    objectMode: true,
+    transform: (chunk, encoding, callback) => {
+      const csvRow = [
+        chunk.roll_no, chunk.batch, chunk.student_name, chunk.address, chunk.pin_code, chunk.district, chunk.gender,
+        chunk.syllabus, chunk.class, chunk.medium, chunk.school_name, chunk.school_location, chunk.father,
+        chunk.mother, chunk.father_no, chunk.mother_no, chunk.whatsapp, chunk.centre, chunk.student_status
+      ].map(field => `"${field}"`).join(',');
+      
+      callback(null, csvRow + '\n');
+    },
+  });
+
   // Pipe the cursor to the transform stream and then to the response
   cursor.pipe(transformStream).pipe(res);
 });
+
+module.exports = downloadStudentsCSVController;
+
 
 module.exports = downloadStudentsCSVController;
 

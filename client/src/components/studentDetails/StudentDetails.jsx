@@ -17,6 +17,7 @@ import {
   UserIcon,
   GraduationCapIcon,
   BookmarkIcon,
+  School
 } from "lucide-react";
 import { SsrReportView } from "./ssrReportView/SsrReportView";
 import { SERVER_URL } from "../../server";
@@ -196,8 +197,9 @@ const StudentDetails = () => {
 
       {/* view Report div */}
 
-      <div className="w-full bg-gray-100 sm:pt-2 lg:pt-5 h-screen">
-        <div className="w-full mx-auto flex flex-col h-screen bg-red-200">
+      <div className="w-full bg-gray-100 sm:pt-2 lg:pt-5">
+        <div className="w-full mx-auto flex flex-col  bg-gray-200">
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <div className="lg:col-span-1 bg-gradient-to-br from-white to-gray-100 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
               <div className="p-6 text-center capitalize">
@@ -214,78 +216,95 @@ const StudentDetails = () => {
                 <h2 className="text-2xl font-bold mb-2 text-gray-800 capitalize">
                   {student.student_name}
                 </h2>
-                <p className="text-gray-600 mb-1 capitalize">
-                  Class: {student.class} | Roll: {student.roll_no}
+                <p className="text-black mb-1 capitalize">
+                  Class: {student.class} | Roll: {student.roll_no?.toUpperCase()}
                 </p>
-                <p className="text-gray-600 mb-4">Center: {student.centre}</p>
+                <p className="text-black mb-4">Center: {student.centre?.toUpperCase()}</p>
                 <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200 px-4 py-2 rounded-md">
+                  <button onClick={handleOpenAddReport} className="bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200 px-4 py-2 rounded-md">
                     Add Report
                   </button>
-                  <button className="text-blue-500 border border-blue-500 hover:bg-blue-50 transition-colors duration-200 px-4 py-2 rounded-md">
-                    View Reports
+                  <button onClick={handleOpenViewReports} className="text-blue-500 border border-blue-500 hover:bg-blue-50 transition-colors duration-200 px-4 py-2 rounded-md">
+                    {!openViewReports ? "View Reports" : "Close Reports"}
                   </button>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
-              <div className="p-6 capitalize">
-                <h2 className="text-xl font-semibold text-gray-700 mb-4">
-                  Student Information
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <InfoItem
-                    icon={<UserIcon className="w-5 h-5 text-blue-500" />}
-                    label="Father's Name"
-                    value="purushothaman t k"
-                  />
-                  <InfoItem
-                    icon={<UserIcon className="w-5 h-5 text-blue-500" />}
-                    label="Mother's Name"
-                    value="sumathi t p"
-                  />
-                  <InfoItem
-                    icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
-                    label="Address"
-                    value="thundiyil house, cherai p o, cherai"
-                  />
-                  <InfoItem
-                    icon={
-                      <GraduationCapIcon className="w-5 h-5 text-blue-500" />
-                    }
-                    label="Pin Code"
-                    value="683521"
-                  />
-                  <InfoItem
-                    icon={<BookOpenIcon className="w-5 h-5 text-blue-500" />}
-                    label="Syllabus"
-                    value="cbse"
-                  />
-                  <InfoItem
-                    icon={<BookmarkIcon className="w-5 h-5 text-blue-500" />}
-                    label="Medium"
-                    value="english"
-                  />
-                  <InfoItem
-                    label="School Name"
-                    value="raja rajeswari central school"
-                  />
-                  <InfoItem
-                    icon={<MapIcon className="w-5 h-5 text-blue-500" />}
-                    label="School Location"
-                    value="kodukulanji"
-                  />
-                  <InfoItem
-                    icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
-                    label="District"
-                    value="bengaluru (bangalore) urban"
-                  />
+            <div className="sm:hidden lg:block lg:col-span-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden">
+              <div
+                className={`absolute top-0 left-0 right-0 bottom-0 h-full w-full transition-transform duration-700 ${openViewReports ? "transform translate-x-0" : "transform -translate-x-full"
+                  }`}
+              >
+                {student._id &&
+                  <SsrReportView id={student._id} />
+                }
+              </div>
+
+              <div
+                className={`absolute top-0 left-0 right-0 bottom-0 h-full w-full transition-transform duration-700 ${openViewReports ? "transform translate-x-full" : "transform translate-x-0"
+                  }`}
+              >
+                <div className="p-6 capitalize">
+                  <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                    Student Information
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
+                    <InfoItem
+                      icon={<UserIcon className="w-5 h-5 text-blue-500" />}
+                      label="Father's Name"
+                      value={student.father}
+                    />
+                    <InfoItem
+                      icon={<UserIcon className="w-5 h-5 text-blue-500" />}
+                      label="Mother's Name"
+                      value={student.mother}
+                    />
+                    <InfoItem
+                      icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
+                      label="Address"
+                      value={student.address}
+                    />
+                    <InfoItem
+                      icon={
+                        <GraduationCapIcon className="w-5 h-5 text-blue-500" />
+                      }
+                      label="Pin Code"
+                      value={student.pin_code}
+                    />
+                    <InfoItem
+                      icon={<BookOpenIcon className="w-5 h-5 text-blue-500" />}
+                      label="Syllabus"
+                      value={student.syllabus}
+                    />
+                    <InfoItem
+                      icon={<BookmarkIcon className="w-5 h-5 text-blue-500" />}
+                      label="Medium"
+                      value={student.medium}
+                    />
+                    <InfoItem
+                      icon={<School className="w-5 h-5 text-blue-500" />}
+                      label="School Name"
+                      value={student.school_name}
+                    />
+                    <InfoItem
+                      icon={<MapIcon className="w-5 h-5 text-blue-500" />}
+                      label="School Location"
+                      value={student.school_location}
+                    />
+                    <InfoItem
+                      icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
+                      label="District"
+                      value={student.district}
+                    />
+                  </div>
                 </div>
+
               </div>
             </div>
           </div>
 
+          {!openViewReports?
           <div className="block lg:hidden mb-6">
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex" aria-label="Tabs">
@@ -293,11 +312,10 @@ const StudentDetails = () => {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm ${
-                      activeTab === tab
+                    className={`w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm ${activeTab === tab
                         ? "border-blue-500 text-blue-600"
                         : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                    }`}
+                      }`}
                   >
                     {tab === "info" ? "Student Info" : "Contact Details"}
                   </button>
@@ -306,12 +324,17 @@ const StudentDetails = () => {
             </div>
             <div className="mt-4">
               {activeTab === "info" ? (
-                <MobileInfoCard />
+                <MobileInfoCard student={student} />
               ) : (
-                <MobileContactCard />
+                <MobileContactCard student={student} />
               )}
             </div>
           </div>
+          :
+          <div className="lg:hidden sm:block">
+          <SsrReportView id={student._id} />
+          </div>
+}
 
           <div className="hidden lg:block">
             <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
@@ -323,22 +346,22 @@ const StudentDetails = () => {
                   <InfoItem
                     icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
                     label="WhatsApp No"
-                    value="Not provided"
+                    value={student.whatsapp}
                   />
                   <InfoItem
                     icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
                     label="Father's No"
-                    value="9497678645"
+                    value={student.father_no}
                   />
                   <InfoItem
                     icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
                     label="Mother's No"
-                    value="9992225551"
+                    value={student.mother_no}
                   />
                   <InfoItem
                     icon={<MailIcon className="w-5 h-5 text-blue-500" />}
                     label="Email ID"
-                    value="No content for email id."
+                    value={student.email}
                     className="sm:col-span-3"
                   />
                 </div>
@@ -353,79 +376,82 @@ const StudentDetails = () => {
   );
 };
 
-function MobileInfoCard() {
+function MobileInfoCard({ student }) {
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 capitalize">
         <InfoItem
           icon={<UserIcon className="w-5 h-5 text-blue-500" />}
           label="Father's Name"
-          value="purushothaman t k"
+          value={student.father}
         />
         <InfoItem
           icon={<UserIcon className="w-5 h-5 text-blue-500" />}
           label="Mother's Name"
-          value="sumathi t p"
+          value={student.mother}
         />
         <InfoItem
           icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
           label="Address"
-          value="thundiyil house, cherai p o, cherai"
+          value={student.address}
         />
         <InfoItem
           icon={<GraduationCapIcon className="w-5 h-5 text-blue-500" />}
           label="Pin Code"
-          value="683521"
+          value={student.pin_code}
         />
         <InfoItem
           icon={<BookOpenIcon className="w-5 h-5 text-blue-500" />}
           label="Syllabus"
-          value="cbse"
+          value={student.syllabus}
         />
         <InfoItem
           icon={<BookmarkIcon className="w-5 h-5 text-blue-500" />}
           label="Medium"
-          value="english"
+          value={student.medium}
         />
-        <InfoItem label="School Name" value="raja rajeswari central school" />
+        <InfoItem
+          icon={<School className="w-5 h-5 text-blue-500" />}
+          label="School Name" value={student.school_name} />
         <InfoItem
           icon={<MapIcon className="w-5 h-5 text-blue-500" />}
           label="School Location"
-          value="kodukulanji"
+          value={student.school_location}
         />
         <InfoItem
           icon={<MapPinIcon className="w-5 h-5 text-blue-500" />}
           label="District"
-          value="bengaluru (bangalore) urban"
+          value={student.district}
         />
       </div>
     </div>
   );
 }
 
-function MobileContactCard() {
+function MobileContactCard({ student }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
       <div className="grid grid-cols-1 gap-4">
         <InfoItem
           icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
           label="WhatsApp No"
-          value="Not provided"
+          value={student.whatsapp}
         />
         <InfoItem
           icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
           label="Father's No"
-          value="9497678645"
+          value={student.father_no}
         />
         <InfoItem
           icon={<PhoneIcon className="w-5 h-5 text-blue-500" />}
           label="Mother's No"
-          value="9992225551"
+          value={student.mother_no}
         />
         <InfoItem
           icon={<MailIcon className="w-5 h-5 text-blue-500" />}
           label="Email ID"
-          value="No content for email id."
+          value={student.email}
         />
       </div>
     </div>
