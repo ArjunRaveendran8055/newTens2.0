@@ -304,6 +304,7 @@ const StudentDetails = () => {
             </div>
           </div>
 
+          {!openViewReports?
           <div className="block lg:hidden mb-6">
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex" aria-label="Tabs">
@@ -329,6 +330,11 @@ const StudentDetails = () => {
               )}
             </div>
           </div>
+          :
+          <div className="lg:hidden sm:block">
+          <SsrReportView id={student._id} />
+          </div>
+}
 
           <div className="hidden lg:block">
             <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
@@ -374,7 +380,7 @@ function MobileInfoCard({ student }) {
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 capitalize">
         <InfoItem
           icon={<UserIcon className="w-5 h-5 text-blue-500" />}
           label="Father's Name"
