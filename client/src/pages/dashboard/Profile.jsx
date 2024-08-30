@@ -45,13 +45,13 @@ export function Profile() {
               />
               <div>
                 <Typography variant="h5" color="blue-gray" className="mb-1">
-                  {user.firstname.toUpperCase()}{user.lastname.toUpperCase()}
+                  {user.firstname?.toUpperCase()}{user.lastname?.toUpperCase()}
                 </Typography>
                 <Typography
                   variant="small"
                   className="font-normal text-blue-gray-600"
                 >
-                  {user.role.toUpperCase()}
+                  {user.role?.toUpperCase()}
                 </Typography>
               </div>
             </div>

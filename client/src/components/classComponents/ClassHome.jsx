@@ -300,8 +300,8 @@ function ClassHome() {
                         <span className="text-black text-sm mb-1 font-bold">
                           <span>
                             <p>
-                              {item.roll.toUpperCase()} -{" "}
-                              {item.name.toUpperCase()}
+                              {item.roll?.toUpperCase()} -{" "}
+                              {item.name?.toUpperCase()}
                             </p>
                           </span>
                         </span>{" "}
