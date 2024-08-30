@@ -1,9 +1,7 @@
 const { AppError } = require("../AppError");
 const { asyncWrapper } = require("../helpers/asyncWrapper");
 const { leadBankModel } = require("../models/leadBankModel");
-const fs = require("fs");
-const path = require("path");
-const XLSX = require("xlsx");
+const { Parser } = require('json2csv');
 const submitLeadController = asyncWrapper(async (req, res, next) => {
   const formData = req.body;
   if (
@@ -63,12 +61,13 @@ const getAllLeadsController = asyncWrapper(async (req, res, next) => {
   });
 });
 
+
+
 const exportLeadController = asyncWrapper(async (req, res, next) => {
   const { fields } = req.body;
   const { dateFrom, dateTo } = req.query;
-  console.log("fields are:", fields);
 
-  //filter out keys with value zero
+  // Filter out keys with value zero
   const filteredFields = Object.fromEntries(
     Object.entries(fields).filter(([key, value]) => value !== 0)
   );
@@ -79,10 +78,9 @@ const exportLeadController = asyncWrapper(async (req, res, next) => {
       ...filteredFields,
     },
   };
-  console.log("projection obj is :",projectionObj );
+
   let obj = {};
   if (dateFrom) {
-    console.log("dum");
     obj.createdAt = obj.createdAt || {};
     obj.createdAt.$gte = new Date(dateFrom);
   }
@@ -90,38 +88,28 @@ const exportLeadController = asyncWrapper(async (req, res, next) => {
     obj.createdAt = obj.createdAt || {};
     obj.createdAt.$lte = new Date(dateTo);
   }
+
+  // Fetch data from the database
   const exportData = await leadBankModel.aggregate([
-    {
-      $match: obj,
-    },
-    {
-      $sort: {
-        createdAt: -1,
-      },
-    },
+    { $match: obj },
+    { $sort: { createdAt: -1 } },
     projectionObj,
   ]);
-  console.log("export data is :", exportData);
 
-  // Create a new workbook and worksheet
-  const ws = XLSX.utils.json_to_sheet(exportData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Leads");
-  
-  // Generate the Excel file
-  const excelFilePath = path.join(__dirname + "/../public", "leads.xlsx");
-  XLSX.writeFile(wb, excelFilePath);
-  // Send the file as a response
-  res.download(excelFilePath, "leads.xlsx", (err) => {
-    if (err) {
-      console.error("Error downloading the file", err);
-      res.status(500).send("Error downloading the file");
-    }
+  // Convert JSON data to CSV
+  const json2csvParser = new Parser({ fields: Object.keys(filteredFields) });
+  const csv = json2csvParser.parse(exportData);
 
-    // // Clean up the file after sending it
-     fs.unlinkSync(excelFilePath);
-  });
+  // Set response headers for CSV download
+  res.setHeader('Content-Disposition', 'attachment; filename=leads.csv');
+  res.setHeader('Content-Type', 'text/csv');
+
+  // Send CSV file
+  res.send(csv);
 });
+
+
+
 
 const uploadLeadsController = asyncWrapper(async (req, res) => {
     const leadsData = req.body.leads; // Assuming the frontend sends data as { leads: [...] }

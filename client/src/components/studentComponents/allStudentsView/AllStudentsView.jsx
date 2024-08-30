@@ -96,7 +96,19 @@ function AllStudentsView() {
     }
   };
 
+
+
   const handleDownload = async () => {
+
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    const today = new Date();
+
     try {
       const response = await axios({
         url: '/student/downloadStudentsExcel', // Replace with your server URL
@@ -119,7 +131,7 @@ function AllStudentsView() {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'students.csv'); // Specify the file name
+      link.setAttribute('download', `students_${formatDate(today)}_.csv`); // Specify the file name
       link.click();
       window.URL.revokeObjectURL(url); // Clean up the URL object
     } catch (error) {
