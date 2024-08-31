@@ -10,17 +10,17 @@ const {
 
 const { authorizeGenuinity }=require("../middleware/authorizeGenuinity")
 
-studentRoutes.get("/getAllStudents",authorizeGenuinity ,getAllStudentsController);
+studentRoutes.get("/getAllStudents",authorizeGenuinity() ,getAllStudentsController);
 
-studentRoutes.get("/getStudentDetails/:id",authorizeGenuinity, getStudentDetailsController);
+studentRoutes.get("/getStudentDetails/:id",authorizeGenuinity(), getStudentDetailsController);
 
-studentRoutes.post("/addReport",authorizeGenuinity, addReportController);
+studentRoutes.post("/addReport",authorizeGenuinity(), addReportController);
 
-studentRoutes.get("/fetchStudentReports/:id",authorizeGenuinity, fetchStudentReportsController);
+studentRoutes.get("/fetchStudentReports/:id",authorizeGenuinity(), fetchStudentReportsController);
 
-studentRoutes.post("/getAllStudentsDetailed", authorizeGenuinity , getAllStudentsDetailedController )
+studentRoutes.post("/getAllStudentsDetailed", authorizeGenuinity() , getAllStudentsDetailedController )
 
-studentRoutes.post("/downloadStudentsExcel", authorizeGenuinity , downloadStudentsCSVController )
+studentRoutes.post("/downloadStudentsExcel", authorizeGenuinity() , downloadStudentsCSVController )
 
 module.exports = {
   studentRoutes,

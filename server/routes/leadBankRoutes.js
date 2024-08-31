@@ -1,13 +1,14 @@
 const { submitLeadController, getAllLeadsController, exportLeadController,uploadLeadsController } = require("../controllers/leadBankController");
 const express = require("express");
+const { authorizeGenuinity } = require("../middleware/authorizeGenuinity");
 const leadBankRouter = express.Router();
 
-leadBankRouter.post("/submitLead", submitLeadController);
+leadBankRouter.post("/submitLead",authorizeGenuinity(), submitLeadController);
 
-leadBankRouter.get("/getAllLeads",getAllLeadsController)
+leadBankRouter.get("/getAllLeads",authorizeGenuinity(),getAllLeadsController)
 
-leadBankRouter.post("/exportleads",exportLeadController)
-leadBankRouter.post("/bulkUploadLead",uploadLeadsController)
+leadBankRouter.post("/exportleads",authorizeGenuinity(),exportLeadController)
+leadBankRouter.post("/bulkUploadLead",authorizeGenuinity(),uploadLeadsController)
 
 module.exports = {
   leadBankRouter,
