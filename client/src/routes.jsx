@@ -43,18 +43,18 @@ export const routes = [
     ],
   },
   {
-    title: "CRM Controlls",
+    title: "CRM Controls",
     layout: "crm",
     pages: [
       {
         icon: <BsClipboardData {...icon} />,
         name: "General Leads",
-        path: "/pro",
+        path: "/leadbank/viewdetailedleads",
       },
       {
         icon: <GrTableAdd {...icon} />,
         name: "Bulk Upload",
-        path: "/pro",
+        path: "/leadbank/bulkupload",
       },
       {
         icon: <MdOutlineAssignmentInd {...icon} />,
@@ -69,13 +69,13 @@ export const routes = [
     ],
   },
   {
-    title: "Manage Staff",
+    title: "Staff Panel",
     layout: "user",
     pages: [
       {
         icon: <IoSearch {...icon} />,
-        name: "Search User",
-        path: "/pro",
+        name: "Manage Users",
+        path: "/managestaffs",
       },
       {
         icon: <TbReportSearch {...icon} />,

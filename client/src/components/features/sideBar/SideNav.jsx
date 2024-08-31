@@ -22,7 +22,7 @@ export function Sidenav({ brandName }) {
     <>
       <aside
         className={`hidden xl:block translate-x-0
-       fixed inset-0 z-44 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-white`}
+       fixed inset-0 overflow-y-auto z-44 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-white`}
       >
         <div className={`relative`}>
           <div className="py-6 mt-2 px-8 text-center flex flex-row justify-center items-center gap-2">

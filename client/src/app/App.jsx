@@ -31,6 +31,7 @@ import ViewDetailedLeads from "../components/Marketing/ViewDetailedLeads";
 import BulkUpload from "../components/Marketing/BulkUpload";
 import { SERVER_URL } from "../server";
 import AllStudentsView from "../components/studentComponents/allStudentsView/AllStudentsView";
+import ManageStaffs from "../components/staffComponents/ManageStaffs";
 
 function App() {
   axios.defaults.baseURL = SERVER_URL;
@@ -56,7 +57,6 @@ function App() {
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/tables" element={<Table />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/pendingusers" element={<PendingUsers />} />
           {/* <Route path="/accessdenied" element={<AccessDenied/>} /> */}
           <Route path="/search/studentdetails/:id" element={<StudentDetailsPage/>}/>
           {/* classes components inside here */}
@@ -76,6 +76,9 @@ function App() {
           <Route path="/leadbank/viewdetailedleads" element={<ViewDetailedLeads/>}/>
           <Route path="/leadbank/bulkupload" element={<BulkUpload/>}/>
           <Route path="/addstudent" element={ <PrivateRoute userType={["AA","admin"]} comp={<AddStudent/>}></PrivateRoute>}/>
+          {/* staff components */}
+          <Route path="/managestaffs" element={<ManageStaffs/>}/>
+          <Route path="/pendingusers" element={<PendingUsers />} />
         </Route>
       </Routes>
     </div>
