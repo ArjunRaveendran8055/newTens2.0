@@ -4,29 +4,29 @@ const { authorizeGenuinity } = require("../middleware/authorizeGenuinity")
 
 const centreRouter = require("express").Router();
 
-centreRouter.get("/getAllCentres", authorizeGenuinity, getAllCentresController);
-centreRouter.post("/createCentre", authorizeGenuinity, createCentreController);
+centreRouter.get("/getAllCentres", authorizeGenuinity(), getAllCentresController);
+centreRouter.post("/createCentre", authorizeGenuinity(), createCentreController);
 centreRouter.delete(
   "/deleteCentre/:id",
-  authorizeGenuinity,
+  authorizeGenuinity(),
   deleteCentreController
 );
-centreRouter.get("/getCentreTags", getCentreTagsController);
+centreRouter.get("/getCentreTags",authorizeGenuinity(), getCentreTagsController);
 
-centreRouter.put("/addClass/:id", authorizeGenuinity, createClassController);
-centreRouter.get("/getAllClass/:id", authorizeGenuinity, getAllClassController);
+centreRouter.put("/addClass/:id", authorizeGenuinity(), createClassController);
+centreRouter.get("/getAllClass/:id", authorizeGenuinity(), getAllClassController);
 centreRouter.delete(
   "/deleteCentreClass/:id",
-  authorizeGenuinity,
+  authorizeGenuinity(),
   deleteClassController
 );
 
 
-centreRouter.post('/addAAtoClass', addAAcontroller)
-centreRouter.post('/getAAtoClass', getAAcontroller)
-centreRouter.post("/addBatch", authorizeGenuinity, addBatchController);
-centreRouter.post("/getBatch", authorizeGenuinity, getBatchController);
-centreRouter.post("/updateMentor", authorizeGenuinity, updateMentorController);
+centreRouter.post('/addAAtoClass',authorizeGenuinity(), addAAcontroller)
+centreRouter.post('/getAAtoClass',authorizeGenuinity(), getAAcontroller)
+centreRouter.post("/addBatch", authorizeGenuinity(), addBatchController);
+centreRouter.post("/getBatch", authorizeGenuinity(), getBatchController);
+centreRouter.post("/updateMentor", authorizeGenuinity(), updateMentorController);
 
 module.exports = {
   centreRouter,
