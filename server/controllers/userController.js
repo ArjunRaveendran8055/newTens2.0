@@ -14,6 +14,14 @@ const pendingUserController = asyncWrapper(async (req, res, next) => {
   }
 });
 
+
+
+
+
+
+
+
+
 //get all users
 
 const allUserController = asyncWrapper(async (req, res, next) => {
@@ -25,6 +33,9 @@ const allUserController = asyncWrapper(async (req, res, next) => {
     res.status(200).json({ success:true, count: allData.length, data: allData });
   }
 });
+
+
+
 
 //get user by id
 const oneUserController = asyncWrapper(async (req, res, next) => {
@@ -42,6 +53,107 @@ const oneUserController = asyncWrapper(async (req, res, next) => {
     }
   }
 });
+
+
+// create user for admin 
+
+const createUserController = asyncWrapper(async (req, res, next) => {
+  const { firstname, lastname, dob, email, password, role } = req.body;
+
+  // Validate required fields
+  if (!firstname) {
+    throw new AppError(400, "Firstname is required");
+  }
+  if (!lastname) {
+    throw new AppError(400, "Lastname is required");
+  }
+  if (!dob) {
+    throw new AppError(400, "Date of Birth (dob) is required");
+  }
+  if (!email) {
+    throw new AppError(400, "Email is required");
+  }
+  if (!password) {
+    throw new AppError(400, "Password is required");
+  }
+
+  // Additional validations
+  const existingUser = await UserModel.findOne({ email });
+  if (existingUser) {
+    throw new AppError(409, "Email is already in use");
+  }
+
+  // Create and save new user
+  const newUser = new UserModel({
+    firstname,
+    lastname,
+    dob,
+    email,
+    password,
+    role: role || "TA",  // Default role is "TA" if not provided
+  });
+
+  await newUser.save();
+
+  // Response
+  res.status(201).json({
+    success: true,
+    message: "User created successfully!",
+    data: newUser,
+  });
+});
+
+
+
+
+
+
+// edit user data for admin
+
+const editUserController = asyncWrapper(async (req, res, next) => {
+  const userId = req.params.id;
+  const { firstname, lastname, dob, email, password, role } = req.body;
+
+  // Check if at least one field is provided for update
+  if (!firstname && !lastname && !dob && !email && !password && !role) {
+    throw new AppError(400, "No fields specified for update");
+  }
+
+  // Validate the user ID
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw new AppError(400, "Invalid Id!");
+  }
+
+  // Prepare the data to be updated
+  const updateData = {};
+  if (firstname) updateData.firstname = firstname;
+  if (lastname) updateData.lastname = lastname;
+  if (dob) updateData.dob = dob;
+  if (email) updateData.email = email;
+  if (password) updateData.password = password;
+  if (role) updateData.role = role;
+
+  // Perform the update
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    userId,
+    updateData,
+    { new: true }
+  );
+
+  // Handle case where the user is not found
+  if (!updatedUser) {
+    throw new AppError(404, "No user found by ID!");
+  }
+
+  // Success response
+  res.status(200).json({
+    success: true,
+    message: "User updated successfully!",
+    data: updatedUser,
+  });
+});
+
+
 
 //get user by id
 const approveUserController = asyncWrapper(async (req, res, next) => {
@@ -117,5 +229,7 @@ module.exports = {
   oneUserController,
   approveUserController,
   deleteUserByIdController,
-  getAllAAController
+  getAllAAController,
+  editUserController,
+  createUserController
 };
