@@ -192,7 +192,6 @@ const ApproveStudents = () => {
     socket.emit("student_selected", { userId: user.id, studentId: item._id });
   };
 
-  // console.log(selectedSchool)
 
   //receiving the selected studentIds from the backend
   socket.on("student_ids", (student) => {
@@ -208,17 +207,13 @@ const ApproveStudents = () => {
 
   //getting updated pendingapprovalstudent list and selected students
   socket.on("after-student-updation", (student) => {
-    console.log("hoiii...hoii....", student);
     setSelectedStudents(student.studentIds);
     setStudentsList([...student.students]);
     setDisplayingStudentList([...student.students]);
   });
 
-  //console.log("updated student list is",displayingStudentList)
-
   //on changing ref Id in the refid input box
   const refIdChangeHandler = (e) => {
-    console.log("changing ref is:", e.target.value);
     setDisplayingStudentList(() =>
       studentsList.filter((student) =>
         student.responseId.includes(e.target.value)

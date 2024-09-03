@@ -162,7 +162,6 @@ const FormView = ({
     const levels = allSyllabus
       .find((item) => item.syllabus === formData.syllabus)
       .levels.map((item) => item.level);
-    //console.log("levels are", levels);
     setLevels([...levels]);
   };
 
@@ -250,7 +249,7 @@ const FormView = ({
       });
 
       // Now you can use the compressedFile for further processing or uploading
-      console.log("Compressed image:", compressedFile);
+      // console.log("Compressed image:", compressedFile);
       setPhoto(compressedFile);
     } catch (error) {
       console.error("Error compressing image:", error);
@@ -268,9 +267,7 @@ const FormView = ({
   //function to handle changes in all the fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    console.log("error in name is", errors[name]);
     setErrors({ ...errors, [name]: "" });
-    console.log(name, value);
     if (name === "level") {
       return setFormData({ ...formData, class: null, [name]: value });
     }
@@ -283,7 +280,6 @@ const FormView = ({
         syllabus: value,
       });
     if (name === "state") {
-      console.log("tutututututututut...");
       return setFormData({ ...formData, district: "", state: value });
     }
     if (name === "country" && value === "india") {
@@ -310,7 +306,6 @@ const FormView = ({
 
   //function for validating form
   const validateForm = () => {
-    console.log("centre is", formData.centre);
     const newErrors = {};
     if (!formData.centre) newErrors.centre = "Centre is required";
     //if (!photo) newErrors.photo = "photo is required";
@@ -367,16 +362,13 @@ const FormView = ({
       newErrors.whatsappNumber = "WhatsApp number must be 10 digits";
     }
     setErrors(newErrors);
-    console.log("errors are:", newErrors);
     return newErrors;
   };
 
   const scrollToElement = (name) => {
-    console.log("Name of element is:", name);
 
     // Retrieve the element by its name attribute
     const elements = document.getElementsByName(name);
-    console.log("Elements found:", elements);
 
     if (elements.length > 0) {
       const element = elements[0];
@@ -404,7 +396,7 @@ const FormView = ({
         search: scl,
       })
       .then((response) => {
-        console.log("schools are", response.data.data);
+        // console.log("schools are", response.data.data);
         setSchools([...response.data.data]);
         setIsAddSchool(false);
       })
@@ -419,7 +411,7 @@ const FormView = ({
 
   const handleSchoolChange = (schoolName) => {
     setErrors({ ...errors, school: "", schoolLocation: "" });
-    console.log("entered school name:", schoolName.length);
+    // console.log("entered school name:", schoolName.length);
     setActualSchool(schoolName || "");
     if (schoolName.length > 3) {
       setIsOpen(true);
@@ -435,10 +427,8 @@ const FormView = ({
     }
   };
 
-  console.log("actualSchool value:", actualSchool);
 
   const handleSchoolChange2 = (school) => {
-    console.log("selected school is", school.name, school.loc);
     setErrors({ ...errors, schools: "" });
     setFormData({
       ...formData,
@@ -521,7 +511,6 @@ const FormView = ({
   };
   //handle change distict || state
   const handleSelectChange = (field, value) => {
-    console.log("balu is:", value);
     setSchoolData({
       ...schoolData,
       [field]: value,
@@ -533,7 +522,6 @@ const FormView = ({
       });
     }
   };
-  console.log("school data is:", schoolData);
 
   const handleSchoolSave = () => {
     if (validateSchoolForm()) {
@@ -561,7 +549,6 @@ const FormView = ({
   //code realted to add school end here//
 
   const preSubmissionHandle = async () => {
-    console.log("duttuttu...");
     let errs = validateForm();
     console.log(errs);
     if (Object.keys(errs).length > 0) {
@@ -574,7 +561,6 @@ const FormView = ({
 
   const handleSub = async () => {
     if (!photo) {
-      console.log("dum...dum..");
       setIsSaving(true);
       axios
         .post("/approve/staffApproval", { formData })
@@ -617,8 +603,8 @@ const FormView = ({
         .post("/approve/staffApprovalWithPhoto", finalFormData, config)
         .then((res) => {
           const { id } = res.data;
-          console.log("response is:",res.data)
-          console.log("ithanne alle angod ayache", id);
+          // console.log("response is:",res.data)
+          // console.log("ithanne alle angod ayache", id);
           setIsModalOpen(false);
           setIsSaving(false);
           setOpenPreview(false);

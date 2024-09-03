@@ -3,13 +3,38 @@ const mongoose = require("mongoose");
 const { ApproveStudentModel } = require("../models/ApproveStudentModel");
 const { AppError } = require("../AppError");
 const { RegisteredStudentModel } = require("../models/RegisteredStudentModel");
+const { CentreModel } = require("../models/CentreModel");
 const fs = require("fs");
 const { sendMail } = require("../utils/nodeMailer");
+
 
 const staffApprovalController = asyncWrapper(async (req, res, next) => {
   const { formData } = req.body;
   console.log("vanna formData is:", formData);
   const _id = formData._id;
+
+  //getting batch from the entered roll number
+  const batch = formData.rollNumber.charAt(1);
+
+  const centre= await CentreModel.findOne({
+    centrename: formData.centre,
+    classes: {
+      $elemMatch: {
+        class: Number(formData.class),
+        stream: formData.level,
+        batches: {
+          $elemMatch: {
+            name: batch
+          }
+        }
+      }
+    }
+  })
+
+  if(!centre){
+    throw new AppError(422,"Invalid Class or Batch!!!")
+  }
+
   let updatedDetails = {
     student_name: formData.fullName,
     gender: formData.gender,
@@ -36,6 +61,8 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
     whatsapp: formData.whatsappNumber,
     centre: formData.centre,
     approveStatus: true,
+    active_status: true,
+    student_status: true,
   };
 
   if (!mongoose.Types.ObjectId.isValid(formData._id)) {
@@ -99,11 +126,9 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
     },
   ]);
 
-  
   if (result.length === 0) {
     throw new AppError(404, "Something went Wrong!");
   }
-  const batch = formData.rollNumber.charAt(1);
   const realStudent = { ...result[0], batch };
   const newApprovedStudent = new ApproveStudentModel(realStudent);
   const approvedResult = await newApprovedStudent.save();
@@ -111,25 +136,20 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
   if (!approvedResult) {
     throw new AppError(500, "Approval Failed!");
   }
-   //sending mail using nodeMailer
-   sendMail({
+  //sending mail using nodeMailer
+  sendMail({
     email: approvedResult.email,
     subject: "NEW10S APPROVE CONFIRMATION",
     text: `Dear ${approvedResult.student_name}, \n \t\t\t\t\t From now you are a student at New10s EduTech Private Limited.\n\nContact Details\nMentor Name: Simi VK\nContact Number:9446722008`,
   })
     .then(() => {
       console.log("mail sent successfully.");
-      return res
-        .status(200)
-        .json({id:_id,approvedResult, mailSend:true });
+      return res.status(200).json({ id: _id, approvedResult, mailSend: true });
     })
     .catch(() => {
       console.log("error sending mail.");
-      return res
-        .status(200)
-        .json({id:_id,approvedResult, mailSend:false });
+      return res.status(200).json({ id: _id, approvedResult, mailSend: false });
     });
-    
 });
 
 const staffApprovalWithPhotoController = asyncWrapper(
@@ -180,6 +200,8 @@ const staffApprovalWithPhotoController = asyncWrapper(
       centre: formData.centre,
       image: filename,
       approveStatus: true,
+      active_status: true,
+      student_status: true,
     };
     const updatedUser = await RegisteredStudentModel.findByIdAndUpdate(
       { _id: id },
@@ -233,7 +255,7 @@ const staffApprovalWithPhotoController = asyncWrapper(
           report: 1,
           active_status: 1,
           student_status: 1,
-        }, 
+        },
       },
     ]);
 
@@ -248,25 +270,24 @@ const staffApprovalWithPhotoController = asyncWrapper(
     if (!approvedResult) {
       throw new AppError(500, "Approval Failed!");
     }
-     //sending mail using nodeMailer
-  sendMail({
-    email: approvedResult.email,
-    subject: "NEW10S APPROVE CONFIRMATION",
-    text: `Dear ${approvedResult.student_name}, \n \t\t\t\t\t From now you are a student at New10s EduTech Private Limited.\n\nContact Details\nMentor Name: Simi VK\nContact Number:9446722008`,
-  })
-    .then(() => {
-      console.log("mail sent successfully.");
-      return res
-        .status(200)
-        .json({id:_id,approvedResult, mailSend:true });
+    //sending mail using nodeMailer
+    sendMail({
+      email: approvedResult.email,
+      subject: "NEW10S APPROVE CONFIRMATION",
+      text: `Dear ${approvedResult.student_name}, \n \t\t\t\t\t From now you are a student at New10s EduTech Private Limited.\n\nContact Details\nMentor Name: Simi VK\nContact Number:9446722008`,
     })
-    .catch(() => {
-      console.log("error sending mail.");
-      return res
-        .status(200)
-        .json({id:_id,approvedResult, mailSend:false });
-    });
-  
+      .then(() => {
+        console.log("mail sent successfully.");
+        return res
+          .status(200)
+          .json({ id: _id, approvedResult, mailSend: true });
+      })
+      .catch(() => {
+        console.log("error sending mail.");
+        return res
+          .status(200)
+          .json({ id: _id, approvedResult, mailSend: false });
+      });
   }
 );
 
