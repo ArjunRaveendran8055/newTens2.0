@@ -9,14 +9,20 @@ import {
 } from "@material-tailwind/react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { routes, AAroutes, TEAMLEADroutes, MENTORroutes, MARKETINGroutes } from "../../../routes";
+import {
+  routes,
+  AAroutes,
+  TEAMLEADroutes,
+  MENTORroutes,
+  MARKETINGroutes,
+} from "../../../routes";
 import Logo from "./logo.png";
 import { setIsOpen } from "./sideNavSlice";
 
 export function Sidenav({ brandName }) {
   const { isOpen } = useSelector((state) => state.sideNav);
   const { user } = useSelector((state) => state.user);
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -26,7 +32,7 @@ export function Sidenav({ brandName }) {
       >
         <div className={`relative`}>
           <div className="py-6 mt-2 px-8 text-center flex flex-row justify-center items-center gap-2">
-            <img width={"50px"} src={Logo} alt=""  />
+            <img width={"50px"} src={Logo} alt="" />
             <Typography variant="h4" color="black">
               {brandName}
             </Typography>
@@ -175,8 +181,54 @@ export function Sidenav({ brandName }) {
               </ul>
             ))}
 
-{user.role === "MARKETING" &&
+          {user.role === "MARKETING" &&
             MARKETINGroutes.map(({ layout, title, pages }, key) => (
+              <ul key={key} className="mb-4 flex flex-col gap-1">
+                {
+                  //MODULE TITLE
+                }
+
+                {title && (
+                  <li className="mx-3.5 mt-4 mb-2">
+                    <Typography
+                      variant="small"
+                      color="inherit"
+                      className="font-black uppercase opacity-75"
+                    >
+                      {title}
+                    </Typography>
+                  </li>
+                )}
+
+                {pages.map(({ icon, name, path }) => (
+                  <li key={name}>
+                    <NavLink to={`${path}`}>
+                      {({ isActive }) => (
+                        <Button
+                          variant={isActive ? "gradient" : "text"}
+                          color="gray"
+                          className="flex items-center gap-4 px-4 capitalize"
+                          fullWidth
+                        >
+                          {icon}
+                          <Typography
+                            color="inherit"
+                            className="font-medium capitalize"
+                          >
+                            {name}
+                          </Typography>
+                        </Button>
+                      )}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            ))}
+
+          {/* functionalities of mentor  */}
+
+          {user.role === "MENTOR" &&
+            MENTORroutes.map(({ layout, title, pages }, key) => (
               <ul key={key} className="mb-4 flex flex-col gap-1">
                 {
                   //MODULE TITLE
@@ -232,9 +284,8 @@ export function Sidenav({ brandName }) {
        fixed inset-0 z-50 my-4 ml-4 overflow-y-auto h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-white`}
       >
         <div className={`relative`}>
-          
           <div className="py-6 px-8 text-center flex flex-row justify-center items-center gap-2">
-          <img width={"50px"} src={Logo} alt=""  />
+            <img width={"50px"} src={Logo} alt="" />
             <Typography variant="h5" color="black">
               {brandName}
             </Typography>
@@ -342,7 +393,7 @@ export function Sidenav({ brandName }) {
               </ul>
             ))}
 
-{user.role === "AA" &&
+          {user.role === "AA" &&
             AAroutes.map(({ layout, title, pages }, key) => (
               <ul key={key} className="mb-4 flex flex-col gap-1">
                 {
@@ -389,7 +440,7 @@ export function Sidenav({ brandName }) {
               </ul>
             ))}
 
-{user.role === "MENTOR" &&
+          {user.role === "MENTOR" &&
             MENTORroutes.map(({ layout, title, pages }, key) => (
               <ul key={key} className="mb-4 flex flex-col gap-1">
                 {
@@ -436,7 +487,7 @@ export function Sidenav({ brandName }) {
               </ul>
             ))}
 
-{user.role === "MARKETING" &&
+          {user.role === "MARKETING" &&
             MARKETINGroutes.map(({ layout, title, pages }, key) => (
               <ul key={key} className="mb-4 flex flex-col gap-1">
                 {
@@ -482,9 +533,7 @@ export function Sidenav({ brandName }) {
                 ))}
               </ul>
             ))}
-
         </div>
-        
       </aside>
     </>
   );
