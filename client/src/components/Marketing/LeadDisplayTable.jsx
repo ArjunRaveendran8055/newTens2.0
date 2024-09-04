@@ -96,7 +96,7 @@ const LeadDisplayTable = ({
   const fetchLeadList = () => {
     axios
       .get(
-        `/leadBank/getAllLeads?page=${currentPage}&limit=${itemsPerPage}&dateFrom=${dateFrom}&dateTo=${dateTo}`
+        `/leadBank/getAllLeads?page=${currentPage}&limit=${itemsPerPage}&dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}`
       )
       .then((res) => {
         console.log("response is", res.data);
@@ -116,7 +116,7 @@ const LeadDisplayTable = ({
 
   useEffect(() => {
     fetchLeadList();
-  }, [dateFrom, dateTo, currentPage]);
+  }, [dateFrom, dateTo, currentPage,selectedSyllabus,selectedClass]);
 
   const handleCheckboxChange = (event) => {
     const { id, checked } = event.target;
@@ -141,6 +141,8 @@ const LeadDisplayTable = ({
   const handleExportClick = () => {
     setIsPopupVisible(true);
   };
+
+
 
   const handleClosePopup = () => {
     setIsPopupVisible(false);
@@ -200,7 +202,7 @@ const LeadDisplayTable = ({
 
     axios
       .post(
-        `/leadbank/exportleads?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+        `/leadbank/exportleads?dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}`,
         { fields },
         { responseType: "blob" } // Ensure the response is treated as a binary blob
       )
@@ -559,12 +561,7 @@ const LeadDisplayTable = ({
 
 
           {/* Submit Button */}
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
-            // onClick={handleSubmit}
-          >
-            Apply
-          </button>
+ 
         </div>
       </div>
     </div>
