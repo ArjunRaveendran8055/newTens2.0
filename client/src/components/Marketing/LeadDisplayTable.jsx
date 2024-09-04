@@ -40,6 +40,7 @@ const LeadDisplayTable = ({
   const dispatch = useDispatch();
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [fields, setFields] = useState({
     name: 1,
     class: 1,
@@ -110,6 +111,14 @@ const LeadDisplayTable = ({
     }
   };
 
+  const handleExportClick = () => {
+    setIsPopupVisible(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupVisible(false);
+  };
+
   const dateFromChangeHandler = (e) => {
     console.log("event is", e);
     const selectedDate = new Date(e);
@@ -175,7 +184,7 @@ const LeadDisplayTable = ({
       })
       .catch((err) => console.log("Error downloading file:", err));
   };
-  
+
 
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
@@ -188,11 +197,20 @@ const LeadDisplayTable = ({
               </span>
               <Button
                 className="flex sm:gap-1 lg:gap-2 justify-center items-center bg-black sm:w-20 lg:w-32 sm:h-7 lg:h-10 text-white"
-                onClick={onExport}
+                // onClick={onExport}
+                onClick={handleExportClick}
               >
                 <span>Export</span>
               </Button>
             </span>
+            
+          </div>
+        </CardHeader>
+
+        {isPopupVisible && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-75">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Export Options</h2>
             <span className="checkSelectionDiv flex sm:overflow-x-scroll overflow-y-hidden text-black lg:justify-between">
               <span className="flex justify-center items-center">
                 <Checkbox
@@ -285,16 +303,33 @@ const LeadDisplayTable = ({
                 <label htmlFor="District">District</label>
               </span>
             </span>
+            <div className="flex justify-between items-center">
+            <button
+              className="mt-4 bg-black text-white px-4 py-2 rounded"
+              onClick={handleClosePopup}
+            >
+              Close
+            </button>
+            <Button
+                className="flex sm:gap-1 lg:gap-2 justify-center items-center bg-black sm:w-20 lg:w-32 sm:h-7 lg:h-10 text-white"
+                 onClick={onExport}
+                
+              >
+                <span>Download</span>
+              </Button>
+              </div>
           </div>
-        </CardHeader>
+        </div>
+      )}
+
         <div className="w-full flex justify-around px-4 sm:gap-5 lg:gap-0">
-          <div className="w-1/2 flex sm:justify-end lg:justify-start">
+          <div className="w-1/2 flex sm:justify-end lg:justify-start items-center">
             <DatePicker
               id="date"
               onChange={dateFromChangeHandler}
               selected={dateFrom}
               dateFormat="dd/MM/yyyy"
-              className="border sm:w-32 sm:h-7 lg:w-32 lg:h-10 flex justify-center items-center px-4 rounded-md"
+              className="border ml-4 sm:w-32 sm:h-7 lg:w-32 lg:h-10 flex justify-center items-center px-4 rounded-md"
               placeholderText="From"
             />
           </div>
@@ -310,99 +345,65 @@ const LeadDisplayTable = ({
             />
           </div>
         </div>
+
         {noPendingList ? (
           <CardBody className="h-[75vh] flex justify-center items-center">
             <span className="text-2xl">No Leads to Show :( </span>
           </CardBody>
         ) : (
           <CardBody className="flex flex-col justify-between min-h-[65vh] overflow-x-scroll px-0 pt-0 pb-0">
-            <table className="w-full min-w-[640px] table-auto">
-              <thead>
-                <tr>
-                  {tableHeadings.map((el, key) => (
-                    <th
-                      key={key}
-                      className="border-b border-blue-gray-50 py-3 px-5 text-left"
-                    >
-                      <div
-                        variant="small"
-                        className="text-[11px] font-bold capitalize text-blue-gray-400"
-                      >
-                        {el}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {leadList.map((item, key) => {
-                  const className = `py-3 px-5 ${
-                    key === leadList.length - 1
-                      ? ""
-                      : "border-b border-blue-gray-50"
-                  }`;
-
-                  return (
-                    <tr key={key} className="capitalize">
-                      <td className={className}>
-                        <div className="flex items-center gap-4">
-                          <div>
-                            <div
-                              variant="small"
-                              color="blue-gray"
-                              className="font-semibold"
-                            >
-                              {item.name}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <div className="text-xs font-semibold text-blue-gray-600">
-                          {item.class}
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <div className="text-xs font-semibold text-blue-gray-600">
-                          {item.year}
-                        </div>
-                      </td>
-                      <td className={className}>{item.division}</td>
-                      <td className={className}>
-                        <div className="text-xs font-semibold text-blue-gray-600">
-                          {item.phone}
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <div className="text-xs font-semibold text-blue-gray-600">
-                          {item.whatsapp}
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <div className="text-xs font-semibold text-blue-gray-600">
-                          {item.syllabus}
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <div className="text-xs font-semibold text-blue-gray-600">
-                          {item.school}
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <div className="text-xs font-semibold text-blue-gray-600">
-                          {item.location}
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <div className="text-xs font-semibold text-blue-gray-600">
-                          {item.district}
-                        </div>
-                      </td>
+            <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg mt-4">
+              <div className="w-full overflow-x-auto">
+                <table className="w-full whitespace-no-wrap bg-gray shadow-md rounded-lg overflow-hidden">
+                  <thead className="bg-gradient-to-r from-gray-900 to-gray-900 text-white">
+                    <tr className="text-md sm:text-sm font-semibold whitespace-nowrap tracking-wide text-left uppercase border-b border-gray-200">
+                    {tableHeadings.map((el, key) => (
+                      <th key={key} align="center" className="px-4 py-3"> {el}</th>
+                    ))}
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                  {leadList.map((item, key) => {
+                     return (
+              <tr key={key} className="hover:bg-gray-100">
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black">
+    {item.name}
+  </td>
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black">
+    {item.class}
+  </td>
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black">
+    {item.year}
+  </td>
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black">
+    {item.division}
+  </td>
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black">
+    {item.phone}
+  </td>
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black">
+    {item.whatsapp}
+  </td>
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black">
+    {item.syllabus}
+  </td>
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-xs text-black w-96">  {/* Added w-40 for wider width */}
+    {item.school}
+  </td>
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black">
+    {item.location}
+  </td>
+  <td align="center" className="px-4 uppercase py-3 border-t border-gray-200 text-m sm:text-sm text-black">
+    {item.district}
+  </td>
+</tr>
+                    );
+                  })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </CardBody>
         )}
       </Card>
