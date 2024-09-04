@@ -10,6 +10,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
+import { FaTimes } from "react-icons/fa";
 import { setToastView } from "../features/toast/toastSlice";
 
 const tableHeadings = [
@@ -41,6 +42,11 @@ const LeadDisplayTable = ({
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedClass, setSelectedClass] = useState('');
+  const [selectedSyllabus, setSelectedSyllabus] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
   const [fields, setFields] = useState({
     name: 1,
     class: 1,
@@ -65,6 +71,27 @@ const LeadDisplayTable = ({
     location: true,
     district: true,
   });
+  
+  const districts = [
+    "Thiruvananthapuram",
+    "Kollam",
+    "Pathanamthitta",
+    "Alappuzha",
+    "Kottayam",
+    "Idukki",
+    "Ernakulam",
+    "Thrissur",
+    "Palakkad",
+    "Malappuram",
+    "Kozhikode",
+    "Wayanad",
+    "Kannur",
+    "Kasargod"
+  ];
+  const classes = ["7", "8", "9", "10", "11", "12"];
+  const syllabi = ["cbse", "state"];
+  const country = ["india", "usa", "quatar"];
+
 
   const fetchLeadList = () => {
     axios
@@ -156,6 +183,10 @@ const LeadDisplayTable = ({
 
   //console.log("fields are:", fields);
 
+  const toggleOverlay = () => {
+    setIsOverlayOpen(!isOverlayOpen);
+  };
+
   const onExport = () => {
 
     function formatDate(date) {
@@ -191,16 +222,19 @@ const LeadDisplayTable = ({
       <Card>
         <CardHeader className="mb-2 p-2 shadow-lg">
           <div color="white" className="w-full flex flex-col">
-            <span className="LeadDetailsandExportDiv w-full flex justify-between items-center">
-              <span className="sm:text-xl lg:text-3xl text-gray-600 font-extrabold">
-                Lead Details
-              </span>
+            <span className="LeadDetailsandExportDiv gap-5 w-full flex items-center">
               <Button
                 className="flex sm:gap-1 lg:gap-2 justify-center items-center bg-black sm:w-20 lg:w-32 sm:h-7 lg:h-10 text-white"
                 // onClick={onExport}
                 onClick={handleExportClick}
               >
                 <span>Export</span>
+              </Button>
+              <Button
+              onClick={toggleOverlay}
+                className="flex sm:gap-1 lg:gap-2 justify-center items-center bg-black sm:w-20 lg:w-32 sm:h-7 lg:h-10 text-white"
+              >
+                <span>Sort Data</span>
               </Button>
             </span>
             
@@ -427,6 +461,111 @@ const LeadDisplayTable = ({
         >
           Next
         </Button>
+      </div>
+
+      <div
+        className={`fixed top-0 right-0 h-full w-96 bg-white shadow-lg transform transition-transform duration-300 ${isOverlayOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+      >
+        <button
+          className="absolute top-4 right-4 text-black"
+          onClick={toggleOverlay}
+        >
+          <FaTimes className="h-6 w-6" />
+        </button>
+        <div className="p-6">
+          <h2 className="text-lg font-semibold mb-4">Sort Data</h2>
+
+          {/* Syllabus Dropdown */}
+          <div className="mb-4">
+            <label htmlFor="syllabus" className="block text-sm font-medium text-gray-700">
+              Syllabus
+            </label>
+            <select
+              id="syllabus"
+              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              value={selectedSyllabus}
+              onChange={(e) => setSelectedSyllabus(e.target.value)}
+            >
+              <option value="">Select Syllabus</option>
+              {syllabi.map((syllabus, index) => (
+                <option key={index} value={syllabus}>
+                  {syllabus.toLocaleUpperCase()}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Class Dropdown */}
+          <div className="mb-4">
+            <label htmlFor="class" className="block text-sm font-medium text-gray-700">
+              Class
+            </label>
+            <select
+              id="class"
+              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              value={selectedClass}
+              onChange={(e) => setSelectedClass(e.target.value)}
+            >
+              <option value="">Select Class</option>
+              {classes.map((className, index) => (
+                <option key={index} value={className}>
+                  {className}
+                </option>
+              ))}
+            </select>
+          </div>
+
+
+          {/* Country Dropdown */}
+          <div className="mb-4">
+            <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+              Country
+            </label>
+            <select
+              id="country"
+              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+            >
+              <option value="">Select Country</option>
+              {country.map((country, index) => (
+                <option key={index} value={country}>
+                  {country.toLocaleUpperCase()}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* District Dropdown */}
+          <div className="mb-4">
+            <label htmlFor="district" className="block text-sm font-medium text-gray-700">
+              District
+            </label>
+            <select
+              id="district"
+              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              value={selectedDistrict}
+              onChange={(e) => setSelectedDistrict(e.target.value)}
+            >
+              <option value="">Select District</option>
+              {districts.map((district, index) => (
+                <option key={index} value={district}>
+                  {district.toLocaleUpperCase()}
+                </option>
+              ))}
+            </select>
+          </div>
+
+
+          {/* Submit Button */}
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
+            // onClick={handleSubmit}
+          >
+            Apply
+          </button>
+        </div>
       </div>
     </div>
   );
