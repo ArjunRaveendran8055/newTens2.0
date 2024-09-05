@@ -26,6 +26,34 @@ const addSchoolController = asyncWrapper(async (req, res, next) => {
   return res.status(200).json({addedSchool,success:true})
 });
 
+const getLocationController = asyncWrapper(async (req, res, next) => {
+  try {
+    const searchQuery = req.query.q;
+
+    const locations = await SchoolModel.aggregate([
+      {
+        $match: { location: { $regex: searchQuery, $options: "i" } } // Case-insensitive search
+      },
+      {
+        $group: {
+          _id: "$location" // Group by location to ensure uniqueness
+        }
+      },
+      {
+        $limit: 10 // Limit to 10 suggestions
+      }
+    ]);
+
+    // Extract location from the grouped result
+    const uniqueLocations = locations.map(loc => loc._id);
+
+    res.json(uniqueLocations);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch locations" });
+  }
+});
+
 module.exports = {
   addSchoolController,
+  getLocationController
 };

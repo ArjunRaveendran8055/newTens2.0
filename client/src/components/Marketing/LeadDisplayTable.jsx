@@ -47,6 +47,9 @@ const LeadDisplayTable = ({
   const [selectedClass, setSelectedClass] = useState('');
   const [selectedSyllabus, setSelectedSyllabus] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState("");
   const [fields, setFields] = useState({
     name: 1,
     class: 1,
@@ -92,11 +95,38 @@ const LeadDisplayTable = ({
   const syllabi = ["cbse", "state"];
   const country = ["india", "usa", "quatar"];
 
+  const fetchLocations = async (searchText) => {
+    try {
+      const response = await axios.get(`/school/locations?q=${searchText}`);
+      setSuggestions(response.data);
+    } catch (error) {
+      console.error("Error fetching location suggestions", error);
+    }
+  };
+
+  const handleSuggestionClick = (location) => {
+    setSelectedLocation(location);
+    setQuery(location);
+    setSuggestions([]); // Hide suggestions after selecting one
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    if (value.length > 1) {
+      fetchLocations(value);
+    } else {
+      setSuggestions([]);
+      setSelectedLocation("")
+    }
+  };
+
+  
 
   const fetchLeadList = () => {
     axios
       .get(
-        `/leadBank/getAllLeads?page=${currentPage}&limit=${itemsPerPage}&dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}&district=${selectedDistrict}`
+        `/leadBank/getAllLeads?page=${currentPage}&limit=${itemsPerPage}&dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}&district=${selectedDistrict}&location=${selectedLocation}`
       )
       .then((res) => {
         console.log("response is", res.data);
@@ -116,7 +146,7 @@ const LeadDisplayTable = ({
 
   useEffect(() => {
     fetchLeadList();
-  }, [dateFrom, dateTo, currentPage,selectedSyllabus,selectedClass,selectedDistrict]);
+  }, [dateFrom, dateTo, currentPage,selectedSyllabus,selectedClass,selectedDistrict,selectedLocation]);
 
   const handleCheckboxChange = (event) => {
     const { id, checked } = event.target;
@@ -202,7 +232,7 @@ const LeadDisplayTable = ({
 
     axios
       .post(
-        `/leadbank/exportleads?dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}&district=${selectedDistrict}`,
+        `/leadbank/exportleads?dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}&district=${selectedDistrict}&location=${selectedLocation}`,
         { fields },
         { responseType: "blob" } // Ensure the response is treated as a binary blob
       )
@@ -559,8 +589,33 @@ const LeadDisplayTable = ({
             </select>
           </div>
 
+      {/* location search */}
 
-          {/* Submit Button */}
+          <div className="mb-4">
+      <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+        Location
+      </label>
+      <input
+        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        type="search"
+        value={query}
+        onChange={handleSearchChange}
+        placeholder="Search location"
+      />
+      {suggestions.length > 0 && (
+        <ul className="border bg-white mt-1 rounded-md shadow-lg">
+          {suggestions.map((location, index) => (
+            <li
+              key={index}
+              className="p-2 hover:bg-blue-100 cursor-pointer"
+              onClick={() => handleSuggestionClick(location)}
+            >
+              {location}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
  
         </div>
       </div>

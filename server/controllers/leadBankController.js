@@ -27,7 +27,7 @@ const submitLeadController = asyncWrapper(async (req, res, next) => {
 const getAllLeadsController = asyncWrapper(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 15;
-  const { dateFrom, dateTo, syllabus, className, district } = req.query; // Renamed class to className
+  const { dateFrom, dateTo, syllabus, className, district, location } = req.query; // Renamed class to className
   const skip = (page - 1) * limit;
   console.log("dates are :", dateFrom, dateTo);
   let obj = {};
@@ -49,6 +49,10 @@ const getAllLeadsController = asyncWrapper(async (req, res, next) => {
   if (district) { 
     obj.district = district.toLowerCase(); 
   }
+  if (location) { 
+    obj.location = location.toLowerCase(); 
+  }
+
 
   console.log("query object is:", obj);
 
@@ -73,7 +77,7 @@ const getAllLeadsController = asyncWrapper(async (req, res, next) => {
 
 const exportLeadController = asyncWrapper(async (req, res, next) => {
   const { fields } = req.body;
-  const { dateFrom, dateTo, syllabus, className,district } = req.query;
+  const { dateFrom, dateTo, syllabus, className,district,location } = req.query;
 
   // Filter out keys with value zero
   const filteredFields = Object.fromEntries(
@@ -104,6 +108,9 @@ const exportLeadController = asyncWrapper(async (req, res, next) => {
   }
   if (district) { 
     obj.district = district.toLowerCase(); 
+  }
+  if (location) { 
+    obj.location = location.toLowerCase(); 
   }
 
 
