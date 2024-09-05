@@ -96,7 +96,7 @@ const LeadDisplayTable = ({
   const fetchLeadList = () => {
     axios
       .get(
-        `/leadBank/getAllLeads?page=${currentPage}&limit=${itemsPerPage}&dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}`
+        `/leadBank/getAllLeads?page=${currentPage}&limit=${itemsPerPage}&dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}&district=${selectedDistrict}`
       )
       .then((res) => {
         console.log("response is", res.data);
@@ -116,7 +116,7 @@ const LeadDisplayTable = ({
 
   useEffect(() => {
     fetchLeadList();
-  }, [dateFrom, dateTo, currentPage,selectedSyllabus,selectedClass]);
+  }, [dateFrom, dateTo, currentPage,selectedSyllabus,selectedClass,selectedDistrict]);
 
   const handleCheckboxChange = (event) => {
     const { id, checked } = event.target;
@@ -202,7 +202,7 @@ const LeadDisplayTable = ({
 
     axios
       .post(
-        `/leadbank/exportleads?dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}`,
+        `/leadbank/exportleads?dateFrom=${dateFrom}&dateTo=${dateTo}&syllabus=${selectedSyllabus}&className=${selectedClass}&district=${selectedDistrict}`,
         { fields },
         { responseType: "blob" } // Ensure the response is treated as a binary blob
       )
