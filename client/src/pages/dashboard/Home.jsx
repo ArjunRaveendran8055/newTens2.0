@@ -25,6 +25,8 @@ import axios from "axios";
 import AdminStatisticsCard from "../../components/features/user/statisticsCard/AdminStatisticsCard";
 import AAStatisticsCard from "../../components/features/user/statisticsCard/AAStatisticsCard";
 import TeamLeadStatisticsCard from "../../components/features/user/statisticsCard/TeamLeadStatisticsCard";
+import TAStatisticsCard from "../../components/features/user/statisticsCard/TAStaticsticsCard";
+import MentorStatisticsCard from "../../components/features/user/statisticsCard/MentorStatisticsCard";
 
 export function Home() {
   const { user } = useSelector((state) => state.user);
@@ -34,6 +36,9 @@ export function Home() {
         {user.role === "admin" && <AdminStatisticsCard />}
         {user.role === "AA" && <AAStatisticsCard />}
         {user.role ==="TEAMLEAD" && <TeamLeadStatisticsCard/>}
+        {user.role ==="TA" && <TAStatisticsCard/>}
+        {user.role ==="MENTOR" && <MentorStatisticsCard/>}
+
       </div>
       <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         {statisticsChartsData.map((props) => (

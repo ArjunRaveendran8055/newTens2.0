@@ -280,13 +280,13 @@ const staffApprovalWithPhotoController = asyncWrapper(
         console.log("mail sent successfully.");
         return res
           .status(200)
-          .json({ id: _id, approvedResult, mailSend: true });
+          .json({ id, approvedResult, mailSend: true });
       })
       .catch(() => {
         console.log("error sending mail.");
         return res
           .status(200)
-          .json({ id: _id, approvedResult, mailSend: false });
+          .json({ id, approvedResult, mailSend: false });
       });
   }
 );

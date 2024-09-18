@@ -10,7 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-function AdminStatisticsCard() {
+function MentorStatisticsCard() {
   const [PendingUserList,setPendingUserList] = useState([])
 
   useEffect(()=>{
@@ -29,7 +29,7 @@ function AdminStatisticsCard() {
       color: "gray",
       icon: BanknotesIcon,
       title: "Today's Money",
-      value: "$53k",
+      value: "Alloted Batches",
       footer: {
         color: "text-green-500",
         value: "+55%",
@@ -100,4 +100,4 @@ function AdminStatisticsCard() {
   );
 }
 
-export default AdminStatisticsCard;
+export default MentorStatisticsCard;

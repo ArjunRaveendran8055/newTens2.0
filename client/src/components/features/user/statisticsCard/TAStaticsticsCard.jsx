@@ -10,7 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-function AdminStatisticsCard() {
+function TAStatisticsCard() {
   const [PendingUserList,setPendingUserList] = useState([])
 
   useEffect(()=>{
@@ -100,4 +100,4 @@ function AdminStatisticsCard() {
   );
 }
 
-export default AdminStatisticsCard;
+export default TAStatisticsCard;

@@ -15,6 +15,7 @@ import {
   TEAMLEADroutes,
   MENTORroutes,
   MARKETINGroutes,
+  TAroutes,
 } from "../../../routes";
 import Logo from "./logo.png";
 import { setIsOpen } from "./sideNavSlice";
@@ -94,6 +95,50 @@ export function Sidenav({ brandName }) {
             ))}
 
           {user.role === "AA" &&
+            AAroutes.map(({ layout, title, pages }, key) => (
+              <ul key={key} className="mb-4 flex flex-col gap-1">
+                {
+                  //MODULE TITLE
+                }
+
+                {title && (
+                  <li className="mx-3.5 mt-4 mb-2">
+                    <Typography
+                      variant="small"
+                      color="inherit"
+                      className="font-black uppercase opacity-75"
+                    >
+                      {title}
+                    </Typography>
+                  </li>
+                )}
+
+                {pages.map(({ icon, name, path }) => (
+                  <li key={name}>
+                    <NavLink to={`${path}`}>
+                      {({ isActive }) => (
+                        <Button
+                          variant={isActive ? "gradient" : "text"}
+                          color="gray"
+                          className="flex items-center gap-4 px-4 capitalize"
+                          fullWidth
+                        >
+                          {icon}
+                          <Typography
+                            color="inherit"
+                            className="font-medium capitalize"
+                          >
+                            {name}
+                          </Typography>
+                        </Button>
+                      )}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            ))}
+
+          {user.role === "TA" &&
             AAroutes.map(({ layout, title, pages }, key) => (
               <ul key={key} className="mb-4 flex flex-col gap-1">
                 {
