@@ -14,7 +14,7 @@ const AAStatisticsCard = () => {
       color: "gray",
       icon: BanknotesIcon,
       title: "Today's Money",
-      value: "$53k",
+      value: "Allotted Classes",
       footer: {
         color: "text-green-500",
         value: "+55%",
