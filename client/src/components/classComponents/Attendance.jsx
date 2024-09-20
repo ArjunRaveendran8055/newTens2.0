@@ -4,11 +4,12 @@ import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import * as XLSX from "xlsx";
+import { FiEdit } from "react-icons/fi";
 
 const Attendance = () => {
   const { id } = useParams();
   const [excelData, setExceldata] = useState([]);
-  console.log("excelData is:",excelData)
+  console.log("excelData is:", excelData);
   return (
     <div className="bg-white mt-5 h-[88vh] rounded-lg flex flex-col">
       <div className="fileuploadContainer w-full flex sm:flex-col lg:flex-row sm:gap-5 lg:gap-10 justify-center items-center pt-10">
@@ -131,7 +132,12 @@ const products = [
     Price: 14,
   },
 ];
-export const ExcelPreview = ({excelData}) => {
+export const ExcelPreview = ({ excelData }) => {
+  // Function to check the roll number format
+  const isValidRoll = (roll) => {
+    return /^[a-zA-Z]{2}\d{3}$/.test(roll);
+  };
+
   return (
     <div className="w-full">
       <div className="w-full flex flex-col">
@@ -142,7 +148,7 @@ export const ExcelPreview = ({excelData}) => {
           <div class=" w-full flex">
             <table class="md:inline-table w-full flex flex-row sm:bg-white  overflow-hidden ">
               <thead class="text-black">
-                {products?.map((data, index) => (
+                {excelData?.map((data, index) => (
                   <tr
                     class={`bg-[#222E3A]/[6%] flex flex-col md:table-row rounded-l-lg sm:rounded-none mb-2 md:mb-0 ${
                       index == 0 ? "md:flex" : "md:hidden"
@@ -150,35 +156,47 @@ export const ExcelPreview = ({excelData}) => {
                     key={index}
                   >
                     <th class="py-3 px-5 text-left border border-b rounded-tl-lg sm:rounded-none">
-                      ID
+                      Roll Number
                     </th>
                     <th class="py-3 px-5 text-left border border-b">
-                      Category
+                      Duration
                     </th>
-                    <th class="py-3 px-5 text-left border border-b">Company</th>
                     <th class="py-3 px-5 text-left border border-t rounded-bl-lg sm:rounded-none">
-                      Price
+                      JoinTime
                     </th>
                   </tr>
                 ))}
               </thead>
               <tbody class="flex-1 md:flex-none">
-                {products?.map((data, index) => (
+                {excelData?.map((data, index) => (
                   <tr
                     class="flex flex-col md:table-row mb-2 md:mb-0"
                     key={index}
                   >
-                    <td class="border hover:bg-[#222E3A]/[6%] hover:sm:bg-transparent py-3 px-5">
-                      {data?.id}
+                    <td
+                      className={`border py-3 px-5 ${
+                        !isValidRoll(data?.roll)
+                          ? ""
+                          : "hover:bg-[#222E3A]/[6%] hover:sm:bg-transparent"
+                      }`}
+                    >
+                      <span className="relative flex-row justify-between">
+                        <span className="flex flex-row justify-between">
+                          <span className="">{data?.roll}</span>
+
+                          {!isValidRoll(data?.roll) && (
+                            <span className=" text-red-500 text-xl">
+                              <FiEdit />
+                            </span>
+                          )}
+                        </span>
+                      </span>
                     </td>
                     <td class="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
-                      {data?.Category}
+                      {data?.duration}
                     </td>
                     <td class="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
-                      {data?.Company}
-                    </td>
-                    <td class="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5 cursor-pointer">
-                      {"$" + data?.Price}
+                      {data?.joinTime}
                     </td>
                   </tr>
                 ))}
