@@ -41,16 +41,14 @@ function ClassHome() {
   // function to fetch class details
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        `/class/getoneclass/${id}`
-      );
+      const response = await axios.get(`/class/getoneclass/${id}`);
       const responseReports = await axios.get(
         `/classReport/GetAllReport/${id}`
       );
       const data = response.data;
       // console.log("reports are",data)
       // store report data to loop for preview
-      console.log("filtered report",responseReports.data.report)
+      console.log("filtered report", responseReports.data.report);
       setReportData(responseReports.data.report);
       setReportDataCopy(responseReports.data.report);
       dispatch(removeLoader());
@@ -83,7 +81,6 @@ function ClassHome() {
     // console.log("final reason is",trimmedResponse)
     setSsrReport({ ...ssrReport, response: trimmedResponse });
   };
-
 
   const onSaveReportHandler = () => {
     if (ssrReport.response?.length < 10) {
@@ -192,10 +189,12 @@ function ClassHome() {
               </h3>
               <p className="text-l text-white">Status: uploaded</p>
             </div>
-            <div className="bg-[#BFDBFE] rounded-lg p-4 cursor-pointer">
-              <h3 className="text-lg font-semibold text-black"> Uploads </h3>
-              <p className="text-l text-black-500">Status: not Completed</p>
-            </div>
+            <Link to={`/clases/attendance/:${id}`}>
+              <div className="bg-[#BFDBFE] rounded-lg p-4 cursor-pointer">
+                <h3 className="text-lg font-semibold text-black">Attendance</h3>
+                <p className="text-l text-black-500">Status: not Completed</p>
+              </div>
+            </Link>
             <div className="bg-[#FED7AA] rounded-lg p-4 cursor-pointer">
               <h3 className="text-lg font-semibold text-black">Daily Report</h3>
               <p className="text-l text-black-500">Status: Not updated</p>
