@@ -32,6 +32,7 @@ import BulkUpload from "../components/Marketing/BulkUpload";
 import { SERVER_URL } from "../server";
 import AllStudentsView from "../components/studentComponents/allStudentsView/AllStudentsView";
 import ManageStaffs from "../components/staffComponents/ManageStaffs";
+import AllottedStudents from "../components/AllottedStudents/AllottedStudents";
 
 function App() {
   axios.defaults.baseURL = SERVER_URL;
@@ -79,6 +80,9 @@ function App() {
           {/* staff components */}
           <Route path="/managestaffs" element={<ManageStaffs/>}/>
           <Route path="/pendingusers" element={<PendingUsers />} />
+          {/* allotted students */}
+          <Route path="/allottedstudents" element={<AllottedStudents></AllottedStudents>}/>
+
         </Route>
       </Routes>
     </div>
