@@ -32,6 +32,7 @@ import { SERVER_URL } from "../server";
 import AllStudentsView from "../components/studentComponents/allStudentsView/AllStudentsView";
 import ManageStaffs from "../components/staffComponents/ManageStaffs";
 import Attendance from "../components/classComponents/Attendance";
+import Attendance from "../components/classComponents/Attendance";
 
 function App() {
   axios.defaults.baseURL = SERVER_URL;
@@ -48,7 +49,12 @@ function App() {
           element={<ActivationPage />}
         />
 
+
         <Route path="/regForm" element={<RegForm></RegForm>} />
+        <Route
+          path="/SubmitSuccess/:resid"
+          element={<SubmitSuccess></SubmitSuccess>}
+        />
         <Route
           path="/SubmitSuccess/:resid"
           element={<SubmitSuccess></SubmitSuccess>}
@@ -65,6 +71,10 @@ function App() {
             path="/search/studentdetails/:id"
             element={<StudentDetailsPage />}
           />
+          <Route
+            path="/search/studentdetails/:id"
+            element={<StudentDetailsPage />}
+          />
           {/* classes components inside here */}
           <Route path="/classes" element={<DisplayClasses />} />
           <Route path="/classes/classhome/:id" element={<ClassHome />} />
@@ -72,7 +82,18 @@ function App() {
           <Route path="/clases/attendance/:id" element={<Attendance />} />
           <Route path="/approvestudents" element={<ApproveStudents />} />
           <Route path="/allStudents" element={<AllStudentsView />} />
+          <Route path="/classes/classhome/:id" element={<ClassHome />} />
+          <Route path="/classes/classreport/:id" element={<ClassReport />} />
+          <Route path="/clases/attendance/:id" element={<Attendance />} />
+          <Route path="/approvestudents" element={<ApproveStudents />} />
+          <Route path="/allStudents" element={<AllStudentsView />} />
           {/* components inside allcentres */}
+          <Route path="/allcentres" element={<AllCentres />} />
+          <Route path="/allcentres/batches/:id" element={<Batches />} />
+          <Route
+            path="/allcentres/displaybatches/:id"
+            element={<DisplayBatches />}
+          />
           <Route path="/allcentres" element={<AllCentres />} />
           <Route path="/allcentres/batches/:id" element={<Batches />} />
           <Route
@@ -97,9 +118,30 @@ function App() {
               ></PrivateRoute>
             }
           />
+          
+          <Route path="/leadbank" element={<LeadBank />} />
+          <Route path="/leadbank/leadbankform" element={<LeadBankForm />} />
+          <Route
+            path="/leadbank/viewdetailedleads"
+            element={<ViewDetailedLeads />}
+          />
+          <Route path="/leadbank/bulkupload" element={<BulkUpload />} />
+          <Route
+            path="/addstudent"
+            element={
+              <PrivateRoute
+                userType={["AA", "admin"]}
+                comp={<AddStudent />}
+              ></PrivateRoute>
+            }
+          />
           {/* staff components */}
           <Route path="/managestaffs" element={<ManageStaffs />} />
+          <Route path="/managestaffs" element={<ManageStaffs />} />
           <Route path="/pendingusers" element={<PendingUsers />} />
+          {/* allotted students */}
+          <Route path="/allottedstudents" element={<AllottedStudents></AllottedStudents>}/>
+
         </Route>
       </Routes>
     </div>
