@@ -32,7 +32,7 @@ import { SERVER_URL } from "../server";
 import AllStudentsView from "../components/studentComponents/allStudentsView/AllStudentsView";
 import ManageStaffs from "../components/staffComponents/ManageStaffs";
 import Attendance from "../components/classComponents/Attendance";
-
+import AllottedStudents from "../components/AllottedStudents/AllottedStudents"
 
 function App() {
   axios.defaults.baseURL = SERVER_URL;
