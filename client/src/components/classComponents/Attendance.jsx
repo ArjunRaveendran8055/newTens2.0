@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import * as XLSX from "xlsx";
 import { FiEdit } from "react-icons/fi";
-
+import { MdOutlineDeleteOutline } from "react-icons/md";
 const Attendance = () => {
   const { id } = useParams();
   const [excelData, setExceldata] = useState([]);
@@ -17,7 +17,7 @@ const Attendance = () => {
         <FileUpload excelData={excelData} setExceldata={setExceldata} />
       </div>
       <div className="previewContainer flex w-full">
-        <ExcelPreview excelData={excelData} />
+        <ExcelPreview excelData={excelData} setExcelData={setExceldata} />
       </div>
     </div>
   );
@@ -98,44 +98,70 @@ export function FileUpload({ setExceldata }) {
   );
 }
 
-const products = [
-  {
-    id: 1,
-    Category: "Electronics",
-    Company: "Apple",
-    Product: "iPhone 13",
-    Description: "The latest iPhone with advanced features",
-    Price: 999,
-  },
-  {
-    id: 2,
-    Category: "Clothing",
-    Company: "Nike",
-    Product: "Running Shoes",
-    Description: "High-quality running shoes for athletes",
-    Price: 89,
-  },
-  {
-    id: 3,
-    Category: "Books",
-    Company: "Penguin Books",
-    Product: "The Great Gatsby",
-    Description: "Classic novel by F. Scott Fitzgerald",
-    Price: 12,
-  },
-  {
-    id: 4,
-    Category: "Home Appliances",
-    Company: "Samsung",
-    Product: "Smart Refrigerator",
-    Description: "Refrigerator with smart features and spacious design",
-    Price: 14,
-  },
-];
-export const ExcelPreview = ({ excelData }) => {
-  // Function to check the roll number format
-  const isValidRoll = (roll) => {
-    return /^[a-zA-Z]{2}\d{3}$/.test(roll);
+// Function to check the roll number format
+const isValidRoll = (roll) => {
+  return /^[a-zA-Z]{2}\d{3}$/.test(roll);
+};
+
+// Popup component for editing roll numbers
+const EditRollPopup = ({
+  isOpen,
+  onClose,
+  currentRoll,
+  setCurrentRoll,
+  onSave,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-5 rounded-lg w-[350px]">
+        <h2 className="text-lg mb-4">Edit Roll Number</h2>
+        <input
+          type="text"
+          value={currentRoll}
+          onChange={(e) => setCurrentRoll(e.target.value)}
+          className="border-2 border-gray-200 p-2 w-full"
+        />
+        <div className="flex justify-end gap-5 mt-4">
+          <button
+            onClick={() => onSave(currentRoll)}
+            className="bg-blue-500 text-white p-2 w-20 rounded"
+          >
+            Save
+          </button>
+          <button
+            onClick={onClose}
+            className="bg-red-500 text-white p-2 w-20 rounded"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const ExcelPreview = ({ excelData, setExcelData }) => {
+  const [isPopupOpen, setPopupOpen] = useState(false);
+  const [currentRoll, setCurrentRoll] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(null);
+
+  const handleEditClick = (roll, index) => {
+    setCurrentRoll(roll);
+    setCurrentIndex(index);
+    setPopupOpen(true);
+  };
+
+  const handleSave = (newRoll) => {
+    if (isValidRoll(newRoll)) {
+      const newData = [...excelData];
+      newData[currentIndex].roll = newRoll;
+      setExcelData(newData);
+      setPopupOpen(false);
+    } else {
+      alert("Invalid roll number format.");
+    }
   };
 
   return (
@@ -144,33 +170,36 @@ export const ExcelPreview = ({ excelData }) => {
         <div className="w-full  px-2 ">
           <h1 className="text-xl sm:text-2xl font-medium mb-2">Preview</h1>
         </div>
-        <div class="flex items-center justify-center">
-          <div class=" w-full flex">
-            <table class="md:inline-table w-full flex flex-row sm:bg-white  overflow-hidden ">
-              <thead class="text-black">
+        <div className="flex items-center justify-center">
+          <div className=" w-full flex">
+            <table className="md:inline-table w-full flex flex-row sm:bg-white  overflow-hidden ">
+              <thead className="text-black">
                 {excelData?.map((data, index) => (
                   <tr
-                    class={`bg-[#222E3A]/[6%] flex flex-col md:table-row rounded-l-lg sm:rounded-none mb-2 md:mb-0 ${
+                  className={`bg-[#222E3A]/[6%] flex flex-col md:table-row rounded-l-lg sm:rounded-none mb-2 md:mb-0 ${
                       index == 0 ? "md:flex" : "md:hidden"
                     }`}
                     key={index}
                   >
-                    <th class="py-3 px-5 text-left border border-b rounded-tl-lg sm:rounded-none">
+                    <th className="py-3 px-5 text-left border border-b rounded-tl-lg sm:rounded-none">
                       Roll Number
                     </th>
-                    <th class="py-3 px-5 text-left border border-b">
+                    <th className="py-3 px-5 text-left border border-b">
                       Duration
                     </th>
-                    <th class="py-3 px-5 text-left border border-t rounded-bl-lg sm:rounded-none">
+                    <th className="py-3 px-5 text-left border border-t rounded-bl-lg sm:rounded-none">
                       JoinTime
+                    </th>
+                    <th className="py-3 px-5 text-left border border-t rounded-bl-lg sm:rounded-none">
+                      Actions
                     </th>
                   </tr>
                 ))}
               </thead>
-              <tbody class="flex-1 md:flex-none">
+              <tbody className="flex-1 md:flex-none">
                 {excelData?.map((data, index) => (
                   <tr
-                    class="flex flex-col md:table-row mb-2 md:mb-0"
+                  className="flex flex-col md:table-row mb-2  md:mb-0"
                     key={index}
                   >
                     <td
@@ -185,18 +214,24 @@ export const ExcelPreview = ({ excelData }) => {
                           <span className="">{data?.roll}</span>
 
                           {!isValidRoll(data?.roll) && (
-                            <span className=" text-red-500 text-xl">
+                            <span
+                              className=" text-red-500 text-xl"
+                              onClick={() => handleEditClick(data.roll, index)}
+                            >
                               <FiEdit />
                             </span>
                           )}
                         </span>
                       </span>
                     </td>
-                    <td class="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
+                    <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
                       {data?.duration}
                     </td>
-                    <td class="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
+                    <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
                       {data?.joinTime}
+                    </td>
+                    <td className=" border hover:bg-[#222E3A]/[6%] flex sm:justify-end lg:justify-start  hover:sm:bg-transparent py-3 px-5">
+                      <span className=""> <MdOutlineDeleteOutline className="text-red-500 text-2xl"/></span>
                     </td>
                   </tr>
                 ))}
@@ -205,6 +240,13 @@ export const ExcelPreview = ({ excelData }) => {
           </div>
         </div>
       </div>
+      <EditRollPopup
+        isOpen={isPopupOpen}
+        onClose={() => setPopupOpen(false)}
+        currentRoll={currentRoll}
+        setCurrentRoll={setCurrentRoll}
+        onSave={handleSave}
+      />
     </div>
   );
 };

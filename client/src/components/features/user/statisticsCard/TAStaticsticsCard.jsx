@@ -77,8 +77,8 @@ function TAStatisticsCard() {
   ];
   return (
     <>
-      {adminStatisticsCardsData.map(({ icon, title, path, footer, ...rest }) => (
-        <Link to={path}>
+      {adminStatisticsCardsData.map(({ icon, title, path, footer, ...rest },index) => (
+        <Link key={index} to={path}>
         
         <StatisticsCard
           key={title}
