@@ -204,47 +204,23 @@ const staffApprovalWithPhotoController = asyncWrapper(
     const batch = formData.rollNumber.charAt(1).toLowerCase();
     console.log(batch);
 
-    const result1 = await CentreModel.aggregate([
-      {
-        $match: { centrename: formData.centre }  
-      },
-      {
-        $unwind: "$classes"  
-      },
-      {
-        $match: { "classes.class": formData.class }  
-      },
-      {
-        $project: {
+    const centre= await CentreModel.findOne({
+      centrename: formData.centre,
+      classes: {
+        $elemMatch: {
+          class: Number(formData.class),
+          stream: formData.level,
           batches: {
-            $filter: {
-              input: "$classes.batches",  
-              as: "batch",  
-              cond: { $eq: ["$$batch.name",batch] }  
+            $elemMatch: {
+              name: batch
             }
           }
         }
-      },
-      {
-        $match: { "batches.0": { $exists: true } }  // Ensure that there is at least one matching batch
-      },
-      {
-        $project: {
-          _id: 0,  // Exclude _id
-          matchFound: { $literal: true }  // Return true if match 
-        }
       }
-    ])
-    if(result1[0]?.matchFound){
-      var proceed = true
-    }else{
-      var proceed= false
-    }
-
-    console.log(proceed,"ress");
-
-    if(!proceed){
-      throw new AppError(404,"Invalid class or batch")
+    })
+  
+    if(!centre){
+      throw new AppError(422,"Invalid Class or Batch!!!")
     }
     
 
