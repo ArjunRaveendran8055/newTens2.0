@@ -156,23 +156,20 @@ const staffApprovalWithPhotoController = asyncWrapper(
   async (req, res, next) => {
     const { filename } = req.file;
     const { destination } = req.file;
-    console.log("veryGood", destination);
     const formData = JSON.parse(req.body.formData);
-    console.log("received form data is", formData._id);
     const id = formData._id;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new AppError(400, "Not a Valid User");
     }
     const prevData = await RegisteredStudentModel.findOne({ _id: id });
-    console.log("previous student data is:", prevData);
     if (!prevData) {
       throw new AppError(404, "Some Error Occur!");
     }
-    const prevFile = prevData.image;
-    const item = `${destination}/${prevFile}`;
-    fs.unlink(item, (err) => {
-      if (err) console.log(err.message);
-    });
+    // const prevFile = prevData.image;
+    // const item = `${destination}/${prevFile}`;
+    // fs.unlink(item, (err) => {
+    //   if (err) console.log(err.message);
+    // });
     let updatedDetails = {
       student_name: formData.fullName,
       gender: formData.gender,
@@ -203,6 +200,54 @@ const staffApprovalWithPhotoController = asyncWrapper(
       active_status: true,
       student_status: true,
     };
+
+    const batch = formData.rollNumber.charAt(1).toLowerCase();
+    console.log(batch);
+
+    const result1 = await CentreModel.aggregate([
+      {
+        $match: { centrename: formData.centre }  
+      },
+      {
+        $unwind: "$classes"  
+      },
+      {
+        $match: { "classes.class": formData.class }  
+      },
+      {
+        $project: {
+          batches: {
+            $filter: {
+              input: "$classes.batches",  
+              as: "batch",  
+              cond: { $eq: ["$$batch.name",batch] }  
+            }
+          }
+        }
+      },
+      {
+        $match: { "batches.0": { $exists: true } }  // Ensure that there is at least one matching batch
+      },
+      {
+        $project: {
+          _id: 0,  // Exclude _id
+          matchFound: { $literal: true }  // Return true if match 
+        }
+      }
+    ])
+    if(result1[0]?.matchFound){
+      var proceed = true
+    }else{
+      var proceed= false
+    }
+
+    console.log(proceed,"ress");
+
+    if(!proceed){
+      throw new AppError(404,"Invalid class or batch")
+    }
+    
+
     const updatedUser = await RegisteredStudentModel.findByIdAndUpdate(
       { _id: id },
       updatedDetails,
@@ -262,7 +307,8 @@ const staffApprovalWithPhotoController = asyncWrapper(
     if (result.length === 0) {
       throw new AppError(404, "Something went Wrong!");
     }
-    const batch = formData.rollNumber.charAt(1);
+   
+    
     const realStudent = { ...result[0], batch };
 
     const newApprovedStudent = new ApproveStudentModel(realStudent);
