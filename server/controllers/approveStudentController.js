@@ -35,6 +35,20 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
     throw new AppError(422,"Invalid Class or Batch!!!")
   }
 
+  const student = await ApproveStudentModel.findOne({
+    centre: formData.centre.toLowerCase(),
+    class: Number(formData.class),
+    level: formData.level,
+    roll_no: formData.rollNumber,
+  });
+
+  if (student) {
+    // If the student is found, return true
+    console.log("match found");
+    throw new AppError(422,"Roll Number is Already used!!!")
+  } 
+  
+
   let updatedDetails = {
     student_name: formData.fullName,
     gender: formData.gender,
@@ -165,11 +179,12 @@ const staffApprovalWithPhotoController = asyncWrapper(
     if (!prevData) {
       throw new AppError(404, "Some Error Occur!");
     }
-    // const prevFile = prevData.image;
-    // const item = `${destination}/${prevFile}`;
-    // fs.unlink(item, (err) => {
-    //   if (err) console.log(err.message);
-    // });
+    const prevFile = prevData.image;
+    const item = `${destination}/${prevFile}`;
+    fs.unlink(item, (err) => {
+      if (err) console.log(err.message);
+    });
+
     let updatedDetails = {
       student_name: formData.fullName,
       gender: formData.gender,
@@ -202,7 +217,6 @@ const staffApprovalWithPhotoController = asyncWrapper(
     };
 
     const batch = formData.rollNumber.charAt(1).toLowerCase();
-    console.log(batch);
 
     const centre= await CentreModel.findOne({
       centrename: formData.centre,
@@ -222,8 +236,20 @@ const staffApprovalWithPhotoController = asyncWrapper(
     if(!centre){
       throw new AppError(422,"Invalid Class or Batch!!!")
     }
-    
 
+    const student = await ApproveStudentModel.findOne({
+      centre: formData.centre.toLowerCase(),
+      class: Number(formData.class),
+      level: formData.level,
+      roll_no: formData.rollNumber,
+    });
+
+    if (student) {
+      // If the student is found, return true
+      console.log("match found");
+      throw new AppError(422,"Roll Number is Already used!!!")
+    } 
+    
     const updatedUser = await RegisteredStudentModel.findByIdAndUpdate(
       { _id: id },
       updatedDetails,
