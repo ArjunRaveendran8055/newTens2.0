@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import * as XLSX from "xlsx";
+import axios from "axios"
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 const Attendance = () => {
@@ -16,9 +17,11 @@ const Attendance = () => {
         <span className="font-bold text-xl">Click Here to Upload File</span>
         <FileUpload excelData={excelData} setExceldata={setExceldata} />
       </div>
-      <div className="previewContainer flex w-full">
-        <ExcelPreview excelData={excelData} setExcelData={setExceldata} />
-      </div>
+      {excelData.length > 0 && (
+        <div className="previewContainer flex w-full">
+          <ExcelPreview excelData={excelData} setExcelData={setExceldata} />
+        </div>
+      )}
     </div>
   );
 };
@@ -146,13 +149,32 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [currentRoll, setCurrentRoll] = useState("");
   const [currentIndex, setCurrentIndex] = useState(null);
-
+  const [lessTime,setLessTime]=useState(null)
   const handleEditClick = (roll, index) => {
     setCurrentRoll(roll);
     setCurrentIndex(index);
     setPopupOpen(true);
   };
+  useEffect(()=>{
+    axios.get("/class/getOneClass/:")
+  },[])
 
+  const deleteRowHandler = (index) => {
+    setExcelData(() => excelData.filter((item, ind) => ind !== index));
+  };
+
+  const lessTimeChangeHander=(e)=>{
+    const time=e.target.value
+    if(Number(time) > 30){
+      setLessTime(time)
+    }
+    else{
+      setLessTime(null)
+    }
+    
+  }
+
+  console.log("lesstime is:",lessTime)
   const handleSave = (newRoll) => {
     if (isValidRoll(newRoll)) {
       const newData = [...excelData];
@@ -170,13 +192,22 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
         <div className="w-full  px-2 ">
           <h1 className="text-xl sm:text-2xl font-medium mb-2">Preview</h1>
         </div>
+        <div className="w-full px-2 flex justify-end items-center gap-2 pb-2">
+          <label className="font-bold" htmlFor="lesstime">Less Time :</label>
+          <input
+            name="lesstime"
+            onChange={lessTimeChangeHander}
+            type="number"
+            className="border border-black outline-none rounded sm:w-16 h-10 p-2 text-center"
+          />
+        </div>
         <div className="flex items-center justify-center">
-          <div className=" w-full flex">
+          <div className=" w-full flex flex-col">
             <table className="md:inline-table w-full flex flex-row sm:bg-white  overflow-hidden ">
               <thead className="text-black">
                 {excelData?.map((data, index) => (
                   <tr
-                  className={`bg-[#222E3A]/[6%] flex flex-col md:table-row rounded-l-lg sm:rounded-none mb-2 md:mb-0 ${
+                    className={`bg-[#222E3A]/[6%] flex flex-col md:table-row rounded-l-lg sm:rounded-none mb-2 md:mb-0 ${
                       index == 0 ? "md:flex" : "md:hidden"
                     }`}
                     key={index}
@@ -199,7 +230,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
               <tbody className="flex-1 md:flex-none">
                 {excelData?.map((data, index) => (
                   <tr
-                  className="flex flex-col md:table-row mb-2  md:mb-0"
+                    className="flex flex-col md:table-row mb-2  md:mb-0"
                     key={index}
                   >
                     <td
@@ -225,18 +256,31 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
                       </span>
                     </td>
                     <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
-                      {data?.duration}
+                      <span className={`${data.duration < lessTime ? "text-red-500":"text-black"}`}>
+                        {data.duration}
+                      </span>
                     </td>
                     <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
                       {data?.joinTime}
                     </td>
                     <td className=" border hover:bg-[#222E3A]/[6%] flex sm:justify-end lg:justify-start  hover:sm:bg-transparent py-3 px-5">
-                      <span className=""> <MdOutlineDeleteOutline className="text-red-500 text-2xl"/></span>
+                      <span
+                        className=""
+                        onClick={() => deleteRowHandler(index)}
+                      >
+                        {" "}
+                        <MdOutlineDeleteOutline className="text-red-500 text-2xl" />
+                      </span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <div className="w-full px-2 flex justify-center items-center gap-2 pt-5">
+              <button className="cursor-pointer w-44 h-12 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:shadow-lg transition-all group ">
+                <span className="">Save Data</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
