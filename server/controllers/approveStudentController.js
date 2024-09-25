@@ -35,6 +35,20 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
     throw new AppError(422,"Invalid Class or Batch!!!")
   }
 
+  const student = await ApproveStudentModel.findOne({
+    centre: formData.centre.toLowerCase(),
+    class: Number(formData.class),
+    level: formData.level,
+    roll_no: formData.rollNumber,
+  });
+
+  if (student) {
+    // If the student is found, return true
+    console.log("match found");
+    throw new AppError(422,"Roll Number is Already used!!!")
+  } 
+  
+
   let updatedDetails = {
     student_name: formData.fullName,
     gender: formData.gender,
@@ -156,15 +170,12 @@ const staffApprovalWithPhotoController = asyncWrapper(
   async (req, res, next) => {
     const { filename } = req.file;
     const { destination } = req.file;
-    console.log("veryGood", destination);
     const formData = JSON.parse(req.body.formData);
-    console.log("received form data is", formData._id);
     const id = formData._id;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new AppError(400, "Not a Valid User");
     }
     const prevData = await RegisteredStudentModel.findOne({ _id: id });
-    console.log("previous student data is:", prevData);
     if (!prevData) {
       throw new AppError(404, "Some Error Occur!");
     }
@@ -173,6 +184,7 @@ const staffApprovalWithPhotoController = asyncWrapper(
     fs.unlink(item, (err) => {
       if (err) console.log(err.message);
     });
+
     let updatedDetails = {
       student_name: formData.fullName,
       gender: formData.gender,
@@ -203,6 +215,41 @@ const staffApprovalWithPhotoController = asyncWrapper(
       active_status: true,
       student_status: true,
     };
+
+    const batch = formData.rollNumber.charAt(1).toLowerCase();
+
+    const centre= await CentreModel.findOne({
+      centrename: formData.centre,
+      classes: {
+        $elemMatch: {
+          class: Number(formData.class),
+          stream: formData.level,
+          batches: {
+            $elemMatch: {
+              name: batch
+            }
+          }
+        }
+      }
+    })
+  
+    if(!centre){
+      throw new AppError(422,"Invalid Class or Batch!!!")
+    }
+
+    const student = await ApproveStudentModel.findOne({
+      centre: formData.centre.toLowerCase(),
+      class: Number(formData.class),
+      level: formData.level,
+      roll_no: formData.rollNumber,
+    });
+
+    if (student) {
+      // If the student is found, return true
+      console.log("match found");
+      throw new AppError(422,"Roll Number is Already used!!!")
+    } 
+    
     const updatedUser = await RegisteredStudentModel.findByIdAndUpdate(
       { _id: id },
       updatedDetails,
@@ -262,7 +309,8 @@ const staffApprovalWithPhotoController = asyncWrapper(
     if (result.length === 0) {
       throw new AppError(404, "Something went Wrong!");
     }
-    const batch = formData.rollNumber.charAt(1);
+   
+    
     const realStudent = { ...result[0], batch };
 
     const newApprovedStudent = new ApproveStudentModel(realStudent);
