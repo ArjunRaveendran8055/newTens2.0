@@ -189,7 +189,7 @@ function ClassHome() {
               </h3>
               <p className="text-l text-white">Status: uploaded</p>
             </div>
-            <Link to={`/clases/attendance/:${id}`}>
+            <Link to={`/clases/attendance/${id}`}>
               <div className="bg-[#BFDBFE] rounded-lg p-4 cursor-pointer">
                 <h3 className="text-lg font-semibold text-black">Attendance</h3>
                 <p className="text-l text-black-500">Status: not Completed</p>
