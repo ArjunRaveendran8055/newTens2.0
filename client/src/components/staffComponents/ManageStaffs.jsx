@@ -4,6 +4,7 @@ import { MdDelete } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
 import addImg from '../../layouts/addimg.png'
 import compressImage from "browser-image-compression";
+import { SERVER_URL } from '../../server';
 
 const ManageStaffs = () => {
     const [imageUrl, setImageUrl] = useState(addImg);
@@ -163,7 +164,7 @@ const ManageStaffs = () => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0 h-10 w-10">
-                                            <img className="h-10 w-10 rounded-full" src={'https://via.placeholder.com/40'} alt={user.firstname} />
+                                            <img className="h-10 w-10 rounded-full" src={user.image ? `${SERVER_URL}/uploads/users/${user.image}` : 'https://via.placeholder.com/40'} alt={user.firstname} />
                                         </div>
                                         <div className="ml-4">
                                             <div className="text-s capitalize font-medium text-gray-900">{user.firstname + " " + user.lastname}</div>
