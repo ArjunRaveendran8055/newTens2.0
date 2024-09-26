@@ -58,6 +58,8 @@ const oneUserController = asyncWrapper(async (req, res, next) => {
 // create user for admin 
 
 const createUserController = asyncWrapper(async (req, res, next) => {
+  console.log(req.body,"ress");
+  
   const { firstname, lastname, dob, email, password, role } = req.body;
 
   // Validate required fields
@@ -83,6 +85,13 @@ const createUserController = asyncWrapper(async (req, res, next) => {
     throw new AppError(409, "Email is already in use");
   }
 
+  // Check if a file is uploaded
+  let photoUrl;
+  if (req.file) {
+    photoUrl = req.file.filename; // Get the path where the photo is stored
+  }
+
+  
   // Create and save new user
   const newUser = new UserModel({
     firstname,
@@ -91,6 +100,7 @@ const createUserController = asyncWrapper(async (req, res, next) => {
     email,
     password,
     role: role || "TA",  // Default role is "TA" if not provided
+    image: photoUrl,      // Save photo path to the user's record
   });
 
   await newUser.save();

@@ -2,13 +2,17 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { MdDelete } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
+import addImg from '../../layouts/addimg.png'
+import compressImage from "browser-image-compression";
 
 const ManageStaffs = () => {
-
+    const [imageUrl, setImageUrl] = useState(addImg);
     const [users, setUsers] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [photo, setPhoto] = useState(null);
     const [newUser, setNewUser] = useState({
         firstname: '',
         lastname: '',
@@ -55,17 +59,41 @@ const ManageStaffs = () => {
     const handleAddUser = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/user/CreateNewUser', newUser);
+            const formData = new FormData();
+            
+            // Log newUser to ensure it's populated correctly
+            console.log(newUser); // Check that this contains the expected key-value pairs
+    
+            // Append all newUser fields to FormData
+            Object.keys(newUser).forEach(key => {
+                if (key === 'dob') {
+                    // Convert dob if needed (e.g., Date object to string)
+                    formData.append(key, new Date(newUser[key]).toISOString());
+                } else {
+                    formData.append(key, newUser[key]); // Append all other fields as is
+                }
+            });
+    
+            // Add photo to FormData if it exists
+            if (photo) {
+                formData.append('photo', photo); // Ensure photo is a File object
+            }
+    
+            // Log FormData content for debugging
+            for (let pair of formData.entries()) {
+                console.log(`${pair[0]}: ${pair[1]}`);
+            }
+            
+            // Send POST request with FormData
+            const response = await axios.post('/user/CreateNewUser', formData, {
+                // headers: {
+                //     'Content-Type': 'multipart/form-data'
+                // }
+            });
+    
+            // Update users state and close modal
             setUsers([...users, response.data]);
             setShowAddModal(false);
-            setNewUser({
-                firstname: '',
-                lastname: '',
-                email: '',
-                password: '',
-                role: 'TA',
-                dob: ''
-            });
         } catch (error) {
             console.error('Error adding user:', error);
         }
@@ -78,6 +106,32 @@ const ManageStaffs = () => {
             [name]: value
         });
     };
+
+    const handleImageChange = async (e) => {
+        const file = e.target.files[0];
+
+        try {
+          const compressedFile = await compressImage(file, {
+            maxSizeMB: 0.25, // Maximum size in megabytes
+            maxWidthOrHeight: 900, // Maximum width or height
+            useWebWorker: true, // Use web workers for faster compression (optional)
+          });
+    
+          // Now you can use the compressedFile for further processing or uploading
+          console.log("Compressed image:", compressedFile);
+          setPhoto(compressedFile);
+        } catch (error) {
+          console.error("Error compressing image:", error);
+        }
+    
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            setImageUrl(reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
 
     return (
         <div className="container mx-auto pt-9">
@@ -204,6 +258,43 @@ const ManageStaffs = () => {
                        <div className="flex justify-center first-letter:sm:flex sm:items-start">
                            <div className="w-full sm:w-2/3">
                                <h3 className="text-xl leading-6 font-bold underline flex justify-center text-gray-900 mb-4">Add User</h3>
+
+                               <div name="photo" className="w-52 p-2 mx-auto mb-10 rounded ">
+            <label htmlFor="imageUpload">
+              <div className="avatar-upload">
+                <div className="avatar-edit">
+                  <input
+                    required
+                    type="file"
+                    id="imageUpload"
+                    accept=".png, .jpg, .jpeg"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="imageUpload"
+                    className=" px-2 py-1 absolute ml-36  mt-40 inline-block w-9 h-9 bg-white rounded-full border border-gray-300 shadow cursor-pointer  hover:bg-gray-100"
+                  >
+                    <i className="fas fa-camera fa-lg text-gray-600 "></i>
+                  </label>
+                </div>
+
+                <div className="avatar-preview">
+                  <div
+                    id="imagePreview"
+                    className="w-48 h-48 bg-cover bg-center rounded-full border-4 border-gray-300"
+                    style={{ backgroundImage: `url(${imageUrl})` }}
+                  ></div>
+                  {errors.photo && (
+                    <span className="text-sm text-center text-red-500">
+                      {" * " + errors.photo}
+                    </span>
+                 )} 
+                </div>
+              </div>
+            </label>
+          </div>
+
                                <form onSubmit={handleAddUser}>
                                    <div className="mb-4">
                                        <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">First Name</label>
