@@ -79,6 +79,8 @@ const ManageStaffs = () => {
             if (photo) {
                 formData.append('photo', photo); // Ensure photo is a File object
             }
+
+            formData.append('activeStatus', true);
     
             // Log FormData content for debugging
             for (let pair of formData.entries()) {

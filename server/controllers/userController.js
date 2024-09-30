@@ -58,9 +58,9 @@ const oneUserController = asyncWrapper(async (req, res, next) => {
 // create user for admin 
 
 const createUserController = asyncWrapper(async (req, res, next) => {
-  console.log(req.body,"ress");
-  
-  const { firstname, lastname, dob, email, password, role } = req.body;
+  console.log(req.body, "req.body");
+
+  const { firstname, lastname, dob, email, password, role, activeStatus } = req.body;
 
   // Validate required fields
   if (!firstname) {
@@ -91,16 +91,22 @@ const createUserController = asyncWrapper(async (req, res, next) => {
     photoUrl = req.file.filename; // Get the path where the photo is stored
   }
 
-  
+  // Conditionally set the activestatus
+  const activestatus = activeStatus === 'true' || activeStatus === true ? true : false;
+
+  // Format dob in YYYY-MM-DD format
+  const formattedDob = new Date(dob).toISOString().split('T')[0]; // Extract the date part only
+
   // Create and save new user
   const newUser = new UserModel({
     firstname,
     lastname,
-    dob,
+    dob: formattedDob,  // Save the formatted dob
     email,
     password,
     role: role || "TA",  // Default role is "TA" if not provided
     image: photoUrl,      // Save photo path to the user's record
+    activestatus,         // Set activestatus based on request body or default to false
   });
 
   await newUser.save();
@@ -112,7 +118,6 @@ const createUserController = asyncWrapper(async (req, res, next) => {
     data: newUser,
   });
 });
-
 
 
 
