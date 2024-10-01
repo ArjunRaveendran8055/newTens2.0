@@ -2,6 +2,8 @@ const { asyncWrapper } = require("../helpers/asyncWrapper");
 const { UserModel } = require("../models/UserModel");
 const mongoose = require("mongoose");
 const { AppError } = require("../AppError");
+const fs = require('fs');
+const path = require('path');
 
 //get the pending userList
 const pendingUserController = asyncWrapper(async (req, res, next) => {
@@ -13,13 +15,6 @@ const pendingUserController = asyncWrapper(async (req, res, next) => {
     res.status(200).json({ success:true, count: pendingData.length, data: pendingData });
   }
 });
-
-
-
-
-
-
-
 
 
 //get all users
@@ -202,13 +197,30 @@ const deleteUserByIdController = asyncWrapper(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     throw new AppError(400, "Invalid ID!");
   } else {
-    const deletedUser = await UserModel.findByIdAndDelete(userId);
+    const user = await UserModel.findById(userId);
 
-    if (!deletedUser) {
+    if (!user) {
       throw new AppError(404, "No user found by ID!");
-    } else {
-      res.status(200).json({ success:true, message: "User deleted successfully!" });
     }
+
+    // Check if the user has an image, and delete it if it exists
+    if (user.image) {
+      const imagePath = path.join(__dirname, '..', 'uploads', 'users', user.image); // Point to uploads/users
+
+      // Delete the image file
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error('Error deleting image:', err);
+        } else {
+          console.log('Image deleted successfully:', imagePath);
+        }
+      });
+    }
+
+    // Delete the user
+    await UserModel.findByIdAndDelete(userId);
+
+    res.status(200).json({ success: true, message: "User and associated image deleted successfully!" });
   }
 });
 
