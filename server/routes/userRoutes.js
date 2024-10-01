@@ -1,10 +1,11 @@
-const { pendingUserController, allUserController, oneUserController, approveUserController, deleteUserByIdController,getAllAAController, createUserController, editUserController } = require("../controllers/userController")
+const { pendingUserController, allUserController, oneUserController, approveUserController, deleteUserByIdController,getAllAAController, createUserController, editUserController, allottedAreas } = require("../controllers/userController")
 const { authorizeGenuinity } = require("../middleware/authorizeGenuinity")
 
 const userRoutes=require("express").Router()
 
 
 userRoutes.get("/getPendingUserList",authorizeGenuinity(),pendingUserController)
+userRoutes.get("/allottedAreas",authorizeGenuinity(),allottedAreas)
 userRoutes.get("/getAllUserList",authorizeGenuinity(),allUserController)
 userRoutes.get("/getAllAA",authorizeGenuinity(),getAllAAController)
 userRoutes.get("/getOneUser/:id",authorizeGenuinity(),oneUserController)
