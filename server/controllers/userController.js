@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const { AppError } = require("../AppError");
 const fs = require('fs');
 const path = require('path');
+const { encryptPassword } = require("../utils/bcrypt");
 
 //get the pending userList
 const pendingUserController = asyncWrapper(async (req, res, next) => {
@@ -91,14 +92,14 @@ const createUserController = asyncWrapper(async (req, res, next) => {
 
   // Format dob in YYYY-MM-DD format
   const formattedDob = new Date(dob).toISOString().split('T')[0]; // Extract the date part only
-
+  const hashPass = encryptPassword(password);
   // Create and save new user
   const newUser = new UserModel({
     firstname,
     lastname,
     dob: formattedDob,  // Save the formatted dob
     email,
-    password,
+    password:hashPass,
     role: role || "TA",  // Default role is "TA" if not provided
     image: photoUrl,      // Save photo path to the user's record
     activestatus,         // Set activestatus based on request body or default to false
