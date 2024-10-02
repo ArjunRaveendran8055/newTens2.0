@@ -5,8 +5,11 @@ import { FaUserEdit } from "react-icons/fa";
 import addImg from '../../layouts/addimg.png'
 import compressImage from "browser-image-compression";
 import { SERVER_URL } from '../../server';
+import { setToastView } from '../features/toast/toastSlice';
+import { useDispatch } from "react-redux";
 
 const ManageStaffs = () => {
+    const dispatch = useDispatch();
     const [imageUrl, setImageUrl] = useState(addImg);
     const [users, setUsers] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -136,10 +139,18 @@ const ManageStaffs = () => {
     const handleUpdateUser = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`/api/users/${editUser._id}`, editUser);
-            closeModal(); // Close modal after successful update
+            const response = await axios.put(`/user/EditUser/${editUser._id}`, editUser);
+            setShowEditModal(false); // Close modal after successful update
+            console.log(response);
+            
+            dispatch(
+                setToastView({ type: "success", msg: response.data.message })
+              );
         } catch (error) {
             console.error('Error updating user:', error);
+            dispatch(
+                setToastView({ type: "error", msg: error.message })
+              );
         }
     };
 
