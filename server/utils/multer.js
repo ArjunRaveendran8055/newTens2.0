@@ -37,4 +37,4 @@ const studentUpload = multer({ storage: studentStorage });
 
 const userUpload = multer({ storage: userStorage });
 
-module.exports = { studentUpload,userStorage };
+module.exports = { studentUpload,userStorage,userUpload };

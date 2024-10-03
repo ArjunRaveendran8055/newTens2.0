@@ -15,7 +15,7 @@ const newclassSchema = new mongoose.Schema(
       required: [true, "subject required"],
     },
     classdate:  {
-      type: String,
+      type: Date,
       required: [true, "date required"],
     },
     classexam: {

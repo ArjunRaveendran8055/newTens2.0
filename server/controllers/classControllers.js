@@ -11,7 +11,7 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     classexam,
     classsyllabus,
     classsubject,
-    classstream
+    classstream,
   } = req.body;
 
   if (
@@ -25,10 +25,14 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     throw new AppError(400, "required all fields!");
   }
 
+  console.log("classDate :", classdate);
+  
+  // Create a new Date object from the string
+  var mongoDate = new Date(classdate);
   const newClass = new ClassModel({
     tutorname,
     classname,
-    classdate,
+    classdate:mongoDate,
     classexam,
     classsyllabus,
     classsubject,
@@ -118,9 +122,12 @@ const getAllClassesController = asyncWrapper(async (req, res, next) => {
     classes = await ClassModel.find({ classsyllabus: syllabus })
       .skip(startIndex)
       .limit(limit)
-      .sort({createdAt:-1});
+      .sort({ createdAt: -1 });
   } else {
-    classes = await ClassModel.find().skip(startIndex).limit(limit).sort({createdAt:-1});
+    classes = await ClassModel.find()
+      .skip(startIndex)
+      .limit(limit)
+      .sort({ createdAt: -1 });
   }
 
   const pagination = {};
@@ -157,8 +164,6 @@ const getClassByIdController = asyncWrapper(async (req, res, next) => {
 
   res.status(200).json(foundClass);
 });
-
-
 
 module.exports = {
   createClassController,

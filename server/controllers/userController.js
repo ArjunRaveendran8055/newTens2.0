@@ -3,6 +3,9 @@ const { UserModel } = require("../models/UserModel");
 const mongoose = require("mongoose");
 const { AppError } = require("../AppError");
 const { fetchAAbasedClasses, fetchMentorBasedClasses } = require("../helpers/FetchRoleBasedClassess");
+const fs = require('fs');
+const path = require('path');
+const { encryptPassword } = require("../utils/bcrypt");
 
 //get the pending userList
 const pendingUserController = asyncWrapper(async (req, res, next) => {
@@ -80,7 +83,9 @@ const oneUserController = asyncWrapper(async (req, res, next) => {
 // create user for admin 
 
 const createUserController = asyncWrapper(async (req, res, next) => {
-  const { firstname, lastname, dob, email, password, role } = req.body;
+  console.log(req.body, "req.body");
+
+  const { firstname, lastname, dob, email, password, role, activeStatus } = req.body;
 
   // Validate required fields
   if (!firstname) {
@@ -105,14 +110,28 @@ const createUserController = asyncWrapper(async (req, res, next) => {
     throw new AppError(409, "Email is already in use");
   }
 
+  // Check if a file is uploaded
+  let photoUrl;
+  if (req.file) {
+    photoUrl = req.file.filename; // Get the path where the photo is stored
+  }
+
+  // Conditionally set the activestatus
+  const activestatus = activeStatus === 'true' || activeStatus === true ? true : false;
+
+  // Format dob in YYYY-MM-DD format
+  const formattedDob = new Date(dob).toISOString().split('T')[0]; // Extract the date part only
+  const hashPass = encryptPassword(password);
   // Create and save new user
   const newUser = new UserModel({
     firstname,
     lastname,
-    dob,
+    dob: formattedDob,  // Save the formatted dob
     email,
-    password,
+    password:hashPass,
     role: role || "TA",  // Default role is "TA" if not provided
+    image: photoUrl,      // Save photo path to the user's record
+    activestatus,         // Set activestatus based on request body or default to false
   });
 
   await newUser.save();
@@ -124,7 +143,6 @@ const createUserController = asyncWrapper(async (req, res, next) => {
     data: newUser,
   });
 });
-
 
 
 
@@ -209,13 +227,30 @@ const deleteUserByIdController = asyncWrapper(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     throw new AppError(400, "Invalid ID!");
   } else {
-    const deletedUser = await UserModel.findByIdAndDelete(userId);
+    const user = await UserModel.findById(userId);
 
-    if (!deletedUser) {
+    if (!user) {
       throw new AppError(404, "No user found by ID!");
-    } else {
-      res.status(200).json({ success:true, message: "User deleted successfully!" });
     }
+
+    // Check if the user has an image, and delete it if it exists
+    if (user.image) {
+      const imagePath = path.join(__dirname, '..', 'uploads', 'users', user.image); // Point to uploads/users
+
+      // Delete the image file
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error('Error deleting image:', err);
+        } else {
+          console.log('Image deleted successfully:', imagePath);
+        }
+      });
+    }
+
+    // Delete the user
+    await UserModel.findByIdAndDelete(userId);
+
+    res.status(200).json({ success: true, message: "User and associated image deleted successfully!" });
   }
 });
 

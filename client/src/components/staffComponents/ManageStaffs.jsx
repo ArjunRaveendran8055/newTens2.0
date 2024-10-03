@@ -2,13 +2,29 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { MdDelete } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
+import addImg from '../../layouts/addimg.png'
+import compressImage from "browser-image-compression";
+import { SERVER_URL } from '../../server';
+import { setToastView } from '../features/toast/toastSlice';
+import { useDispatch } from "react-redux";
 
 const ManageStaffs = () => {
-
+    const dispatch = useDispatch();
+    const [imageUrl, setImageUrl] = useState(addImg);
     const [users, setUsers] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [photo, setPhoto] = useState(null);
+    const [editUser, setEditUser] = useState({
+        firstname: '',
+        lastname: '',
+        email: '',
+        role: '',
+        dob: '',
+    });
+    const [showEditModal, setShowEditModal] = useState(false);
     const [newUser, setNewUser] = useState({
         firstname: '',
         lastname: '',
@@ -55,21 +71,89 @@ const ManageStaffs = () => {
     const handleAddUser = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/user/CreateNewUser', newUser);
+            const formData = new FormData();
+
+            // Log newUser to ensure it's populated correctly
+            console.log(newUser); // Check that this contains the expected key-value pairs
+
+            // Append all newUser fields to FormData
+            Object.keys(newUser).forEach(key => {
+                if (key === 'dob') {
+                    // Convert dob if needed (e.g., Date object to string)
+                    formData.append(key, new Date(newUser[key]).toISOString());
+                } else {
+                    formData.append(key, newUser[key]); // Append all other fields as is
+                }
+            });
+
+            // Add photo to FormData if it exists
+            if (photo) {
+                formData.append('photo', photo); // Ensure photo is a File object
+            }
+
+            formData.append('activeStatus', true);
+
+            // Log FormData content for debugging
+            for (let pair of formData.entries()) {
+                console.log(`${pair[0]}: ${pair[1]}`);
+            }
+
+            // Send POST request with FormData
+            const response = await axios.post('/user/CreateNewUser', formData, {
+                // headers: {
+                //     'Content-Type': 'multipart/form-data'
+                // }
+            });
+
+            // Update users state and close modal
             setUsers([...users, response.data]);
             setShowAddModal(false);
-            setNewUser({
-                firstname: '',
-                lastname: '',
-                email: '',
-                password: '',
-                role: 'TA',
-                dob: ''
-            });
         } catch (error) {
             console.error('Error adding user:', error);
         }
     };
+
+    const handleEditClick = async (userId) => {
+        try {
+            // Fetch the user data from the server
+            const { data } = await axios.get(`/user/getOneUser/${userId}`);
+            setEditUser(data.data); // Populate the form with user data
+            setShowEditModal(true); // Open the edit modal
+
+        } catch (error) {
+            console.error("Failed to fetch user data:", error);
+        }
+    };
+
+    // Handle input change for the edit form
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
+        setEditUser((prev) => ({
+            ...prev,
+            [name]: value, // Update the state based on the input's name attribute
+        }));
+    };
+
+
+    // Submit the edited user data
+    const handleUpdateUser = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.put(`/user/EditUser/${editUser._id}`, editUser);
+            setShowEditModal(false); // Close modal after successful update
+            console.log(response);
+            
+            dispatch(
+                setToastView({ type: "success", msg: response.data.message })
+              );
+        } catch (error) {
+            console.error('Error updating user:', error);
+            dispatch(
+                setToastView({ type: "error", msg: error.message })
+              );
+        }
+    };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -79,11 +163,37 @@ const ManageStaffs = () => {
         });
     };
 
+    const handleImageChange = async (e) => {
+        const file = e.target.files[0];
+
+        try {
+            const compressedFile = await compressImage(file, {
+                maxSizeMB: 0.25, // Maximum size in megabytes
+                maxWidthOrHeight: 900, // Maximum width or height
+                useWebWorker: true, // Use web workers for faster compression (optional)
+            });
+
+            // Now you can use the compressedFile for further processing or uploading
+            console.log("Compressed image:", compressedFile);
+            setPhoto(compressedFile);
+        } catch (error) {
+            console.error("Error compressing image:", error);
+        }
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImageUrl(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
         <div className="container mx-auto pt-9">
             <div className="bg-gray-800 text-white p-4 rounded-t-lg flex justify-between">
                 <h2 className="text-lg font-semibold">STAFF DETAILS</h2>
-                <button 
+                <button
                     className="bg-blue-500 text-white px-4 py-2 rounded"
                     onClick={() => setShowAddModal(true)}
                 >
@@ -109,7 +219,7 @@ const ManageStaffs = () => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0 h-10 w-10">
-                                            <img className="h-10 w-10 rounded-full" src={'https://via.placeholder.com/40'} alt={user.firstname} />
+                                            <img className="h-10 w-10 rounded-full" src={user.image ? `${SERVER_URL}/uploads/users/${user.image}` : 'https://via.placeholder.com/40'} alt={user.firstname} />
                                         </div>
                                         <div className="ml-4">
                                             <div className="text-s capitalize font-medium text-gray-900">{user.firstname + " " + user.lastname}</div>
@@ -133,7 +243,7 @@ const ManageStaffs = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{user.dob}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex gap-3 mt-2">
                                     <button>
-                                        <FaUserEdit size={26}/>
+                                        <FaUserEdit size={26} onClick={() => handleEditClick(user._id)} />
                                     </button>
                                     <button onClick={() => confirmDelete(user._id)}>
                                         <MdDelete color="red" size={26} />
@@ -170,15 +280,15 @@ const ManageStaffs = () => {
                                 </div>
                             </div>
                             <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                                     onClick={handleDelete}
                                 >
                                     Delete
                                 </button>
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
                                     onClick={cancelDelete}
                                 >
@@ -192,122 +302,301 @@ const ManageStaffs = () => {
 
             {/* Add User Modal */}
             {showAddModal && (
-               <div className="fixed z-10 inset-0 overflow-y-auto">
-               <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                   <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-                       <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-                   </div>
-           
-                   <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-           
-                   <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
-                       <div className="flex justify-center first-letter:sm:flex sm:items-start">
-                           <div className="w-full sm:w-2/3">
-                               <h3 className="text-xl leading-6 font-bold underline flex justify-center text-gray-900 mb-4">Add User</h3>
-                               <form onSubmit={handleAddUser}>
-                                   <div className="mb-4">
-                                       <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">First Name</label>
-                                       <input
-                                           type="text"
-                                           name="firstname"
-                                           id="firstname"
-                                           placeholder="First Name"
-                                           value={newUser.firstname}
-                                           onChange={handleInputChange}
-                                           className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
-                                           
-                                       />
-                                   </div>
-                                   <div className="mb-4">
-                                       <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">Last Name</label>
-                                       <input
-                                           type="text"
-                                           name="lastname"
-                                           id="lastname"
-                                           placeholder="Last Name"
-                                           value={newUser.lastname}
-                                           onChange={handleInputChange}
-                                           className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
-                                           
-                                       />
-                                   </div>
-                                   <div className="mb-4">
-                                       <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                                       <input
-                                           type="email"
-                                           name="email"
-                                           id="email"
-                                           placeholder="Email"
-                                           value={newUser.email}
-                                           onChange={handleInputChange}
-                                           className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
-                                           
-                                       />
-                                   </div>
-                                   <div className="mb-4">
-                                       <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                                       <input
-                                           type="password"
-                                           name="password"
-                                           id="password"
-                                           placeholder="Password"
-                                           value={newUser.password}
-                                           onChange={handleInputChange}
-                                           className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
-                                           
-                                       />
-                                   </div>
-                                   <div className="mb-4">
-                                       <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
-                                       <select
-                                           name="role"
-                                           id="role"
-                                           value={newUser.role}
-                                           onChange={handleInputChange}
-                                           className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
-                                       >
-                                           <option value="TA">TA</option>
-                                           <option value="TEAMLEAD">TEAMLEAD</option>
-                                           <option value="AA">AA</option>
-                                           <option value="MENTOR">MENTOR</option>
-                                           <option value="MARKETING">MARKETING</option>
-                                       </select>
-                                   </div>
-                                   <div className="mb-4">
-                                       <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                                       <input
-                                           type="date"
-                                           name="dob"
-                                           id="dob"
-                                           placeholder="Date of Birth"
-                                           value={newUser.dob}
-                                           onChange={handleInputChange}
-                                           className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
-                                           
-                                       />
-                                   </div>
-                                   <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                                       <button 
-                                           type="submit" 
-                                           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
-                                       >
-                                           Add User
-                                       </button>
-                                       <button 
-                                           type="button" 
-                                           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
-                                           onClick={() => setShowAddModal(false)}
-                                       >
-                                           Cancel
-                                       </button>
-                                   </div>
-                               </form>
-                           </div>
-                       </div>
-                   </div>
-               </div>
-           </div>
+                <div className="fixed z-10 inset-0 overflow-y-auto">
+                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                        </div>
+
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
+                            <div className="flex justify-center first-letter:sm:flex sm:items-start">
+                                <div className="w-full sm:w-2/3">
+                                    <h3 className="text-xl leading-6 font-bold underline flex justify-center text-gray-900 mb-4">Add User</h3>
+
+                                    <div name="photo" className="w-52 p-2 mx-auto mb-10 rounded ">
+                                        <label htmlFor="imageUpload">
+                                            <div className="avatar-upload">
+                                                <div className="avatar-edit">
+                                                    <input
+                                                        required
+                                                        type="file"
+                                                        id="imageUpload"
+                                                        accept=".png, .jpg, .jpeg"
+                                                        onChange={handleImageChange}
+                                                        className="hidden"
+                                                    />
+                                                    <label
+                                                        htmlFor="imageUpload"
+                                                        className=" px-2 py-1 absolute ml-36  mt-40 inline-block w-9 h-9 bg-white rounded-full border border-gray-300 shadow cursor-pointer  hover:bg-gray-100"
+                                                    >
+                                                        <i className="fas fa-camera fa-lg text-gray-600 "></i>
+                                                    </label>
+                                                </div>
+
+                                                <div className="avatar-preview">
+                                                    <div
+                                                        id="imagePreview"
+                                                        className="w-48 h-48 bg-cover bg-center rounded-full border-4 border-gray-300"
+                                                        style={{ backgroundImage: `url(${imageUrl})` }}
+                                                    ></div>
+                                                    {errors.photo && (
+                                                        <span className="text-sm text-center text-red-500">
+                                                            {" * " + errors.photo}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <form onSubmit={handleAddUser}>
+                                        <div className="mb-4">
+                                            <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">First Name</label>
+                                            <input
+                                                type="text"
+                                                name="firstname"
+                                                id="firstname"
+                                                placeholder="First Name"
+                                                value={newUser.firstname}
+                                                onChange={handleInputChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">Last Name</label>
+                                            <input
+                                                type="text"
+                                                name="lastname"
+                                                id="lastname"
+                                                placeholder="Last Name"
+                                                value={newUser.lastname}
+                                                onChange={handleInputChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                id="email"
+                                                placeholder="Email"
+                                                value={newUser.email}
+                                                onChange={handleInputChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                id="password"
+                                                placeholder="Password"
+                                                value={newUser.password}
+                                                onChange={handleInputChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+                                            <select
+                                                name="role"
+                                                id="role"
+                                                value={newUser.role}
+                                                onChange={handleInputChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+                                            >
+                                                <option value="TA">TA</option>
+                                                <option value="TEAMLEAD">TEAMLEAD</option>
+                                                <option value="AA">AA</option>
+                                                <option value="MENTOR">MENTOR</option>
+                                                <option value="MARKETING">MARKETING</option>
+                                            </select>
+                                        </div>
+                                        <div className="mb-4">
+                                            <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                                            <input
+                                                type="date"
+                                                name="dob"
+                                                id="dob"
+                                                placeholder="Date of Birth"
+                                                value={newUser.dob}
+                                                onChange={handleInputChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+
+                                            />
+                                        </div>
+                                        <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                                            <button
+                                                type="submit"
+                                                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                            >
+                                                Add User
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                                                onClick={() => setShowAddModal(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             )}
+
+
+            {showEditModal && (
+                <div className="fixed z-10 inset-0 overflow-y-auto">
+                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                        </div>
+
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
+                            <div className="flex justify-center first-letter:sm:flex sm:items-start">
+                                <div className="w-full sm:w-2/3">
+                                    <h3 className="text-xl leading-6 font-bold underline flex justify-center text-gray-900 mb-4">Edit User</h3>
+
+                                    <div name="photo" className="w-52 p-2 mx-auto mb-10 rounded ">
+                                        <label htmlFor="imageUpload">
+                                            <div className="avatar-upload">
+                                                <div className="avatar-edit">
+                                                    <input
+                                                        type="file"
+                                                        id="imageUpload"
+                                                        accept=".png, .jpg, .jpeg"
+                                                        onChange={handleImageChange}
+                                                        className="hidden"
+                                                    />
+                                                    <label
+                                                        htmlFor="imageUpload"
+                                                        className=" px-2 py-1 absolute ml-36 mt-40 inline-block w-9 h-9 bg-white rounded-full border border-gray-300 shadow cursor-pointer  hover:bg-gray-100"
+                                                    >
+                                                        <i className="fas fa-camera fa-lg text-gray-600 "></i>
+                                                    </label>
+                                                </div>
+
+                                                {/* `${SERVER_URL}/uploads/users/${user.image}` 
+                                                { backgroundImage: `url(${imageUrl || editUser?.photo})*/}
+                                                <div
+                                                    id="imagePreview"
+                                                    className="w-48 h-48 bg-cover bg-center rounded-full border-4 border-gray-300"
+
+                                                    style={editUser.image ? { backgroundImage: `url(${SERVER_URL}/uploads/users/${editUser.image})` } : { backgroundImage: `url(${imageUrl})` }}
+                                                ></div>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <form onSubmit={handleUpdateUser}>
+                                        <div className="mb-4">
+                                            <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">First Name</label>
+                                            <input
+                                                type="text"
+                                                name="firstname"
+                                                id="firstname"
+                                                placeholder="First Name"
+                                                value={editUser.firstname}
+                                                onChange={handleEditChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+                                            />
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">Last Name</label>
+                                            <input
+                                                type="text"
+                                                name="lastname"
+                                                id="lastname"
+                                                placeholder="Last Name"
+                                                value={editUser.lastname}
+                                                onChange={handleEditChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+                                            />
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                id="email"
+                                                placeholder="Email"
+                                                value={editUser.email}
+                                                onChange={handleEditChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+                                            />
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+                                            <select
+                                                name="role"
+                                                id="role"
+                                                value={editUser.role} onChange={handleEditChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+                                            >
+                                                <option value="TA">TA</option>
+                                                <option value="TEAMLEAD">TEAMLEAD</option>
+                                                <option value="AA">AA</option>
+                                                <option value="MENTOR">MENTOR</option>
+                                                <option value="MARKETING">MARKETING</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Create New Password</label>
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                id="password"
+                                                placeholder="Password"
+                                                onChange={handleEditChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+                                            />
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                                            <input
+                                                type="date"
+                                                name="dob"
+                                                id="dob"
+                                                value={editUser?.dob}
+                                                onChange={handleEditChange}
+                                                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md"
+                                            />
+                                        </div>
+
+                                        <button type="submit" className="w-full inline-flex justify-center rounded-md bg-green-600 text-white px-4 py-2 hover:bg-green-700">
+                                            Save Changes
+                                        </button>
+                                        <button type="button" onClick={() => setShowEditModal(false)} className="w-full mt-3 inline-flex justify-center rounded-md bg-gray-300 text-gray-700 px-4 py-2">
+                                            Cancel
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
         </div>
     );
 };
