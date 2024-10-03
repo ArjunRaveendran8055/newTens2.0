@@ -118,7 +118,8 @@ const ManageStaffs = () => {
             // Fetch the user data from the server
             const { data } = await axios.get(`/user/getOneUser/${userId}`);
             setEditUser(data.data); // Populate the form with user data
-            setShowEditModal(true); // Open the edit modal
+            setShowEditModal(true);
+            setImageUrl(`${SERVER_URL}/uploads/users/`+data.data.image) // Open the edit modal
 
         } catch (error) {
             console.error("Failed to fetch user data:", error);
@@ -135,24 +136,44 @@ const ManageStaffs = () => {
     };
 
 
-    // Submit the edited user data
-    const handleUpdateUser = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.put(`/user/EditUser/${editUser._id}`, editUser);
-            setShowEditModal(false); // Close modal after successful update
-            console.log(response);
-            
-            dispatch(
-                setToastView({ type: "success", msg: response.data.message })
-              );
-        } catch (error) {
-            console.error('Error updating user:', error);
-            dispatch(
-                setToastView({ type: "error", msg: error.message })
-              );
-        }
-    };
+// Submit the edited user data, including the image
+const handleUpdateUser = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    
+    // Append user data fields to the FormData
+    formData.append('firstname', editUser.firstname);
+    formData.append('lastname', editUser.lastname);
+    formData.append('email', editUser.email);
+    formData.append('role', editUser.role);
+    formData.append('dob', editUser.dob);
+  
+    // Append the image file if a new one was selected
+    if (photo) {
+      formData.append('photo', photo); // 'photo' should be the compressed image state
+    }
+  
+    try {
+      const response = await axios.put(`/user/EditUser/${editUser._id}`, formData, {
+        // headers: {
+        //   'Content-Type': 'multipart/form-data',
+        // },
+      });
+  
+      setShowEditModal(false); // Close modal after successful update
+      console.log(response);
+      
+      dispatch(
+        setToastView({ type: "success", msg: response.data.message })
+      );
+    } catch (error) {
+      console.error('Error updating user:', error);
+      dispatch(
+        setToastView({ type: "error", msg: error.message })
+      );
+    }
+  };
 
 
     const handleInputChange = (e) => {
@@ -174,7 +195,7 @@ const ManageStaffs = () => {
             });
 
             // Now you can use the compressedFile for further processing or uploading
-            console.log("Compressed image:", compressedFile);
+            // console.log("Compressed image:", compressedFile);
             setPhoto(compressedFile);
         } catch (error) {
             console.error("Error compressing image:", error);
@@ -188,6 +209,8 @@ const ManageStaffs = () => {
             reader.readAsDataURL(file);
         }
     };
+
+    
 
     return (
         <div className="container mx-auto pt-9">
@@ -496,7 +519,7 @@ const ManageStaffs = () => {
                                                     id="imagePreview"
                                                     className="w-48 h-48 bg-cover bg-center rounded-full border-4 border-gray-300"
 
-                                                    style={editUser.image ? { backgroundImage: `url(${SERVER_URL}/uploads/users/${editUser.image})` } : { backgroundImage: `url(${imageUrl})` }}
+                                                    style={  { backgroundImage: `url(${imageUrl})` }}
                                                 ></div>
                                             </div>
                                         </label>

@@ -126,7 +126,7 @@ const editUserController = asyncWrapper(async (req, res, next) => {
   const { firstname, lastname, dob, email, password, role } = req.body;
 
   // Check if at least one field is provided for update
-  if (!firstname && !lastname && !dob && !email && !password && !role) {
+  if (!firstname && !lastname && !dob && !email && !password && !role && !req.file) {
     throw new AppError(400, "No fields specified for update");
   }
 
@@ -141,8 +141,36 @@ const editUserController = asyncWrapper(async (req, res, next) => {
   if (lastname) updateData.lastname = lastname;
   if (dob) updateData.dob = dob;
   if (email) updateData.email = email;
-  if (password) updateData.password = password;
+  if (password) {
+    const hashPass = encryptPassword(password);
+    updateData.password = hashPass;
+  }
   if (role) updateData.role = role;
+
+  // Check if an image file was uploaded
+  if (req.file) {
+    // Assume you are using multer to store the uploaded file in req.file
+    const newImagePath = req.file.filename;
+
+    // Optionally, find the user to remove the old image (if applicable)
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new AppError(404, "No user found by ID!");
+    }
+
+    // Delete the old image if it exists
+    if (user.image) {
+      const oldImagePath = path.join(__dirname, '../uploads/users', user.image);
+      fs.unlink(oldImagePath, (err) => {
+        if (err) {
+          console.error("Failed to delete old image:", err);
+        }
+      });
+    }
+
+    // Update the image field in the database
+    updateData.image = newImagePath;
+  }
 
   // Perform the update
   const updatedUser = await UserModel.findByIdAndUpdate(
@@ -163,7 +191,6 @@ const editUserController = asyncWrapper(async (req, res, next) => {
     data: updatedUser,
   });
 });
-
 
 
 //get user by id
