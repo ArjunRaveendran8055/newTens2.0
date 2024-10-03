@@ -264,6 +264,9 @@ const FormView = ({
     }
   };
 
+
+  
+
   //function to handle changes in all the fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
