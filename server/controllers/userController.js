@@ -2,6 +2,7 @@ const { asyncWrapper } = require("../helpers/asyncWrapper");
 const { UserModel } = require("../models/UserModel");
 const mongoose = require("mongoose");
 const { AppError } = require("../AppError");
+const { fetchAAbasedClasses, fetchMentorBasedClasses } = require("../helpers/FetchRoleBasedClassess");
 const fs = require('fs');
 const path = require('path');
 const { encryptPassword } = require("../utils/bcrypt");
@@ -16,6 +17,34 @@ const pendingUserController = asyncWrapper(async (req, res, next) => {
     res.status(200).json({ success:true, count: pendingData.length, data: pendingData });
   }
 });
+
+
+//get allotted centre , classes , batches
+const allottedAreas = asyncWrapper(async (req, res, next) => {
+  
+  console.log(res.user)
+
+  if(res.user.role="AA"){
+    const data = await fetchAAbasedClasses(res.user.id)
+    res.status(200).json({success:true, data : data})
+  }else if(res.user.role = "MENTOR"){
+    const data = await fetchMentorBasedClasses(res.user.id)
+    res.status(200).json({success:true, data : data})
+  }else{
+    throw new AppError(404, "invalid user role!");
+  }
+
+
+
+ // res.status(200).json({success:true, user : res.user})
+
+
+});
+
+
+
+
+
 
 
 //get all users
@@ -286,5 +315,6 @@ module.exports = {
   deleteUserByIdController,
   getAllAAController,
   editUserController,
-  createUserController
+  createUserController,
+  allottedAreas
 };
