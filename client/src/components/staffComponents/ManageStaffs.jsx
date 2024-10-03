@@ -45,7 +45,7 @@ const ManageStaffs = () => {
         };
 
         fetchUsers();
-    }, []);
+    }, [showEditModal,showAddModal]);
 
     const confirmDelete = (userId) => {
         setUserToDelete(userId);
