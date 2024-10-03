@@ -4,11 +4,10 @@ import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import * as XLSX from "xlsx";
-import axios from "axios"
+import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 const Attendance = () => {
-  const { id } = useParams();
   const [excelData, setExceldata] = useState([]);
   console.log("excelData is:", excelData);
   return (
@@ -146,45 +145,93 @@ const EditRollPopup = ({
 };
 
 export const ExcelPreview = ({ excelData, setExcelData }) => {
+  const { id } = useParams();
   const [isPopupOpen, setPopupOpen] = useState(false);
+  const [ogExcelData,setOgExcelData]=useState([])
   const [currentRoll, setCurrentRoll] = useState("");
   const [currentIndex, setCurrentIndex] = useState(null);
-  const [lessTime,setLessTime]=useState(null)
+  const [lessTime, setLessTime] = useState(null);
   const handleEditClick = (roll, index) => {
     setCurrentRoll(roll);
     setCurrentIndex(index);
     setPopupOpen(true);
   };
-  useEffect(()=>{
-    axios.get("/class/getOneClass/:")
-  },[])
+  useEffect(() => {
+    axios
+      .get(`/class/getOneClass/${id}`)
+      .then((res) => {
+        console.log("response is", res.data.classdate);
+        const datePart = res.data.classdate.split("T")[0];
+        console.log(datePart);
+      
+          const timeCorrectData=excelData.map((item) => {
+            console.log("item is",item)
+            let [hour, minute, second] = item.joinTime.split(/:|\s/);
+            hour =
+              parseInt(hour) +
+              (item.joinTime.includes("PM") && hour !== "12" ? 12 : 0);
+            hour = hour.toString().padStart(2, "0"); // Ensure two-digit hour
+            return {
+              ...item,
+              joinTime : `${datePart}T${hour}:${minute}:${second}000+00:00`
+            };
+          });
+          console.log(timeCorrectData)
+          setOgExcelData([...timeCorrectData])
+        
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, []);
 
+  console.log("ogExcel data is",ogExcelData)
+  console.log("trialexcel",excelData)
   const deleteRowHandler = (index) => {
     setExcelData(() => excelData.filter((item, ind) => ind !== index));
   };
 
-  const lessTimeChangeHander=(e)=>{
-    const time=e.target.value
-    if(Number(time) > 30){
-      setLessTime(time)
+  const lessTimeChangeHander = (e) => {
+    const time = e.target.value;
+    if (Number(time) > 30) {
+      setLessTime(time);
+    } else {
+      setLessTime(null);
     }
-    else{
-      setLessTime(null)
-    }
-    
-  }
+  };
 
-  console.log("lesstime is:",lessTime)
+  console.log("lesstime is:", lessTime);
   const handleSave = (newRoll) => {
     if (isValidRoll(newRoll)) {
-      const newData = [...excelData];
+      const newData = [...ogExcelData];
       newData[currentIndex].roll = newRoll;
-      setExcelData(newData);
+      setOgExcelData(newData);
       setPopupOpen(false);
     } else {
       alert("Invalid roll number format.");
     }
   };
+
+  function convertTimestampToTime(timestamp) {
+    // Create a Date object using the timestamp
+    const date = new Date(timestamp);
+    // Get hours and minutes
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+  
+    // Determine the AM/PM suffix
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+  
+    // Convert hours to 12-hour format
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+  
+    // Pad minutes with leading zero if needed
+    const minutesPadded = minutes < 10 ? '0' + minutes : minutes;
+  
+    // Format the time string
+    return hours + ':' + minutesPadded + ' ' + ampm;
+  }
 
   return (
     <div className="w-full">
@@ -193,7 +240,9 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
           <h1 className="text-xl sm:text-2xl font-medium mb-2">Preview</h1>
         </div>
         <div className="w-full px-2 flex justify-end items-center gap-2 pb-2">
-          <label className="font-bold" htmlFor="lesstime">Less Time :</label>
+          <label className="font-bold" htmlFor="lesstime">
+            Less Time :
+          </label>
           <input
             name="lesstime"
             onChange={lessTimeChangeHander}
@@ -205,7 +254,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
           <div className=" w-full flex flex-col">
             <table className="md:inline-table w-full flex flex-row sm:bg-white  overflow-hidden ">
               <thead className="text-black">
-                {excelData?.map((data, index) => (
+                {ogExcelData?.map((data, index) => (
                   <tr
                     className={`bg-[#222E3A]/[6%] flex flex-col md:table-row rounded-l-lg sm:rounded-none mb-2 md:mb-0 ${
                       index == 0 ? "md:flex" : "md:hidden"
@@ -228,7 +277,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
                 ))}
               </thead>
               <tbody className="flex-1 md:flex-none">
-                {excelData?.map((data, index) => (
+                {ogExcelData?.map((data, index) => (
                   <tr
                     className="flex flex-col md:table-row mb-2  md:mb-0"
                     key={index}
@@ -256,7 +305,13 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
                       </span>
                     </td>
                     <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
-                      <span className={`${data.duration < lessTime ? "text-red-500":"text-black"}`}>
+                      <span
+                        className={`${
+                          data.duration < lessTime
+                            ? "text-red-500"
+                            : "text-black"
+                        }`}
+                      >
                         {data.duration}
                       </span>
                     </td>
