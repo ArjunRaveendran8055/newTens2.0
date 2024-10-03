@@ -144,6 +144,7 @@ const ApprovedStudentSchema = new mongoose.Schema(
     report: Array,
     attendance: Array,
     marks: Array,
+    informedData:Array,
     active_status: {
       type: Boolean,
       default: true,
