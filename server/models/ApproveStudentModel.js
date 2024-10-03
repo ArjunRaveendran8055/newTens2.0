@@ -6,10 +6,10 @@ const ApprovedStudentSchema = new mongoose.Schema(
       type: String,
       required: [true, "roll number required"],
     },
-    batch:{
-      type:String,
-      default:"",
-      required:false
+    batch: {
+      type: String,
+      default: "",
+      required: false,
     },
     admission_no: {
       type: Number,
@@ -137,7 +137,13 @@ const ApprovedStudentSchema = new mongoose.Schema(
       type: String,
       required: [true, "responseId required"],
     },
+    session: {
+      type: String,
+      required: [true, "session is required"],
+    },
     report: Array,
+    attendance: Array,
+    marks: Array,
     active_status: {
       type: Boolean,
       default: true,
