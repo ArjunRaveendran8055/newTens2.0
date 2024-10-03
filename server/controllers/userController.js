@@ -50,12 +50,34 @@ const allottedAreas = asyncWrapper(async (req, res, next) => {
 //get all users
 
 const allUserController = asyncWrapper(async (req, res, next) => {
-  const allData = await UserModel.find();
+  const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10 if not provided
+
+  // Convert page and limit to integers
+  const pageNum = parseInt(page);
+  const limitNum = parseInt(limit);
+
+  // Calculate the skip value (how many records to skip for the current page)
+  const skip = (pageNum - 1) * limitNum;
+
+  // Fetch the total number of users for pagination
+  const totalUsers = await UserModel.countDocuments();
+
+  // Fetch users with pagination
+  const allData = await UserModel.find()
+    .skip(skip)
+    .limit(limitNum);
 
   if (allData.length < 1) {
-    res.status(200).json({ success:true, message: "no users!" });
+    res.status(200).json({ success: true, message: "no users!" });
   } else {
-    res.status(200).json({ success:true, count: allData.length, data: allData });
+    res.status(200).json({
+      success: true,
+      count: allData.length,
+      totalUsers,
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalUsers / limitNum),
+      data: allData
+    });
   }
 });
 

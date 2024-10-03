@@ -33,19 +33,24 @@ const ManageStaffs = () => {
         role: 'TA',
         dob: ''
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [limit, setLimit] = useState(8);
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('/user/getAlluserList');
+                const response = await axios.get(`/user/getAllUserList?page=${currentPage}&limit=${limit}`);
                 setUsers(response.data.data);
+                setCurrentPage(response.data.currentPage);
+                setTotalPages(response.data.totalPages);
             } catch (error) {
-                console.error('Error fetching users:', error);
+                console.error("Error fetching users:", error);
             }
         };
 
         fetchUsers();
-    }, [showEditModal,showAddModal]);
+    }, [showEditModal,showAddModal,currentPage, limit]);
 
     const confirmDelete = (userId) => {
         setUserToDelete(userId);
@@ -210,7 +215,12 @@ const handleUpdateUser = async (e) => {
         }
     };
 
-    
+     // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+
 
     return (
         <div className="container mx-auto pt-9">
@@ -223,6 +233,7 @@ const handleUpdateUser = async (e) => {
                     Add User
                 </button>
             </div>
+            
             <div className="overflow-x-auto bg-white shadow-md rounded-b-lg">
                 <table className="min-w-full divide-y divide-gray-200">
                     {/* Table Head */}
@@ -276,6 +287,37 @@ const handleUpdateUser = async (e) => {
                         ))}
                     </tbody>
                 </table>
+                 {/* Pagination Design */}
+      <div className="flex justify-between items-center px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <span className="text-sm text-gray-700">
+          Page {currentPage} of {totalPages}
+        </span>
+        <div className="inline-flex">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 border rounded-l-md text-gray-500 bg-white border-gray-300 ${currentPage === 1 ? 'cursor-not-allowed' : 'hover:bg-gray-100'}`}
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 border-t border-b border-gray-300 ${currentPage === index + 1 ? 'bg-indigo-500 text-white' : 'bg-white text-gray-500 hover:bg-gray-100'}`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 border rounded-r-md text-gray-500 bg-white border-gray-300 ${currentPage === totalPages ? 'cursor-not-allowed' : 'hover:bg-gray-100'}`}
+          >
+            Next
+          </button>
+        </div>
+      </div>
             </div>
 
             {/* Delete Modal */}
@@ -616,6 +658,8 @@ const handleUpdateUser = async (e) => {
                             </div>
                         </div>
                     </div>
+
+                    
                 </div>
             )}
 
