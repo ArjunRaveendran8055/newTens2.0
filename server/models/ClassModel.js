@@ -30,6 +30,10 @@ const newclassSchema = new mongoose.Schema(
       type: String,
       required: [true, "stream required"],
     },
+    students:{
+      type:Array,
+      required:false
+    },
     classfeed: {
       mainhost: String,
       teacher: String,
@@ -56,22 +60,6 @@ const newclassSchema = new mongoose.Schema(
       rating: String,
       poll_res: String,
     },
-    classatt: {
-      time: Number,
-      attendance_list: [
-        {
-          name: String,
-          roll: {
-            type: String,
-          },
-          time: Number,
-          centre: String,
-          uploadedby: String,
-        },
-      ],
-    },
-    classlate: Object,
-    classreport: Array,
   },
   {
     timestamps: true,
