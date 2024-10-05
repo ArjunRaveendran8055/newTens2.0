@@ -2,37 +2,41 @@ const mongoose = require("mongoose");
 
 const newclassSchema = new mongoose.Schema(
   {
-    tutorname:  {
+    tutorname: {
       type: Object,
       required: [true, "tutorname required"],
     },
-    classname:  {
+    classname: {
       type: String,
       required: [true, "classname required"],
+    },
+    classsession: {
+      type: String,
+      required: [true, "session is required"],
     },
     classsubject: {
       type: String,
       required: [true, "subject required"],
     },
-    classdate:  {
+    classdate: {
       type: Date,
       required: [true, "date required"],
     },
     classexam: {
       type: Boolean,
-      default :false
+      default: false,
     },
-    classsyllabus:  {
+    classsyllabus: {
       type: String,
       required: [true, "syllabus required"],
     },
-    classstream:{
+    classstream: {
       type: String,
       required: [true, "stream required"],
     },
-    students:{
-      type:Array,
-      required:false
+    students: {
+      type: Array,
+      required: false,
     },
     classfeed: {
       mainhost: String,
@@ -66,6 +70,6 @@ const newclassSchema = new mongoose.Schema(
   }
 );
 
-const ClassModel = mongoose.model("class", newclassSchema );
+const ClassModel = mongoose.model("class", newclassSchema);
 
-module.exports = {ClassModel}
+module.exports = { ClassModel };
