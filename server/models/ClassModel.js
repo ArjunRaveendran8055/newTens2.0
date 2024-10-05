@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const newclassSchema = new mongoose.Schema(
   {
     tutorname:  {
-      type: String,
+      type: Object,
       required: [true, "tutorname required"],
     },
     classname:  {
