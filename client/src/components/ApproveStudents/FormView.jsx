@@ -264,9 +264,6 @@ const FormView = ({
     }
   };
 
-
-  
-
   //function to handle changes in all the fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -310,6 +307,7 @@ const FormView = ({
   //function for validating form
   const validateForm = () => {
     const newErrors = {};
+    if(!formData.session) newErrors.session ="Session is required"
     if (!formData.centre) newErrors.centre = "Centre is required";
     //if (!photo) newErrors.photo = "photo is required";
     if (!formData.fullName) newErrors.fullName = "Full name is required";
@@ -369,7 +367,6 @@ const FormView = ({
   };
 
   const scrollToElement = (name) => {
-
     // Retrieve the element by its name attribute
     const elements = document.getElementsByName(name);
 
@@ -429,7 +426,6 @@ const FormView = ({
       });
     }
   };
-
 
   const handleSchoolChange2 = (school) => {
     setErrors({ ...errors, schools: "" });
@@ -569,7 +565,7 @@ const FormView = ({
         .post("/approve/staffApproval", { formData })
         .then((res) => {
           const { id } = res.data;
-          console.log("response is :",res.data)
+          console.log("response is :", res.data);
           console.log("ithanne alle angod ayache", id);
           setIsModalOpen(false);
           setIsSaving(false);
@@ -578,9 +574,11 @@ const FormView = ({
           setIsUpdatedMsg(true);
           setTimeout(() => setIsUpdatedMsg(false), 3000);
           socket.emit("student-updated", { id });
-          const {mailSend}=res.data
-          if(!mailSend){
-            return dispatch(setToastView({type:"error",msg:"Mail limit Exceeded!"}))
+          const { mailSend } = res.data;
+          if (!mailSend) {
+            return dispatch(
+              setToastView({ type: "error", msg: "Mail limit Exceeded!" })
+            );
           }
         })
         .catch((err) => {
@@ -615,9 +613,11 @@ const FormView = ({
           setIsUpdatedMsg(true);
           setTimeout(() => setIsUpdatedMsg(false), 3000);
           socket.emit("student-updated", { id });
-          const {mailSend}=res.data
-          if(!mailSend){
-            return dispatch(setToastView({type:"error",msg:"Mail limit Exceeded!"}))
+          const { mailSend } = res.data;
+          if (!mailSend) {
+            return dispatch(
+              setToastView({ type: "error", msg: "Mail limit Exceeded!" })
+            );
           }
         })
         .catch((err) => {
@@ -630,6 +630,8 @@ const FormView = ({
         });
     }
   };
+
+  console.log("formData is :",formData)
 
   return (
     <>
@@ -1535,6 +1537,39 @@ const FormView = ({
             </div>
           </div>
 
+          {/* session container */}
+
+          <div className="flex">
+            <label className="flex w-full" htmlFor="gender">
+              session
+            </label>
+            <div className="flex flex-col w-full">
+              <div className="w-full">
+                <Select
+                  className="border-gray-200 text-black text-l border-[1px]"
+                  value={formData.session}
+                  name="session"
+                  onChange={(e) =>
+                    handleInputChange({ target: { name: "session", value: e } })
+                  }
+                >
+                  <Option className="text-black" value="morning">
+                    Morning
+                  </Option>
+                  <Option className="text-black" value="evening">
+                    Evening
+                  </Option>
+                </Select>
+              </div>
+              {errors.session && (
+                <span className="text-sm  text-red-500">
+                  {" * " + errors.session}
+                </span>
+              )}
+            </div>
+          </div>
+          {/* session container */}
+
           <div className="flex">
             <label className="flex w-full" htmlFor="gender">
               Centre
@@ -1550,7 +1585,11 @@ const FormView = ({
                   }
                 >
                   {allCentre.map((item, key) => (
-                    <Option className="text-black" key={key} value={item.centre}>
+                    <Option
+                      className="text-black"
+                      key={key}
+                      value={item.centre}
+                    >
                       {item.centre.toUpperCase()}
                     </Option>
                   ))}

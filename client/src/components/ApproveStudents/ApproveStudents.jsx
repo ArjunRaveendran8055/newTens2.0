@@ -69,6 +69,7 @@ const ApproveStudents = () => {
     fatherNumber: "",
     motherNumber: "",
     whatsappNumber: "",
+    session:"",
     centre: "",
   });
 
