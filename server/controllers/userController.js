@@ -59,11 +59,11 @@ const allUserController = asyncWrapper(async (req, res, next) => {
   // Calculate the skip value (how many records to skip for the current page)
   const skip = (pageNum - 1) * limitNum;
 
-  // Fetch the total number of users for pagination
-  const totalUsers = await UserModel.countDocuments();
+  // Fetch the total number of users excluding those with role "admin"
+  const totalUsers = await UserModel.countDocuments({ role: { $ne: "admin" } });
 
-  // Fetch users with pagination
-  const allData = await UserModel.find()
+  // Fetch users with pagination, excluding those with role "admin"
+  const allData = await UserModel.find({ role: { $ne: "admin" } })
     .skip(skip)
     .limit(limitNum);
 

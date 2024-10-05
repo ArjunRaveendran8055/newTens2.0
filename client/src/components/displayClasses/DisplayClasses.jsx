@@ -26,6 +26,7 @@ function DisplayClasses() {
     selectedSyllabus: "",
     selectedStream:"",
     selectedClass: "",
+    selectedSession: "",
     selectedSubject: "",
     tutorName: "",
     scheduleTime: "",
@@ -105,6 +106,7 @@ function DisplayClasses() {
   const handleSubmit = () => {
     if (
       classDetails.selectedClass.trim() === "" ||
+      classDetails.selectedSession.trim() === "" ||
       classDetails.selectedSubject.trim() === "" ||
       classDetails.tutorName.trim() === "" ||
       classDetails.scheduleTime.trim() === "" ||
@@ -119,6 +121,7 @@ function DisplayClasses() {
       .post("/class/createClass", {
         tutorname: classDetails.tutorName,
         classname: classDetails.selectedClass,
+        classsession: classDetails.selectedSession,
         classdate: classDetails.scheduleTime,
         classexam: classDetails.isExam,
         classsyllabus: classDetails.selectedSyllabus,
@@ -132,6 +135,7 @@ function DisplayClasses() {
           selectedSyllabus: "",
           selectedStream:"",
           selectedClass: "",
+          selectedSession:"",
           selectedSubject: "",
           tutorName: "",
           scheduleTime: "",
@@ -193,12 +197,9 @@ function DisplayClasses() {
               Create Class
             </Typography>
 
-            <Typography className="-mb-2" variant="h6">
-              Select Syllabus
-            </Typography>
             <div className="w-100">
               <Select
-                label="Syllabus"
+                label="Select Syllabus"
                 onChange={(value) =>
                   handleInputChange("selectedSyllabus", value)
                 }
@@ -208,12 +209,12 @@ function DisplayClasses() {
               </Select>
             </div>
 
-            <Typography className="-mb-2" variant="h6">
+            {/* <Typography className="-mb-2" variant="h6">
               Select Stream
-            </Typography>
+            </Typography> */}
             <div className="w-100">
               <Select
-                label="Stream"
+                label="Select Stream"
                 onChange={(value) =>
                   handleInputChange("selectedStream", value)
                 }
@@ -225,12 +226,12 @@ function DisplayClasses() {
             </div>
 
 
-            <Typography className="-mb-2" variant="h6">
+            {/* <Typography className="-mb-2" variant="h6">
               Select Class
-            </Typography>
+            </Typography> */}
             <div className="w-100">
               <Select
-                label="Class"
+                label="Select Class"
                 onChange={(value) => handleInputChange("selectedClass", value)}
               >
                 <Option value="12">Class 12</Option>
@@ -241,12 +242,26 @@ function DisplayClasses() {
               </Select>
             </div>
 
-            <Typography className="-mb-2" variant="h6">
-              Select Subject
-            </Typography>
+            {/* <Typography className="-mb-2" variant="h6">
+              Select Session
+            </Typography> */}
             <div className="w-100">
               <Select
-                label="Subject"
+                label="Select Session"
+                onChange={(value) => handleInputChange("selectedSession", value)}
+              >
+                <Option value="morning">Morning</Option>
+                <Option value="evening">Evening</Option>
+                <Option value="combined">Combined</Option>
+              </Select>
+            </div>
+
+            {/* <Typography className="-mb-2" variant="h6">
+              Select Subject
+            </Typography> */}
+            <div className="w-100">
+              <Select
+                label="Select Subject"
                 onChange={(value) =>
                   handleInputChange("selectedSubject", value)
                 }
@@ -261,17 +276,17 @@ function DisplayClasses() {
               </Select>
             </div>
 
-            <Typography className="-mb-2" variant="h6">
+            {/* <Typography className="-mb-2" variant="h6">
               Tutor
-            </Typography>
+            </Typography> */}
             <Input
               label="Enter Tutor Name"
               size="lg"
               onChange={(e) => handleInputChange("tutorName", e.target.value)}
             />
-            <Typography className="-mb-2" variant="h6">
+            {/* <Typography className="-mb-2" variant="h6">
               Date & Time
-            </Typography>
+            </Typography> */}
             <Input
               label="Schedule time"
               type="datetime-local"
