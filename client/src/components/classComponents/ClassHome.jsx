@@ -292,7 +292,7 @@ function ClassHome() {
           {!openDetailedReport ? (
             <>
               <h2 className="text-xl text-black font-semibold mb-4">Reports</h2>
-              {reportData.map((item, index) => {
+              {reportData?.map((item, index) => {
                 return (
                   <div key={index}>
                     <hr></hr>
@@ -443,7 +443,7 @@ function ClassHome() {
                 </Dialog>
               )}
 
-              {reportDataCopy.map((item, index) => {
+              {reportDataCopy?.map((item, index) => {
                 return (
                   <div key={index} className="">
                     <hr></hr>
