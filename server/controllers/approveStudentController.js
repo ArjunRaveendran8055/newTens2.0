@@ -12,7 +12,7 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
   const { formData } = req.body;
   console.log("vanna formData is:", formData);
   const _id = formData._id;
-
+  const session=formData.session
   //getting batch from the entered roll number
   const batch = formData.rollNumber.charAt(1);
 
@@ -143,7 +143,7 @@ const staffApprovalController = asyncWrapper(async (req, res, next) => {
   if (result.length === 0) {
     throw new AppError(404, "Something went Wrong!");
   }
-  const realStudent = { ...result[0], batch };
+  const realStudent = { ...result[0], batch,session };
   const newApprovedStudent = new ApproveStudentModel(realStudent);
   const approvedResult = await newApprovedStudent.save();
   //   console.log("approved result is", approvedResult);
@@ -172,6 +172,7 @@ const staffApprovalWithPhotoController = asyncWrapper(
     const { destination } = req.file;
     const formData = JSON.parse(req.body.formData);
     const id = formData._id;
+    const session=formData.session
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new AppError(400, "Not a Valid User");
     }
@@ -311,7 +312,7 @@ const staffApprovalWithPhotoController = asyncWrapper(
     }
    
     
-    const realStudent = { ...result[0], batch };
+    const realStudent = { ...result[0], batch,session };
 
     const newApprovedStudent = new ApproveStudentModel(realStudent);
     const approvedResult = await newApprovedStudent.save();
