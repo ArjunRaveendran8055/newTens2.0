@@ -9,7 +9,7 @@ import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 const Attendance = () => {
   const [excelData, setExceldata] = useState([]);
-  console.log("excelData is:", excelData);
+  //console.log("excelData is:", excelData);
   return (
     <div className="bg-white mt-5 h-[88vh] rounded-lg flex flex-col">
       <div className="fileuploadContainer w-full flex sm:flex-col lg:flex-row sm:gap-5 lg:gap-10 justify-center items-center pt-10">
@@ -49,7 +49,7 @@ export function FileUpload({ setExceldata }) {
         const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
         if (json.length > 0) {
           const headers = json[0];
-          console.log("headers:", headers);
+          //console.log("headers:", headers);
           const expectedHeaders = [
             "studentName",
             "roll",
@@ -160,12 +160,12 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
     axios
       .get(`/class/getOneClass/${id}`)
       .then((res) => {
-        console.log("response is", res.data.classdate);
+        console.log("response is", res.data);
         const datePart = res.data.classdate.split("T")[0];
-        console.log(datePart);
-      
+        //console.log(datePart);
+
           const timeCorrectData=excelData.map((item) => {
-            console.log("item is",item)
+            // console.log("item is",item)
             let [hour, minute, second] = item.joinTime.split(/:|\s/);
             hour =
               parseInt(hour) +
@@ -176,19 +176,18 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
               joinTime : `${datePart}T${hour}:${minute}:${second}000+00:00`
             };
           });
-          console.log(timeCorrectData)
+          //console.log("what time",timeCorrectData)
           setOgExcelData([...timeCorrectData])
-        
       })
       .catch((err) => {
         console.log(err.message);
       });
   }, []);
 
-  console.log("ogExcel data is",ogExcelData)
-  console.log("trialexcel",excelData)
+  //console.log("ogExcel data is",ogExcelData)
+  //console.log("trialexcel",excelData)
   const deleteRowHandler = (index) => {
-    setExcelData(() => excelData.filter((item, ind) => ind !== index));
+    setOgExcelData(() => ogExcelData.filter((item, ind) => ind !== index));
   };
 
   const lessTimeChangeHander = (e) => {
@@ -200,7 +199,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
     }
   };
 
-  console.log("lesstime is:", lessTime);
+  //console.log("lesstime is:", lessTime);
   const handleSave = (newRoll) => {
     if (isValidRoll(newRoll)) {
       const newData = [...ogExcelData];
@@ -232,6 +231,8 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
     // Format the time string
     return hours + ':' + minutesPadded + ' ' + ampm;
   }
+
+
 
   return (
     <div className="w-full">
