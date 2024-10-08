@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { MdDelete } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
 import { ImUserMinus } from "react-icons/im";
+import { SiTicktick } from "react-icons/si";
 import addImg from '../../layouts/addimg.png'
 import compressImage from "browser-image-compression";
 import { SERVER_URL } from '../../server';
@@ -37,6 +38,7 @@ const ManageStaffs = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [limit, setLimit] = useState(8);
+    const [reloadPage, setReloadPage] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -51,7 +53,7 @@ const ManageStaffs = () => {
         };
 
         fetchUsers();
-    }, [showEditModal,showAddModal,currentPage, limit]);
+    }, [showEditModal,showAddModal,currentPage, limit,reloadPage]);
 
     const confirmDelete = (userId) => {
         setUserToDelete(userId);
@@ -228,10 +230,27 @@ const handleUpdateUser = async (e) => {
             setToastView({ type: "success", msg: response.data.message })
           );
         setShowDeleteModal(false); // Close modal after success
+        setReloadPage((prev) => !prev); // Toggle state to re-render
       } catch (error) {
         console.error('Error deactivating user:', error);
         dispatch(
             setToastView({ type: "error", msg: "Failed to Terminate" })
+          );
+      }
+  };
+
+  const handleApproveUser = async (id) => {
+    try {
+        const response = await axios.post('/user/approveStatus', { id: id });
+        dispatch(
+            setToastView({ type: "success", msg: response.data.message })
+          );
+        setShowDeleteModal(false); // Close modal after success
+        setReloadPage((prev) => !prev); // Toggle state to re-render
+      } catch (error) {
+        console.error('Error approving user:', error);
+        dispatch(
+            setToastView({ type: "error", msg: "Failed to Approve" })
           );
       }
   };
@@ -295,9 +314,15 @@ const handleUpdateUser = async (e) => {
                                     <button>
                                         <FaUserEdit size={26} onClick={() => handleEditClick(user._id)} />
                                     </button>
+                                    {user.activestatus ? 
                                     <button onClick={() => handleTerminateUser(user._id)}>
                                         <ImUserMinus color="brown" size={26} />
                                     </button>
+                                    :
+                                    <button>
+                                        <SiTicktick onClick={()=> handleApproveUser(user._id)} color="green" size={22} />
+                                    </button>
+                                    }
                                     <button onClick={() => confirmDelete(user._id)}>
                                         <MdDelete color="red" size={26} />
                                     </button>

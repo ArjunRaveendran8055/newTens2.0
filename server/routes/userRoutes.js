@@ -1,4 +1,4 @@
-const { pendingUserController, allUserController,terminateUserController, oneUserController, approveUserController, deleteUserByIdController,getAllAAController, createUserController, editUserController, allottedAreas } = require("../controllers/userController")
+const { pendingUserController, allUserController,terminateUserController,approveUserStatusController, oneUserController, approveUserController, deleteUserByIdController,getAllAAController, createUserController, editUserController, allottedAreas } = require("../controllers/userController")
 const { authorizeGenuinity } = require("../middleware/authorizeGenuinity")
 const { userUpload } = require("../utils/multer")
 
@@ -15,6 +15,7 @@ userRoutes.put("/EditUser/:id",authorizeGenuinity(),userUpload.single('photo'),e
 userRoutes.put("/approveUser/:id",authorizeGenuinity(),approveUserController)
 userRoutes.delete("/deleteUser/:id",authorizeGenuinity(),deleteUserByIdController)
 userRoutes.post("/terminateUser",authorizeGenuinity(),terminateUserController)
+userRoutes.post("/approveStatus",authorizeGenuinity(),approveUserStatusController)
 
 
 

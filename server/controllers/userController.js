@@ -118,6 +118,30 @@ const terminateUserController = asyncWrapper(async (req,res,next)=>{
   return res.status(200).json({ message: 'User terminated successfully', updatedUser });
 })
 
+const approveUserStatusController = asyncWrapper(async (req, res, next) => {
+  const { id } = req.body; // Assuming the user's _id is sent in the body of the request
+
+  // Find the user by id and check if activestatus is false
+  const user = await UserModel.findById(id);
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  if (user.activestatus === true) {
+    return res.status(400).json({ message: 'User is already approved' });
+  }
+
+  // If activestatus is false, update it to true
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    id,
+    { activestatus: true },
+    { new: true } // Return the updated document
+  );
+
+  return res.status(200).json({ message: 'User approved successfully', updatedUser });
+});
+
 
 // create user for admin 
 
@@ -356,5 +380,6 @@ module.exports = {
   editUserController,
   createUserController,
   allottedAreas,
-  terminateUserController
+  terminateUserController,
+  approveUserStatusController
 };
