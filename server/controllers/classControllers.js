@@ -1,5 +1,6 @@
 const { AppError } = require("../AppError");
 const { asyncWrapper } = require("../helpers/asyncWrapper");
+const { ApproveStudentModel } = require("../models/ApproveStudentModel");
 const { ClassModel } = require("../models/ClassModel");
 const mongoose = require("mongoose");
 
@@ -12,6 +13,7 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     classsyllabus,
     classsubject,
     classstream,
+    classsession,
   } = req.body;
 
   if (
@@ -20,12 +22,31 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     classdate == "" ||
     classsyllabus == "" ||
     classsubject == "" ||
-    classstream == ""
+    classstream == "" ||
+    classsession == ""
   ) {
     throw new AppError(400, "required all fields!");
   }
 
   console.log("classDate :", classdate);
+
+  const studentsData  = await ApproveStudentModel.find({syllabus:classsyllabus,level:classstream,class:classname,session:classsession},{student_name:1 , roll_no:1 , informedData:1})
+
+  console.log(studentsData)
+
+  const finalStudentData = studentsData.map((data)=>{
+
+    let modified = {
+      studentId:data._id.toString(),
+      roll_no : data.roll_no,
+      student_name : data.student_name,
+      informedData : data.informedData
+    }
+
+    return modified
+
+  })
+
   
   // Create a new Date object from the string
   var mongoDate = new Date(classdate);
@@ -36,7 +57,9 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     classexam,
     classsyllabus,
     classsubject,
-    classstream
+    classstream,
+    classsession,
+    students: finalStudentData
   });
 
   const savedClass = await newClass.save();
@@ -55,14 +78,19 @@ const updateClassController = asyncWrapper(async (req, res, next) => {
     classexam,
     classsyllabus,
     classsubject,
+    classstream,
+    classsession
   } = req.body;
 
   if (
     !tutorname ||
     !classname ||
     !classdate ||
+    !classexam ||
     !classsyllabus ||
-    !classsubject
+    !classsubject ||
+    !classstream ||
+    !classsession 
   ) {
     throw new AppError(400, "required all fields!");
   }
@@ -73,7 +101,7 @@ const updateClassController = asyncWrapper(async (req, res, next) => {
 
   const updatedClass = await ClassModel.findByIdAndUpdate(
     classId,
-    { tutorname, classname, classdate, classexam, classsyllabus, classsubject },
+    { tutorname, classname, classdate, classexam, classsyllabus, classsubject , classstream , classsession },
     { new: true }
   );
 
