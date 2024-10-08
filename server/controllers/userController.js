@@ -101,6 +101,23 @@ const oneUserController = asyncWrapper(async (req, res, next) => {
   }
 });
 
+const terminateUserController = asyncWrapper(async (req,res,next)=>{
+  const { id } = req.body; // Assuming the user's _id is sent in the body of the request
+
+  // Find the user by id and update the active status to false
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    id,
+    { activestatus: false },
+    { new: true } // Return the updated document
+  );
+
+  if (!updatedUser) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  return res.status(200).json({ message: 'User terminated successfully', updatedUser });
+})
+
 
 // create user for admin 
 
@@ -338,5 +355,6 @@ module.exports = {
   getAllAAController,
   editUserController,
   createUserController,
-  allottedAreas
+  allottedAreas,
+  terminateUserController
 };

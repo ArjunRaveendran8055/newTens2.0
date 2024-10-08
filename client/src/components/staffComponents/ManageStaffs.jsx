@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { MdDelete } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
+import { ImUserMinus } from "react-icons/im";
 import addImg from '../../layouts/addimg.png'
 import compressImage from "browser-image-compression";
 import { SERVER_URL } from '../../server';
@@ -220,6 +221,21 @@ const handleUpdateUser = async (e) => {
     setCurrentPage(pageNumber);
   };
 
+  const handleTerminateUser = async (id) => {
+    try {
+        const response = await axios.post('/user/terminateUser', { id: id });
+        dispatch(
+            setToastView({ type: "success", msg: response.data.message })
+          );
+        setShowDeleteModal(false); // Close modal after success
+      } catch (error) {
+        console.error('Error deactivating user:', error);
+        dispatch(
+            setToastView({ type: "error", msg: "Failed to Terminate" })
+          );
+      }
+  };
+
 
 
     return (
@@ -278,6 +294,9 @@ const handleUpdateUser = async (e) => {
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex gap-3 mt-2">
                                     <button>
                                         <FaUserEdit size={26} onClick={() => handleEditClick(user._id)} />
+                                    </button>
+                                    <button onClick={() => handleTerminateUser(user._id)}>
+                                        <ImUserMinus color="brown" size={26} />
                                     </button>
                                     <button onClick={() => confirmDelete(user._id)}>
                                         <MdDelete color="red" size={26} />
