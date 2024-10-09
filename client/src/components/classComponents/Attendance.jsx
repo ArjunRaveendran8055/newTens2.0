@@ -7,6 +7,7 @@ import * as XLSX from "xlsx";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import { CiWarning } from "react-icons/ci";
 const Attendance = () => {
   const [excelData, setExceldata] = useState([]);
   //console.log("excelData is:", excelData);
@@ -67,13 +68,19 @@ export function FileUpload({ setExceldata }) {
             return;
           }
 
-          const jsonData = json.slice(1).map((row) => {
-            let obj = {};
-            row.forEach((cell, index) => {
-              obj[headers[index]] = cell;
-            });
-            return obj;
-          });
+          const jsonData = json
+            .slice(1)
+            .map((row) => {
+              let obj = {};
+              row.forEach((cell, index) => {
+                obj[headers[index]] = cell;
+              });
+              return obj;
+            })
+            .filter(
+              (obj) =>
+                Object.keys(obj).length > 0 && !obj.hasOwnProperty(undefined)
+            );
           setExceldata(jsonData);
         }
       };
@@ -99,11 +106,6 @@ export function FileUpload({ setExceldata }) {
     </>
   );
 }
-
-// Function to check the roll number format
-const isValidRoll = (roll) => {
-  return /^[a-zA-Z]{2}\d{3}$/.test(roll);
-};
 
 // Popup component for editing roll numbers
 const EditRollPopup = ({
@@ -147,7 +149,8 @@ const EditRollPopup = ({
 export const ExcelPreview = ({ excelData, setExcelData }) => {
   const { id } = useParams();
   const [isPopupOpen, setPopupOpen] = useState(false);
-  const [ogExcelData,setOgExcelData]=useState([])
+  const [ogExcelData, setOgExcelData] = useState([]);
+  const [students, setStudents] = useState([]);
   const [currentRoll, setCurrentRoll] = useState("");
   const [currentIndex, setCurrentIndex] = useState(null);
   const [lessTime, setLessTime] = useState(null);
@@ -160,24 +163,23 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
     axios
       .get(`/class/getOneClass/${id}`)
       .then((res) => {
-        console.log("response is", res.data);
+        console.log("response is", res.data.classdate);
+        setStudents(res.data.students);
         const datePart = res.data.classdate.split("T")[0];
-        //console.log(datePart);
+        console.log(datePart);
 
-          const timeCorrectData=excelData.map((item) => {
-            // console.log("item is",item)
-            let [hour, minute, second] = item.joinTime.split(/:|\s/);
-            hour =
-              parseInt(hour) +
-              (item.joinTime.includes("PM") && hour !== "12" ? 12 : 0);
-            hour = hour.toString().padStart(2, "0"); // Ensure two-digit hour
-            return {
-              ...item,
-              joinTime : `${datePart}T${hour}:${minute}:${second}000+00:00`
-            };
-          });
-          //console.log("what time",timeCorrectData)
-          setOgExcelData([...timeCorrectData])
+        const timeCorrectData = excelData.map((item) => {
+          let [hour, minute, second] = item.joinTime.split(/:|\s/);
+          hour =
+            parseInt(hour) +
+            (item.joinTime.includes("PM") && hour !== "12" ? 12 : 0);
+          hour = hour.toString().padStart(2, "0"); // Ensure two-digit hour
+          return {
+            ...item,
+            joinTime: `${datePart}T${hour}:${minute}:${second}000+00:00`,
+          };
+        });
+        setOgExcelData([...timeCorrectData]);
       })
       .catch((err) => {
         console.log(err.message);
@@ -207,32 +209,55 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
       setOgExcelData(newData);
       setPopupOpen(false);
     } else {
-      alert("Invalid roll number format.");
+      alert("Roll number DoesNot Exist!.");
     }
   };
 
   function convertTimestampToTime(timestamp) {
-    // Create a Date object using the timestamp
-    const date = new Date(timestamp);
-    // Get hours and minutes
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-  
-    // Determine the AM/PM suffix
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-  
-    // Convert hours to 12-hour format
+    const correctedTimestamp = timestamp.replace("000+", "00+"); // Fix milliseconds issue
+    const date = new Date(correctedTimestamp);
+
+    let hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+    const ampm = hours >= 12 ? "PM" : "AM";
+
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
-  
-    // Pad minutes with leading zero if needed
-    const minutesPadded = minutes < 10 ? '0' + minutes : minutes;
-  
-    // Format the time string
-    return hours + ':' + minutesPadded + ' ' + ampm;
+
+    const formattedTime =
+      [
+        hours.toString().padStart(2, "0"),
+        minutes.toString().padStart(2, "0"),
+        seconds.toString().padStart(2, "0"),
+      ].join(":") +
+      " " +
+      ampm;
+
+    return formattedTime;
   }
 
+  // Function to check the roll number format
+  const isValidRoll = (roll) => {
+    return students.some((stud) => stud.roll_no === roll);
+  };
 
+  // Function to find duplicates by roll number
+  const findDuplicates = (arr) => {
+    const seen = new Set();
+    const duplicates = new Set();
+    arr.forEach((item) => {
+      if (seen.has(item.roll)) {
+        duplicates.add(item.roll);
+      }
+      seen.add(item.roll);
+    });
+    return duplicates;
+  };
+
+  const duplicateRolls = findDuplicates(ogExcelData);
+
+  //console.log("dupilcates:",duplicateRolls)
 
   return (
     <div className="w-full">
@@ -294,14 +319,35 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
                         <span className="flex flex-row justify-between">
                           <span className="">{data?.roll}</span>
 
-                          {!isValidRoll(data?.roll) && (
-                            <span
-                              className=" text-red-500 text-xl"
-                              onClick={() => handleEditClick(data.roll, index)}
-                            >
-                              <FiEdit />
-                            </span>
-                          )}
+                          <span className="flex gap-2">
+                            {duplicateRolls.has(data.roll) && (
+                              <span className=" text-red-500 text-xl">
+                                <CiWarning />
+                              </span>
+                            )}
+
+                            {duplicateRolls.has(data.roll) && (
+                              <span
+                                className=" text-red-500 text-xl"
+                                onClick={() =>
+                                  handleEditClick(data.roll, index)
+                                }
+                              >
+                                <FiEdit />
+                              </span>
+                            )}
+
+                            {!isValidRoll(data?.roll) && (
+                              <span
+                                className=" text-red-500 text-xl"
+                                onClick={() =>
+                                  handleEditClick(data.roll, index)
+                                }
+                              >
+                                <FiEdit />
+                              </span>
+                            )}
+                          </span>
                         </span>
                       </span>
                     </td>
@@ -317,7 +363,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
                       </span>
                     </td>
                     <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
-                      {data?.joinTime}
+                      {convertTimestampToTime(data?.joinTime)}
                     </td>
                     <td className=" border hover:bg-[#222E3A]/[6%] flex sm:justify-end lg:justify-start  hover:sm:bg-transparent py-3 px-5">
                       <span
