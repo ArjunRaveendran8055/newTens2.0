@@ -18,6 +18,8 @@ import Skeleton from "../../widgets/skeletonLoading/Skeleton";
 import { Link } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import allSyllabus from "../../layouts/syllabus.json";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function DisplayClasses() {
   const [open, setOpen] = useState(false);
@@ -44,6 +46,19 @@ function DisplayClasses() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedTutor,setSelectedTutor] = useState("")
+
+  const showErrorToast = () => {
+    toast.error("Something went wrong!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  };
 
   useEffect(() => {
     fetchData();
@@ -116,7 +131,15 @@ function DisplayClasses() {
       classDetails.selectedSyllabus.trim() === "" ||
       classDetails.selectedStream.trim() === ""
     ) {
-      alert("Please fill in all fields.");
+      toast.error("Please fill in all fields.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
       return;
     }
 
@@ -222,13 +245,14 @@ function DisplayClasses() {
       >
         Add Class
       </button>
-
+      
       <Dialog
         size="xs"
         open={open}
         handler={handleOpen}
         className="bg-transparent shadow-none"
       >
+        <ToastContainer />
         <Card className="mx-auto w-full max-w-[24rem]">
           <CardBody className="flex flex-col gap-4">
             <Typography variant="h4" color="blue-gray">
