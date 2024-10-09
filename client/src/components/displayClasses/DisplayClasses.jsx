@@ -24,11 +24,11 @@ function DisplayClasses() {
   const [load, setLoad] = useState(false);
   const [classDetails, setClassDetails] = useState({
     selectedSyllabus: "",
-    selectedStream:"",
+    selectedStream: "",
     selectedClass: "",
     selectedSession: "",
     selectedSubject: "",
-    tutorName: "",
+    tutorName: {},
     scheduleTime: "",
     isExam: false,
   });
@@ -41,6 +41,9 @@ function DisplayClasses() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [classToDelete, setClassToDelete] = useState(null);
   const [availableStreams, setAvailableStreams] = useState([]);
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedTutor,setSelectedTutor] = useState("")
 
   useEffect(() => {
     fetchData();
@@ -58,15 +61,15 @@ function DisplayClasses() {
       setIsLoading(true);
       const response = await axios.get(
         `/class/getAllClass`, {
-          params: {
-            page: currentPage,
-            limit: limit
-          }
+        params: {
+          page: currentPage,
+          limit: limit
         }
+      }
       );
       const data = response.data;
       console.log(data);
-      
+
       setClasses(data.classes);
       if (data.pagination && data.pagination.next) {
         setTotalPages(data.pagination.next.page);
@@ -74,7 +77,7 @@ function DisplayClasses() {
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-    }    
+    }
   };
 
 
@@ -108,7 +111,7 @@ function DisplayClasses() {
       classDetails.selectedClass.trim() === "" ||
       classDetails.selectedSession.trim() === "" ||
       classDetails.selectedSubject.trim() === "" ||
-      classDetails.tutorName.trim() === "" ||
+      classDetails.tutorName.name.trim() === "" ||
       classDetails.scheduleTime.trim() === "" ||
       classDetails.selectedSyllabus.trim() === "" ||
       classDetails.selectedStream.trim() === ""
@@ -133,14 +136,17 @@ function DisplayClasses() {
         handleLoad();
         setClassDetails({
           selectedSyllabus: "",
-          selectedStream:"",
+          selectedStream: "",
           selectedClass: "",
-          selectedSession:"",
+          selectedSession: "",
           selectedSubject: "",
           tutorName: "",
           scheduleTime: "",
           isExam: false,
         });
+        setSelectedTutor("")
+        setSuggestions([])
+        setQuery("")
       })
       .catch((err) => console.log(err));
   };
@@ -165,14 +171,46 @@ function DisplayClasses() {
     }
   };
 
+  const fetchTutor = async (searchText) => {
+    try {
+      const response = await axios.get(`/user/getAllTutors?name=${searchText}`);
+      setSuggestions(response.data);
+    } catch (error) {
+      console.error("Error fetching tutor names", error);
+    }
+  };
+  
+  const handleSuggestionClick = (tutor) => {
+    setSelectedTutor(tutor.name);
+    setQuery(tutor.name);
+    setSuggestions([]); // Hide suggestions after selecting one
+    // Update tutorName inside classDetails state
+  setClassDetails((prevDetails) => ({
+    ...prevDetails,
+    tutorName: tutor
+  }));
+  };
+  
+
   const openDeleteDialog = (classId) => {
     setClassToDelete(classId);
     setIsDeleteDialogOpen(true);
   };
-  
+
   const closeDeleteDialog = () => {
     setIsDeleteDialogOpen(false);
     setClassToDelete(null);
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    if (value.length > 1) {
+      fetchTutor(value);
+    } else {
+      setSuggestions([]);
+      setSelectedTutor("")
+    }
   };
 
   return (
@@ -219,9 +257,9 @@ function DisplayClasses() {
                   handleInputChange("selectedStream", value)
                 }
               >
-              {availableStreams.map((stream, index) => (
-            <Option key={index} value={stream.level}>{stream.txt}</Option>
-          ))}
+                {availableStreams.map((stream, index) => (
+                  <Option key={index} value={stream.level}>{stream.txt}</Option>
+                ))}
               </Select>
             </div>
 
@@ -279,11 +317,33 @@ function DisplayClasses() {
             {/* <Typography className="-mb-2" variant="h6">
               Tutor
             </Typography> */}
-            <Input
+            {/* <Input
               label="Enter Tutor Name"
               size="lg"
               onChange={(e) => handleInputChange("tutorName", e.target.value)}
-            />
+            /> */}
+
+            <div className="mb-4">
+              <input
+                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                type="search"
+                value={query}
+                placeholder="Enter Tutor name"
+                onChange={handleSearchChange}
+              />
+               {suggestions.length > 0 && (
+              <ul className="border bg-white mt-1 rounded-md shadow-lg">
+                {suggestions.map((tutor, index) => (
+                <li key={index}
+                 className="p-2 hover:bg-blue-100 cursor-pointer"
+                 onClick={() => handleSuggestionClick(tutor)}
+                 >{tutor.name.toUpperCase()}</li>
+              ))}
+              </ul>
+               )}
+            </div>
+
+
             {/* <Typography className="-mb-2" variant="h6">
               Date & Time
             </Typography> */}
@@ -311,7 +371,7 @@ function DisplayClasses() {
           </CardFooter>
         </Card>
       </Dialog>
-     
+
       <div className="flex flex-wrap ml-10 sm:ml-7">
         {isLoading ? (
           Array.from({ length: limit }).map((_, index) => (
@@ -320,65 +380,65 @@ function DisplayClasses() {
         ) : (
           classes.map((item) => (
             <div key={item._id} className="relative group">
-            <Link to={`/classes/classhome/${item._id}`}>
-              <ClassCard classDetail={item} />
-            </Link>
-            <button
-              onClick={() => openDeleteDialog(item._id)}
-              className="absolute bottom-7 right-8 text-red-500 transition-opacity"
-            >
-              {/* Replace with your preferred delete icon */}
-             <MdDelete color="white" size={26}/>
-            </button>
-          
-            {/* Delete Confirmation Dialog */}
-            <Dialog open={isDeleteDialogOpen} handler={closeDeleteDialog}>
-              <Card>
-                <CardBody>
-                  <Typography variant="h5" color="blue-gray">
-                    Confirm Deletion
-                  </Typography>
-                  <Typography>
-                    Are you sure you want to delete this class? This action cannot be undone.
-                  </Typography>
-                </CardBody>
-                <CardFooter className="flex justify-end gap-4">
-                  <Button color="blue-gray" onClick={closeDeleteDialog}>
-                    Cancel
-                  </Button>
-                  <Button color="red" onClick={confirmDelete}>
-                    Delete
-                  </Button>
-                </CardFooter>
-              </Card>
-            </Dialog>
-          </div>
+              <Link to={`/classes/classhome/${item._id}`}>
+                <ClassCard classDetail={item} />
+              </Link>
+              <button
+                onClick={() => openDeleteDialog(item._id)}
+                className="absolute bottom-7 right-8 text-red-500 transition-opacity"
+              >
+                {/* Replace with your preferred delete icon */}
+                <MdDelete color="white" size={26} />
+              </button>
+
+              {/* Delete Confirmation Dialog */}
+              <Dialog open={isDeleteDialogOpen} handler={closeDeleteDialog}>
+                <Card>
+                  <CardBody>
+                    <Typography variant="h5" color="blue-gray">
+                      Confirm Deletion
+                    </Typography>
+                    <Typography>
+                      Are you sure you want to delete this class? This action cannot be undone.
+                    </Typography>
+                  </CardBody>
+                  <CardFooter className="flex justify-end gap-4">
+                    <Button color="blue-gray" onClick={closeDeleteDialog}>
+                      Cancel
+                    </Button>
+                    <Button color="red" onClick={confirmDelete}>
+                      Delete
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </Dialog>
+            </div>
           ))
         )}
       </div>
       {
         !!totalPages &&
         <>
-              <div className="flex justify-center mt-4">
-              <ButtonGroup>
-                <Button
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  className="mr-2"
-                >
-                  Previous Page
-                </Button>
-                <Button>{`${currentPage} of ${totalPages}`}</Button>
-                <Button
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  className="ml-2"
-                >
-                  Next Page
-                </Button>
-              </ButtonGroup>
-            </div>
-            </>
+          <div className="flex justify-center mt-4">
+            <ButtonGroup>
+              <Button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="mr-2"
+              >
+                Previous Page
+              </Button>
+              <Button>{`${currentPage} of ${totalPages}`}</Button>
+              <Button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="ml-2"
+              >
+                Next Page
+              </Button>
+            </ButtonGroup>
+          </div>
+        </>
 
       }
 

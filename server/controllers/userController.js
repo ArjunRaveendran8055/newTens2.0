@@ -6,6 +6,7 @@ const { fetchAAbasedClasses, fetchMentorBasedClasses } = require("../helpers/Fet
 const fs = require('fs');
 const path = require('path');
 const { encryptPassword } = require("../utils/bcrypt");
+const { TutorModel } = require("../models/TutorModel");
 
 //get the pending userList
 const pendingUserController = asyncWrapper(async (req, res, next) => {
@@ -369,6 +370,22 @@ const getAllAAController = asyncWrapper(async (req, res) => {
 });
 
 
+// Controller to fetch tutors by name
+const getTutorsByNameController = async (req, res) => {
+    
+    const query = req.query.name;
+    // Using a regular expression for case-insensitive partial matching
+    const tutors = await TutorModel.find({ name: new RegExp(query, 'i') });
+    
+    if (tutors.length === 0) {
+      return res.status(404).json({ message: "No tutors found" });
+    }
+    
+    res.status(200).json(tutors);
+ 
+};
+
+
 
 module.exports = {
   pendingUserController,
@@ -381,5 +398,6 @@ module.exports = {
   createUserController,
   allottedAreas,
   terminateUserController,
-  approveUserStatusController
+  approveUserStatusController,
+  getTutorsByNameController
 };

@@ -71,7 +71,7 @@ const time12HourFormat = `${hour12}:${minutes < 10 ? '0' : ''}${minutes} ${merid
         </div>
   
         <div className="flex flex-col">
-          <span className="block font-semibold pacity-80 text-l">Tutor: {item.classDetail.tutorname}</span>
+          <span className="block font-semibold pacity-80 text-l">Tutor: {item.classDetail.tutorname?.name}</span>
         </div>
       </div>
     </div>

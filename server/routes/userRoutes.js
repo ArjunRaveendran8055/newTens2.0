@@ -1,4 +1,4 @@
-const { pendingUserController, allUserController,terminateUserController,approveUserStatusController, oneUserController, approveUserController, deleteUserByIdController,getAllAAController, createUserController, editUserController, allottedAreas } = require("../controllers/userController")
+const { pendingUserController,getTutorsByNameController, allUserController,terminateUserController,approveUserStatusController, oneUserController, approveUserController, deleteUserByIdController,getAllAAController, createUserController, editUserController, allottedAreas } = require("../controllers/userController")
 const { authorizeGenuinity } = require("../middleware/authorizeGenuinity")
 const { userUpload } = require("../utils/multer")
 
@@ -16,6 +16,7 @@ userRoutes.put("/approveUser/:id",authorizeGenuinity(),approveUserController)
 userRoutes.delete("/deleteUser/:id",authorizeGenuinity(),deleteUserByIdController)
 userRoutes.post("/terminateUser",authorizeGenuinity(),terminateUserController)
 userRoutes.post("/approveStatus",authorizeGenuinity(),approveUserStatusController)
+userRoutes.get("/getAllTutors",authorizeGenuinity(),getTutorsByNameController)
 
 
 
