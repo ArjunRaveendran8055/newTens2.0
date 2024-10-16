@@ -370,7 +370,6 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
                         className=""
                         onClick={() => deleteRowHandler(index)}
                       >
-                        {" "}
                         <MdOutlineDeleteOutline className="text-red-500 text-2xl" />
                       </span>
                     </td>
