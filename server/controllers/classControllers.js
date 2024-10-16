@@ -28,11 +28,11 @@ const createClassController = asyncWrapper(async (req, res, next) => {
     throw new AppError(400, "required all fields!");
   }
 
-  console.log("classDate :", classdate);
+  // console.log("classDate :", classdate);
 
   const studentsData  = await ApproveStudentModel.find({syllabus:classsyllabus,level:classstream,class:classname,session:classsession},{student_name:1 , roll_no:1 , informedData:1})
 
-  console.log(studentsData)
+  // console.log(studentsData)
 
   const finalStudentData = studentsData.map((data)=>{
 
@@ -47,22 +47,53 @@ const createClassController = asyncWrapper(async (req, res, next) => {
 
   })
 
+    // Create a new Date object from the string
+    var mongoDate = new Date(classdate);
+    const newClass = new ClassModel({
+      tutorname,
+      classname,
+      classdate:mongoDate,
+      classexam,
+      classsyllabus,
+      classsubject,
+      classstream,
+      classsession,
+      students: finalStudentData
+    });
   
-  // Create a new Date object from the string
-  var mongoDate = new Date(classdate);
-  const newClass = new ClassModel({
-    tutorname,
-    classname,
-    classdate:mongoDate,
-    classexam,
-    classsyllabus,
-    classsubject,
-    classstream,
-    classsession,
-    students: finalStudentData
+    const savedClass = await newClass.save();
+
+    console.log(savedClass._id.toString(),"saved");
+    
+  // mark key add cheyyanam, also subject of exam um venam
+  const newReportEntry = {
+    date: new Date(),
+    classReport:{
+      classId:savedClass._id,
+      className:classname,
+      tutorName:tutorname,
+      classDate:classdate,
+      classDuration:null,
+      reports:{},
+      attendance:{},
+      late:{},
+    },
+    casualReport:{},
+  };
+
+  const bulkOperations = studentsData.map((student) => {
+    return {
+      updateOne: {
+        filter: { _id: student._id },
+        update: { $push: { report: newReportEntry } }
+      }
+    };
   });
 
-  const savedClass = await newClass.save();
+   // Execute bulk write
+   if (bulkOperations.length > 0) {
+    await ApproveStudentModel.bulkWrite(bulkOperations);
+  }
 
   res
     .status(201)
