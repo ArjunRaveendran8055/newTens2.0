@@ -36,9 +36,14 @@ function ClassReport() {
     const [isDataFetched, setIsDataFetched] = useState(false);
     const[errorMsg,setErrorMsg]=useState("")
 
+    const[reports,setReports]=useState({
+      name:"Fayaz",
+      report:{}
+    })
+
 
    useEffect(()=>{
-        fetchData()
+        // fetchData()
         setErrorMsg("")
    },[searchRoll])
 
@@ -46,85 +51,85 @@ function ClassReport() {
 
        
    // FUNCTION TO GET STUDENT NAME FROM ROLL NUMBER
-   const fetchData = async () => {
-    if (searchRoll.length === 5) {
-        try {
-            const responseReport = await axios.get(`/classReport/GetAllReport/${id}?roll=${searchRoll}`);
-            const response = await axios.get(`/classReport/GetClassStudentDetails/${id}?roll=${searchRoll}`);
-            console.log(response.data.data,"ress")
-            const fetchedReportData = responseReport.data.report; 
-            // console.log(fetchedReportData)
-            const fetchedStudentName = response.data.data[0].student_name;
-            // console.log(response.data.data[0]._id)
-            if(response.data.data[0]){
-              console.log(response.data.data[0].syllabus,"pppp");
-              setReportData(prevState => ({
-                ...prevState,
-                syllabus:response.data.data[0].syllabus,
-                classs:response.data.data[0].class,
-                centre:response.data.data[0].centre,
-                batch:response.data.data[0].batch,
-                level:response.data.data[0].level,
-              }));
-            }
+//    const fetchData = async () => {
+//     if (searchRoll.length === 5) {
+//         try {
+//             const responseReport = await axios.get(`/classReport/GetAllReport/${id}?roll=${searchRoll}`);
+//             const response = await axios.get(`/classReport/GetClassStudentDetails/${id}?roll=${searchRoll}`);
+//             console.log(response.data.data,"ress")
+//             const fetchedReportData = responseReport.data.report; 
+//             // console.log(fetchedReportData)
+//             const fetchedStudentName = response.data.data[0].student_name;
+//             // console.log(response.data.data[0]._id)
+//             if(response.data.data[0]){
+//               console.log(response.data.data[0].syllabus,"pppp");
+//               setReportData(prevState => ({
+//                 ...prevState,
+//                 syllabus:response.data.data[0].syllabus,
+//                 classs:response.data.data[0].class,
+//                 centre:response.data.data[0].centre,
+//                 batch:response.data.data[0].batch,
+//                 level:response.data.data[0].level,
+//               }));
+//             }
 
-            console.log(reportData,"reportt");
+//             console.log(reportData,"reportt");
             
             
-            if(fetchedReportData){
-              setStudentId(fetchedReportData._id);
-              setStudentName(fetchedStudentName);
-              setReportData(prevState => ({
-                ...prevState,
-                name: fetchedStudentName,
-                roll: searchRoll,
-                studentId: fetchedReportData._id,
-                report: fetchedReportData.report,
-                remark: fetchedReportData.remark,
-                reportedBy: user.firstname,
-                followUp: fetchedReportData.followUp,
-              }));
-              setIsDataFetched(true); 
-            }else{
-               setStudentId(response.data.data[0]._id)
-            setStudentName(fetchedStudentName);
-            setReportData(prevState => ({
-                ...prevState,
-                name: fetchedStudentName,
-                roll: searchRoll,
-                reportedBy:user.firstname,
-            }));
-            setIsDataFetched(true); // Enable the save button
-        }
+//             if(fetchedReportData){
+//               setStudentId(fetchedReportData._id);
+//               setStudentName(fetchedStudentName);
+//               setReportData(prevState => ({
+//                 ...prevState,
+//                 name: fetchedStudentName,
+//                 roll: searchRoll,
+//                 studentId: fetchedReportData._id,
+//                 report: fetchedReportData.report,
+//                 remark: fetchedReportData.remark,
+//                 reportedBy: user.firstname,
+//                 followUp: fetchedReportData.followUp,
+//               }));
+//               setIsDataFetched(true); 
+//             }else{
+//                setStudentId(response.data.data[0]._id)
+//             setStudentName(fetchedStudentName);
+//             setReportData(prevState => ({
+//                 ...prevState,
+//                 name: fetchedStudentName,
+//                 roll: searchRoll,
+//                 reportedBy:user.firstname,
+//             }));
+//             setIsDataFetched(true); // Enable the save button
+//         }
        
-            }
-            catch (error) {
-            console.log(error.response.data.error);
-            setErrorMsg(error.response.data.error);
-            setIsDataFetched(false); // Disable the save button
-        }
-    } else {
-        setStudentName("");
-        setReportData({
-          roll: "",
-          name: "",
-          syllabus:"",
-          classs:"",
-          centre:"",
-          batch:"",
-          level:"",
-          studentId: "",
-          report: [], 
-          remark: "",
-          reportedBy: "",
-          response:"",
-          respondedBy:"",
-          followUp: false,
-        })
-        setIsDataFetched(false); // Disable the save button
-    }
+//             }
+//             catch (error) {
+//             console.log(error.response.data.error);
+//             setErrorMsg(error.response.data.error);
+//             setIsDataFetched(false); // Disable the save button
+//         }
+//     } else {
+//         setStudentName("");
+//         setReportData({
+//           roll: "",
+//           name: "",
+//           syllabus:"",
+//           classs:"",
+//           centre:"",
+//           batch:"",
+//           level:"",
+//           studentId: "",
+//           report: [], 
+//           remark: "",
+//           reportedBy: "",
+//           response:"",
+//           respondedBy:"",
+//           followUp: false,
+//         })
+//         setIsDataFetched(false); // Disable the save button
+//     }
     
-};
+// };
 
     const handleCheckboxChange = (e) => {
       console.log(reportData)
@@ -166,23 +171,27 @@ function ClassReport() {
 
 // POST REQUEST TO SERVER
    const handleSave = async() => {
-   await axios.post(`/classReport/CreateReport/${id}`,{
-    ...reportData,
-    studentId,
-  })
-    .then((res)=>{
-      console.log(res)
-      setSaveMessage("Report saved successfully!");
-    })
-    .catch((err)=>{
-      console.log(err)
-      setSaveMessage("Failed to save Report. Please try again.");
-    })
+    console.log(reportData);
+    
+  //  await axios.post(`/classReport/CreateReport/${id}`,{
+  //   ...reportData,
+  //   studentId,
+  // })
+  //   .then((res)=>{
+  //     console.log(res)
+  //     setSaveMessage("Report saved successfully!");
+  //   })
+  //   .catch((err)=>{
+  //     console.log(err)
+  //     setSaveMessage("Failed to save Report. Please try again.");
+  //   })
 
-    setTimeout(() => {
-      setSaveMessage("");
-    }, 1000);
+  //   setTimeout(() => {
+  //     setSaveMessage("");
+  //   }, 1000);
 };
+
+console.log(reportData,"ppp");
 
     
     
@@ -206,10 +215,10 @@ function ClassReport() {
         </div>
         <div className="mb-6">
           <label className="block text-lg font-medium text-black mb-1" htmlFor="studentName">
-            Student Name : {studentName? studentName : errorMsg }
+            Student Name : {reports? reports.name : errorMsg }
           </label>
         </div>
-        {isDataFetched && (
+        {reports && (
       <div> 
         <h2 className="text-xl text-black font-semibold mb-4">Class Report</h2>
 
