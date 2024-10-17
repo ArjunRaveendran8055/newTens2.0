@@ -37,7 +37,7 @@ const createClassController = asyncWrapper(async (req, res, next) => {
   const finalStudentData = studentsData.map((data)=>{
 
     let modified = {
-      studentId:data._id.toString(),
+      studentId:data._id,
       roll_no : data.roll_no,
       student_name : data.student_name,
       informedData : data.informedData
