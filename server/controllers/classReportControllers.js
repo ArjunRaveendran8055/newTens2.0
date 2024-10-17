@@ -105,7 +105,46 @@ const createReportController = asyncWrapper(async (req, res, next) => {
   });
 });
 
-//get all report in that perticular class using classId
+
+
+const getReportForClassController= asyncWrapper(async (req, res, next) => {
+
+  const classId = req.params.id;
+  const roll = req.query.roll ? req.query.roll.toLowerCase() : "";
+  const { id, role } = res.user;
+  console.log("id and role", roll);
+
+
+  if (!mongoose.Types.ObjectId.isValid(classId)) {
+    throw new AppError(400, "Invalid class Id!");
+  }
+
+  console.log("class id is :", classId);
+  const documentId = new mongoose.Types.ObjectId(classId);
+
+  const studentData = await ClassModel.findOne({
+    _id:documentId,
+    students:{
+      $elemMatch:{
+        roll_no:roll,
+      }
+    }
+  })
+
+
+
+
+    
+    return res.status(200).json({data:studentData})
+
+})
+
+
+
+
+
+
+//get all report in that perticular class using classId( tattanam pinned)
 const getReportController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
   const roll = req.query.roll ? req.query.roll.toLowerCase() : "";
@@ -341,4 +380,5 @@ module.exports = {
   getReportController,
   getClassStudentDetailsController,
   addMentorResponseController,
+  getReportForClassController
 };

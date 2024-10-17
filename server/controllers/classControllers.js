@@ -30,68 +30,81 @@ const createClassController = asyncWrapper(async (req, res, next) => {
 
   // console.log("classDate :", classdate);
 
-  const studentsData  = await ApproveStudentModel.find({syllabus:classsyllabus,level:classstream,class:classname,session:classsession},{student_name:1 , roll_no:1 , informedData:1})
+  const studentsData = await ApproveStudentModel.find(
+    {
+      syllabus: classsyllabus,
+      level: classstream,
+      class: classname,
+      session: classsession,
+    },
+    { student_name: 1, roll_no: 1, informedData: 1 }
+  );
 
   // console.log(studentsData)
 
-  const finalStudentData = studentsData.map((data)=>{
-
+  const finalStudentData = studentsData.map((data) => {
     let modified = {
-      studentId:data._id,
-      roll_no : data.roll_no,
-      student_name : data.student_name,
-      informedData : data.informedData
-    }
+      studentId: data._id,
+      roll_no: data.roll_no,
+      student_name: data.student_name,
+      informedData: data.informedData,
+    };
 
-    return modified
+    return modified;
+  });
 
-  })
+  // Create a new Date object from the string
+  var mongoDate = new Date(classdate);
+  const newClass = new ClassModel({
+    tutorname,
+    classname,
+    classdate: mongoDate,
+    classexam,
+    classsyllabus,
+    classsubject,
+    classstream,
+    classsession,
+    students: finalStudentData,
+  });
 
-    // Create a new Date object from the string
-    var mongoDate = new Date(classdate);
-    const newClass = new ClassModel({
-      tutorname,
-      classname,
-      classdate:mongoDate,
-      classexam,
-      classsyllabus,
-      classsubject,
-      classstream,
-      classsession,
-      students: finalStudentData
-    });
-  
-    const savedClass = await newClass.save();
+  const savedClass = await newClass.save();
 
-    console.log(savedClass._id.toString(),"saved");
-    
+  console.log(savedClass._id.toString(), "saved");
+
+
+
+
   // mark key add cheyyanam, also subject of exam um venam
   const newReportEntry = {
     date: new Date(),
-    classReport:{
-      classId:savedClass._id,
-      className:classname,
-      tutorName:tutorname,
-      classDate:classdate,
-      classDuration:null,
-      reports:{},
-      attendance:{},
-      late:{},
-    },
-    casualReport:{},
+    classes: [
+      {
+        classReport: {
+          classId: savedClass._id,
+          className: classname,
+          tutorName: tutorname,
+          classDate: classdate,
+          classDuration: null,
+          reports: {},
+          attendance: {},
+          late: {},
+        },
+      },
+    ],
+    casualReport: {},
   };
 
   const bulkOperations = studentsData.map((student) => {
     return {
       updateOne: {
         filter: { _id: student._id },
-        update: { $push: { report: newReportEntry } }
-      }
+        update: { $push: { report: newReportEntry } },
+      },
     };
   });
 
-   // Execute bulk write
-   if (bulkOperations.length > 0) {
+  // Execute bulk write
+  if (bulkOperations.length > 0) {
     await ApproveStudentModel.bulkWrite(bulkOperations);
   }
 
@@ -110,7 +123,7 @@ const updateClassController = asyncWrapper(async (req, res, next) => {
     classsyllabus,
     classsubject,
     classstream,
-    classsession
+    classsession,
   } = req.body;
 
   if (
@@ -121,7 +134,7 @@ const updateClassController = asyncWrapper(async (req, res, next) => {
     !classsyllabus ||
     !classsubject ||
     !classstream ||
-    !classsession 
+    !classsession
   ) {
     throw new AppError(400, "required all fields!");
   }
@@ -132,7 +145,16 @@ const updateClassController = asyncWrapper(async (req, res, next) => {
 
   const updatedClass = await ClassModel.findByIdAndUpdate(
     classId,
-    { tutorname, classname, classdate, classexam, classsyllabus, classsubject , classstream , classsession },
+    {
+      tutorname,
+      classname,
+      classdate,
+      classexam,
+      classsyllabus,
+      classsubject,
+      classstream,
+      classsession,
+    },
     { new: true }
   );
 
