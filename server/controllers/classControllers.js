@@ -76,22 +76,24 @@ const createClassController = asyncWrapper(async (req, res, next) => {
 
   // mark key add cheyyanam, also subject of exam um venam
   const newReportEntry = {
-    date: new Date(),
-    classes: [
-      {
-        classReport: {
-          classId: savedClass._id,
-          className: classname,
-          tutorName: tutorname,
-          classDate: classdate,
-          classDuration: null,
-          reports: {},
-          attendance: {},
-          late: {},
+        Type:"classType",
+        classId:savedClass._id,
+        tutor:tutorname,
+        className:classname,
+        classSubject:classsubject,
+        classMinDuration:null,
+        allowedJoinTime:null,
+        examSubject:null,
+        maximumMark:null,
+        minimumMark:null,
+        attendDuration:null,
+        joinTime:null,
+        reportDetail:{
+          reportedBy:{},
+          report:[],
+          remark:null,
+          respondedBy:{}
         },
-      },
-    ],
-    casualReport: {},
   };
 
   const bulkOperations = studentsData.map((student) => {
