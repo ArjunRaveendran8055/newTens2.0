@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import * as XLSX from "xlsx";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { CiWarning } from "react-icons/ci";
+import Papa from "papaparse";
 const Attendance = () => {
   const [excelData, setExceldata] = useState([]);
   //console.log("excelData is:", excelData);
@@ -25,6 +25,7 @@ const Attendance = () => {
     </div>
   );
 };
+
 
 export function FileUpload({ setExceldata }) {
   const VisuallyHiddenInput = styled("input")({
@@ -44,13 +45,13 @@ export function FileUpload({ setExceldata }) {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const workbook = XLSX.read(e.target.result, { type: "binary" });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        if (json.length > 0) {
-          const headers = json[0];
-          //console.log("headers:", headers);
+        const results = Papa.parse(e.target.result, {
+          skipEmptyLines: true,
+          header: true,
+        });
+        const { data } = results;
+        if (data.length > 0) {
+          const headers = Object.keys(data[0]);
           const expectedHeaders = [
             "studentName",
             "roll",
@@ -63,28 +64,29 @@ export function FileUpload({ setExceldata }) {
 
           if (!isValid) {
             window.alert(
-              "Error: Excel file must only contain the headings 'roll', 'duration', and 'joinTime'."
+              "Error: CSV file must only contain the headings 'roll', 'duration', and 'joinTime'."
             );
             return;
           }
 
-          const jsonData = json
-            .slice(1)
-            .map((row) => {
-              let obj = {};
-              row.forEach((cell, index) => {
-                obj[headers[index]] = cell;
-              });
-              return obj;
-            })
-            .filter(
-              (obj) =>
-                Object.keys(obj).length > 0 && !obj.hasOwnProperty(undefined)
+          const jsonData = data.filter(
+            (obj) =>
+              Object.keys(obj).length === expectedHeaders.length &&
+              !Object.values(obj).includes(undefined)
+          );
+
+          // Optionally, you might want to validate the data further before setting state
+          if (jsonData.length === 0) {
+            window.alert(
+              "No valid data to upload. Please check your CSV file."
             );
+            return;
+          }
+
           setExceldata(jsonData);
         }
       };
-      reader.readAsBinaryString(file);
+      reader.readAsText(file);
     }
   };
 
@@ -100,7 +102,7 @@ export function FileUpload({ setExceldata }) {
           type="file"
           onChange={handleFileChange}
           multiple
-          accept=".xlsx, .xls"
+          accept=".csv"
         />
       </Button>
     </>
@@ -169,6 +171,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
         console.log(datePart);
 
         const timeCorrectData = excelData.map((item) => {
+          console.log(item.joinTime, "time");
           let [hour, minute, second] = item.joinTime.split(/:|\s/);
           hour =
             parseInt(hour) +
