@@ -90,6 +90,7 @@ const createClassController = asyncWrapper(async (req, res, next) => {
         joinTime:null,
         reportDetail:{
           reportedBy:{},
+          followUp:null,
           report:[],
           remark:null,
           respondedBy:{}
