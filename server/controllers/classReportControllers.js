@@ -123,19 +123,36 @@ const getReportForClassController= asyncWrapper(async (req, res, next) => {
   const documentId = new mongoose.Types.ObjectId(classId);
 
   const studentData = await ClassModel.aggregate([
-    { $match: { _id: documentId, 'students.roll_no': roll } },
-    { $unwind: '$students' },
-    { $match: { 'students.roll_no': roll } },
-    { $replaceRoot: { newRoot: '$students' } }
+    { $match: { _id: documentId, 'students.roll_no': roll } }, // Match by documentId and roll_no
+    { $unwind: '$students' }, // Unwind students array
+    { $match: { 'students.roll_no': roll } }, // Match specific student after unwind
+    { $replaceRoot: { newRoot: '$students' } }, // Replace root with students object
+    { $addFields: { studentIdd: { $toObjectId: "$studentId" } } }, // Convert studentId to ObjectId
+    { 
+      $lookup: { // Lookup to the approvedstudents collection
+        from: 'approvedstudents',
+        localField: 'studentIdd',
+        foreignField: '_id',
+        as: 'approvedStudentInfo'
+      }
+    },
+    { $unwind: "$approvedStudentInfo" }, // Unwind approvedStudentInfo array
+    { $replaceRoot: { newRoot: "$approvedStudentInfo" } }, // Replace root with approvedStudentInfo
+    
+    { $unwind: "$report" }, // Unwind the report array
+    { $match: { 'report.classId': documentId } }, // Match the specific classId in the report with documentId
+    
+    // Project only the report field in the final output
+    { $project: { report: 1 , student_name : 1 , informedData : 1  } } // Include only the report field and exclude the _id field
   ]);
   
 
+  
+  
 
-
-
-
-
-    
+  
+  
+ 
     return res.status(200).json({data:studentData})
 
 })
