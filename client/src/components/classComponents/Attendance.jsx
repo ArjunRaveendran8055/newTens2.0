@@ -241,12 +241,12 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
 
     // Calculate the time offset for Kolkata (UTC+5:30)
     const offset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
-    const istTime = new Date(date.getTime() - offset);
+  
     // Get hours, minutes, and seconds
-    let hours = istTime.getHours();
+    let hours = date.getUTCHours();
     console.log("hour is", hours);
-    const minutes = istTime.getMinutes();
-    const seconds = istTime.getSeconds();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
 
     // Determine AM or PM suffix
     const ampm = hours >= 12 ? "PM" : "AM";
@@ -283,7 +283,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
 
   const duplicateRolls = findDuplicates(ogExcelData);
 
-  //console.log("dupilcates:",duplicateRolls)
+  console.log("dupilcates:",duplicateRolls)
 
   return (
     <div className="w-full">
