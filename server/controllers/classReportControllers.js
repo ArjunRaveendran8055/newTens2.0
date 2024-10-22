@@ -122,14 +122,15 @@ const getReportForClassController= asyncWrapper(async (req, res, next) => {
   console.log("class id is :", classId);
   const documentId = new mongoose.Types.ObjectId(classId);
 
-  const studentData = await ClassModel.findOne({
-    _id:documentId,
-    students:{
-      $elemMatch:{
-        roll_no:roll,
-      }
-    }
-  })
+  const studentData = await ClassModel.aggregate([
+    { $match: { _id: documentId, 'students.roll_no': roll } },
+    { $unwind: '$students' },
+    { $match: { 'students.roll_no': roll } },
+    { $replaceRoot: { newRoot: '$students' } }
+  ]);
+  
+
+
 
 
 
