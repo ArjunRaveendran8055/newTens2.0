@@ -26,7 +26,6 @@ const Attendance = () => {
   );
 };
 
-
 export function FileUpload({ setExceldata }) {
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -168,18 +167,35 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
         console.log("response is", res.data.classdate);
         setStudents(res.data.students);
         const datePart = res.data.classdate.split("T")[0];
-        console.log(datePart);
+        //console.log("class date is", datePart);
 
         const timeCorrectData = excelData.map((item) => {
-          console.log(item.joinTime, "time");
+          //console.log("joint time :", item.joinTime);
           let [hour, minute, second] = item.joinTime.split(/:|\s/);
-          hour =
-            parseInt(hour) +
-            (item.joinTime.includes("PM") && hour !== "12" ? 12 : 0);
-          hour = hour.toString().padStart(2, "0"); // Ensure two-digit hour
+          let amORpm = item.joinTime.split(" ")[1];
+          //console.log("am or pm is", amORpm);
+          let formattedHours;
+          if (amORpm === "AM") {
+            if (Number(hour) < 10) formattedHours = hour.padStart(2, "0");
+            else formattedHours = hour;
+          } else if (amORpm === "PM") {
+            //console.log("HOUR IS :",hour)
+            if (hour === "12") {
+              formattedHours = `12`;
+            } else {
+              formattedHours = `${Number(hour) + 12}`;
+            }
+          }
+
+          // Ensure double digit formatting
+          const formattedMinutes = minute.padStart(2, "0");
+          const formattedSeconds = second.padStart(2, "0");
+
+        
+
           return {
             ...item,
-            joinTime: `${datePart}T${hour}:${minute}:${second}000+00:00`,
+            joinTime: `${datePart}T${formattedHours}:${formattedMinutes}:${formattedSeconds}.000Z`,
           };
         });
         setOgExcelData([...timeCorrectData]);
@@ -189,7 +205,9 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
       });
   }, []);
 
-  //console.log("ogExcel data is",ogExcelData)
+  console.log("OgexcelData", ogExcelData);
+
+  //console.log("ogExcel data is", ogExcelData);
   //console.log("trialexcel",excelData)
   const deleteRowHandler = (index) => {
     setOgExcelData(() => ogExcelData.filter((item, ind) => ind !== index));
@@ -216,28 +234,33 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
     }
   };
 
-  function convertTimestampToTime(timestamp) {
-    const correctedTimestamp = timestamp.replace("000+", "00+"); // Fix milliseconds issue
-    const date = new Date(correctedTimestamp);
+  function formatTimestamp(timestamp) {
+    // Create a Date object from the timestamp
+    const date = new Date(timestamp);
+    console.log("date is :", date.toISOString());
 
-    let hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const seconds = date.getUTCSeconds();
+    // Calculate the time offset for Kolkata (UTC+5:30)
+    const offset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+    const istTime = new Date(date.getTime() - offset);
+    // Get hours, minutes, and seconds
+    let hours = istTime.getHours();
+    console.log("hour is", hours);
+    const minutes = istTime.getMinutes();
+    const seconds = istTime.getSeconds();
+
+    // Determine AM or PM suffix
     const ampm = hours >= 12 ? "PM" : "AM";
 
+    // Convert hour from 24-hour to 12-hour format
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
 
-    const formattedTime =
-      [
-        hours.toString().padStart(2, "0"),
-        minutes.toString().padStart(2, "0"),
-        seconds.toString().padStart(2, "0"),
-      ].join(":") +
-      " " +
-      ampm;
+    // Pad minutes and seconds with leading zeros if needed
+    const paddedMinutes = minutes.toString().padStart(2, "0");
+    const paddedSeconds = seconds.toString().padStart(2, "0");
 
-    return formattedTime;
+    // Format to "HH:MM:SS AM/PM"
+    return `${hours}:${paddedMinutes}:${paddedSeconds} ${ampm}`;
   }
 
   // Function to check the roll number format
@@ -268,17 +291,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
         <div className="w-full  px-2 ">
           <h1 className="text-xl sm:text-2xl font-medium mb-2">Preview</h1>
         </div>
-        <div className="w-full px-2 flex justify-end items-center gap-2 pb-2">
-          <label className="font-bold" htmlFor="lesstime">
-            Less Time :
-          </label>
-          <input
-            name="lesstime"
-            onChange={lessTimeChangeHander}
-            type="number"
-            className="border border-black outline-none rounded sm:w-16 h-10 p-2 text-center"
-          />
-        </div>
+
         <div className="flex items-center justify-center">
           <div className=" w-full flex flex-col">
             <table className="md:inline-table w-full flex flex-row sm:bg-white  overflow-hidden ">
@@ -366,7 +379,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
                       </span>
                     </td>
                     <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
-                      {convertTimestampToTime(data?.joinTime)}
+                      {formatTimestamp(data?.joinTime)}
                     </td>
                     <td className=" border hover:bg-[#222E3A]/[6%] flex sm:justify-end lg:justify-start  hover:sm:bg-transparent py-3 px-5">
                       <span
