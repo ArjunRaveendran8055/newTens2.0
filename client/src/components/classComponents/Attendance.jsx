@@ -191,11 +191,16 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
           const formattedMinutes = minute.padStart(2, "0");
           const formattedSeconds = second.padStart(2, "0");
 
-        
-
+          // Calculate the time offset for Kolkata (UTC+5:30)
+          const offset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+          const date = new Date(
+            `${datePart}T${formattedHours}:${formattedMinutes}:${formattedSeconds}.000Z`
+          );
+          const utcTime = new Date(date.getTime() - offset);
+          console.log("utc time is:", utcTime);
           return {
             ...item,
-            joinTime: `${datePart}T${formattedHours}:${formattedMinutes}:${formattedSeconds}.000Z`,
+            joinTime: `${utcTime}`,
           };
         });
         setOgExcelData([...timeCorrectData]);
@@ -205,21 +210,13 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
       });
   }, []);
 
+  console.log("students", students);
   console.log("OgexcelData", ogExcelData);
 
   //console.log("ogExcel data is", ogExcelData);
   //console.log("trialexcel",excelData)
   const deleteRowHandler = (index) => {
     setOgExcelData(() => ogExcelData.filter((item, ind) => ind !== index));
-  };
-
-  const lessTimeChangeHander = (e) => {
-    const time = e.target.value;
-    if (Number(time) > 30) {
-      setLessTime(time);
-    } else {
-      setLessTime(null);
-    }
   };
 
   //console.log("lesstime is:", lessTime);
@@ -241,12 +238,12 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
 
     // Calculate the time offset for Kolkata (UTC+5:30)
     const offset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
-  
+
     // Get hours, minutes, and seconds
-    let hours = date.getUTCHours();
+    let hours = date.getHours();
     console.log("hour is", hours);
-    const minutes = date.getUTCMinutes();
-    const seconds = date.getUTCSeconds();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
 
     // Determine AM or PM suffix
     const ampm = hours >= 12 ? "PM" : "AM";
@@ -269,10 +266,10 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
   };
 
   // Function to find duplicates by roll number
-  const findDuplicates = (arr) => {
+  const findDuplicates = () => {
     const seen = new Set();
     const duplicates = new Set();
-    arr.forEach((item) => {
+    ogExcelData.forEach((item) => {
       if (seen.has(item.roll)) {
         duplicates.add(item.roll);
       }
@@ -281,9 +278,25 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
     return duplicates;
   };
 
-  const duplicateRolls = findDuplicates(ogExcelData);
+  //function to check if the rollnumber in excel exists in the class students list
+  const checkExistingRollNumbers = () => {
+    return ogExcelData.every((dataItem) =>
+      students.some((student) => student.roll_no === dataItem.roll)
+    );
+  };
+  const duplicateRolls = findDuplicates();
 
-  console.log("dupilcates:",duplicateRolls)
+  const handleSaveData = () => {
+    const existingRolls = checkExistingRollNumbers();
+
+    if (duplicateRolls.size > 0) {
+      return window.alert("duplicate data still exists");
+    }
+    if (!existingRolls) {
+      return window.alert("Presence of non-existing rolls");
+    }
+    window.alert("thu patti...");
+  };
 
   return (
     <div className="w-full">
@@ -394,7 +407,10 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
               </tbody>
             </table>
             <div className="w-full px-2 flex justify-center items-center gap-2 pt-5">
-              <button className="cursor-pointer w-44 h-12 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:shadow-lg transition-all group ">
+              <button
+                className="cursor-pointer w-44 h-12 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:shadow-lg transition-all group "
+                onClick={handleSaveData}
+              >
                 <span className="">Save Data</span>
               </button>
             </div>

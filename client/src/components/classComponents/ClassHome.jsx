@@ -155,7 +155,6 @@ function ClassHome() {
           </h1>
         </div>
       </div>
-
       <div className="flex w-full  relative lg:flex-row h-[35rem] lg:h-[35rem] sm:h-[70rem] sm:flex-col gap-6 ">
         <div
           className={`${
