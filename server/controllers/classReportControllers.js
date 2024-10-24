@@ -70,55 +70,66 @@ const createReportController = asyncWrapper(async (req, res, next) => {
 
 
 
-const getReportForClassController= asyncWrapper(async (req, res, next) => {
-
+const getReportForClassController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
   const roll = req.query.roll ? req.query.roll.toLowerCase() : "";
   const { id, role } = res.user;
-  console.log("id and role", roll);
-
-
+  
+  // Validate classId
   if (!mongoose.Types.ObjectId.isValid(classId)) {
     throw new AppError(400, "Invalid class Id!");
   }
 
-  console.log("class id is :", classId);
+  // Ensure roll number is provided
+  if (!roll) {
+    throw new AppError(400, "Roll number is required!");
+  }
+
   const documentId = new mongoose.Types.ObjectId(classId);
 
-  const studentData = await ClassModel.aggregate([
-    { $match: { _id: documentId, 'students.roll_no': roll } }, // Match by documentId and roll_no
-    { $unwind: '$students' }, // Unwind students array
-    { $match: { 'students.roll_no': roll } }, // Match specific student after unwind
-    { $replaceRoot: { newRoot: '$students' } }, // Replace root with students object
-    { $addFields: { studentIdd: { $toObjectId: "$studentId" } } }, // Convert studentId to ObjectId
-    { 
-      $lookup: { // Lookup to the approvedstudents collection
-        from: 'approvedstudents',
-        localField: 'studentIdd',
-        foreignField: '_id',
-        as: 'approvedStudentInfo'
-      }
-    },
-    { $unwind: "$approvedStudentInfo" }, // Unwind approvedStudentInfo array
-    { $replaceRoot: { newRoot: "$approvedStudentInfo" } }, // Replace root with approvedStudentInfo
+  try {
+    // Perform aggregation query
+    const studentData = await ClassModel.aggregate([
+      { $match: { _id: documentId, 'students.roll_no': roll } }, // Match by documentId and roll_no
+      { $unwind: '$students' }, // Unwind students array
+      { $match: { 'students.roll_no': roll } }, // Match specific student after unwind
+      { $replaceRoot: { newRoot: '$students' } }, // Replace root with students object
+      { $addFields: { studentIdd: { $toObjectId: "$studentId" } } }, // Convert studentId to ObjectId
+      { 
+        $lookup: { // Lookup in the approvedstudents collection
+          from: 'approvedstudents',
+          localField: 'studentIdd',
+          foreignField: '_id',
+          as: 'approvedStudentInfo'
+        }
+      },
+      { $unwind: "$approvedStudentInfo" }, // Unwind approvedStudentInfo array
+      { $replaceRoot: { newRoot: "$approvedStudentInfo" } }, // Replace root with approvedStudentInfo
+      
+      { $unwind: "$report" }, // Unwind the report array
+      { $match: { 'report.classId': documentId } }, // Match the specific classId in the report with documentId
+      
+      // Project only the report field in the final output
+      { $project: { report: 1, student_name: 1, informedData: 1 } }
+    ]);
+
+    // Check if the aggregation result is empty
+    if (!studentData || studentData.length === 0) {
+      throw new AppError(404, "No report found for the specified class or roll number!");
+    }
+
+    // Respond with the found data
+    return res.status(200).json({
+      status: "success",
+      data: studentData
+    });
     
-    { $unwind: "$report" }, // Unwind the report array
-    { $match: { 'report.classId': documentId } }, // Match the specific classId in the report with documentId
-    
-    // Project only the report field in the final output
-    { $project: { report: 1 , student_name : 1 , informedData : 1  } } // Include only the report field and exclude the _id field
-  ]);
-  
+  } catch (error) {
+    // Catch any unexpected errors
+    next(new AppError(500, "An error occurred while fetching the report!"));
+  }
+});
 
-  
-  
-
-  
-  
- 
-    return res.status(200).json({data:studentData})
-
-})
 
 
 
