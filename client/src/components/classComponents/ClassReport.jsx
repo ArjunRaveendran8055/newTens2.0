@@ -44,10 +44,6 @@ function ClassReport() {
     if (searchRoll.length === 5) {
       try {
         const responseReport = await axios.get(`/classReport/GetAllReport/${id}?roll=${searchRoll}`);
-
-        // if()
-        console.log(responseReport.data.data);
-        
         // console.log(responseReport.data.data[0]);
   
         const fetchedReportData = responseReport.data.data[0]?.report?.reportDetail?.report;
@@ -78,11 +74,14 @@ function ClassReport() {
         }));
   
         setIsDataFetched(true);
+        setShowDiv(true);
   
       } catch (error) {
         console.log(error);
         setErrorMsg(error);
+        setStudentName("No student Found")
         setIsDataFetched(false);
+        setShowDiv(false);
       }
     } else {
       setStudentName("");
@@ -266,7 +265,7 @@ function ClassReport() {
         </div>
         <div className="mb-6">
           <label className="block text-lg font-medium text-black mb-1" htmlFor="studentName">
-            Student Name : {reports ? studentName : errorMsg}
+            Student Name : {studentName}
           </label>
         </div>
         {isDataFetched && (
