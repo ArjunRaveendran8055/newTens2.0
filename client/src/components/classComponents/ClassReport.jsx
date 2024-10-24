@@ -26,13 +26,6 @@ function ClassReport() {
   // STATE FOR SAVE BUTTON ENABLE/DISABLE
   const [isDataFetched, setIsDataFetched] = useState(false);
   const [errorMsg, setErrorMsg] = useState("")
-  const [showDiv, setShowDiv] = useState(false)
-
-  const [reports, setReports] = useState({
-    name: "",
-    report: {}
-  })
-
 
   useEffect(() => {
     fetchData()
@@ -53,7 +46,7 @@ function ClassReport() {
         const fetchedStudentName = responseReport.data.data[0]?.student_name;
         const studentId = responseReport.data.data[0]?._id;
 
-         console.log(followUpData);
+        //  console.log(followUpData);
         
   
         // Ensure fetchedReportData is an array or fallback to an empty array
@@ -74,14 +67,12 @@ function ClassReport() {
         }));
   
         setIsDataFetched(true);
-        setShowDiv(true);
   
       } catch (error) {
         console.log(error);
         setErrorMsg(error);
         setStudentName("No student Found")
         setIsDataFetched(false);
-        setShowDiv(false);
       }
     } else {
       setStudentName("");
@@ -221,28 +212,28 @@ function ClassReport() {
 
   // POST REQUEST TO SERVER
   const handleSave = async () => {
-    console.log(reportData);
+    // console.log(reportData);
 
-    //  await axios.post(`/classReport/CreateReport/${id}`,{
-    //   ...reportData,
-    //   studentId,
-    // })
-    //   .then((res)=>{
-    //     console.log(res)
-    //     setSaveMessage("Report saved successfully!");
-    //   })
-    //   .catch((err)=>{
-    //     console.log(err)
-    //     setSaveMessage("Failed to save Report. Please try again.");
-    //   })
+     await axios.post(`/classReport/CreateReport/${id}`,{
+      reportData,
+      studentId,
+    })
+      .then((res)=>{
+        console.log(res)
+        setSaveMessage("Report saved successfully!");
+      })
+      .catch((err)=>{
+        console.log(err)
+        setSaveMessage("Failed to save Report. Please try again.");
+      })
 
-    //   setTimeout(() => {
-    //     setSaveMessage("");
-    //   }, 1000);
+      setTimeout(() => {
+        setSaveMessage("");
+      }, 1000);
+
   };
 
   // console.log(reportData,"ppp");
-
 
 
 
