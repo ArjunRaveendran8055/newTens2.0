@@ -367,10 +367,18 @@ const addMentorResponseController = asyncWrapper(async (req, res, next) => {
   });
 });
 
+
+const uploadAttendanceController=asyncWrapper(
+  async(req,res,next)=>{
+    console.log("hello world")
+  }
+)
+
 module.exports = {
   createReportController,
   getReportController,
   getClassStudentDetailsController,
   addMentorResponseController,
-  getReportForClassController
+  getReportForClassController,
+  uploadAttendanceController
 };

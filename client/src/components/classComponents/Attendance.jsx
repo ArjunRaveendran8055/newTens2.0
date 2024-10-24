@@ -287,19 +287,21 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
   const duplicateRolls = findDuplicates();
 
   const mergeStudentsWithExcelData = () => {
-    return students.map((student) => {
-      const match = ogExcelData.find((data) => data.roll === student.roll_no);
-      if (match) {
-        return {
-          studentId: student.studentId,
-          roll_no: student.roll_no,
-          student_name: student.student_name,
-          duration: match.duration,
-          late: match.joinTime,
-        };
-      } 
-      return null
-    }).filter(item =>item !==null)
+    return students
+      .map((student) => {
+        const match = ogExcelData.find((data) => data.roll === student.roll_no);
+        if (match) {
+          return {
+            studentId: student.studentId,
+            roll_no: student.roll_no,
+            student_name: student.student_name,
+            duration: match.duration,
+            late: match.joinTime,
+          };
+        }
+        return null;
+      })
+      .filter((item) => item !== null);
   };
 
   const handleSubmitData = () => {
@@ -312,7 +314,16 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
       return window.alert("Presence of non-existing rolls");
     }
     const finalData = mergeStudentsWithExcelData();
-    axios.post("/")
+    axios
+      .post("/classReport/uploadAttendance", {
+        finalData,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   return (
