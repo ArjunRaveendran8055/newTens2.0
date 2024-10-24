@@ -12,98 +12,61 @@ const {
 
 const createReportController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
+  const { studentId, reportData } = req.body;
 
-  console.log(req.body);
-  const {
-    roll,
-    name,
-    studentId,
-    report,
-    remark,
-    reportedBy,
-    followUp,
-    response,
-    respondedBy,
-    classs,
-    syllabus,
-    centre,
-    batch,
-    level,
-  } = req.body;
-
+  // Validate IDs and report data
   if (!mongoose.Types.ObjectId.isValid(classId)) {
     throw new AppError(400, "Invalid class Id!");
   }
 
-  if (roll == "" || name == "" || studentId == "" || reportedBy == "") {
-    throw new AppError(400, "Required all fields!");
+  if (!mongoose.Types.ObjectId.isValid(studentId)) {
+    throw new AppError(400, "Invalid student Id!");
   }
 
-  const existingReport = await ClassModel.findOneAndUpdate(
-    { _id: classId, "classreport.roll": roll }, // Query to find the document
-    {
-      $set: {
-        "classreport.$.name": name,
-        "classreport.$.studentId": studentId,
-        "classreport.$.class": classs,
-        "classreport.$.syllabus": syllabus,
-        "classreport.$.centre": centre,
-        "classreport.$.batch": batch,
-        "classreport.$.level": level,
-        "classreport.$.report": report,
-        "classreport.$.remark": remark,
-        "classreport.$.reportedBy": reportedBy,
-        "classreport.$.followUp": followUp,
-        "classreport.$.response": response,
-        "classreport.$.respondedBy": respondedBy,
-        "classreport.$.time": new Date(Date.now()),
-      },
-    },
-    { new: true }
+  if (!reportData || Object.keys(reportData).length === 0) {
+    throw new AppError(400, "Report data is required!");
+  }
+
+  // Find the approved student document by studentId
+  const approvedStudent = await ApproveStudentModel.findOne({ _id: studentId });
+
+  if (!approvedStudent) {
+    throw new AppError(404, "Approved student not found!");
+  }
+
+  // Find the report in the 'report' array by classId
+  const reportIndex = approvedStudent.report.findIndex(
+    (report) => report.classId.toString() === classId
   );
 
-  if (!existingReport) {
-    const newReport = {
-      roll,
-      name,
-      studentId,
-      class: classs,
-      syllabus,
-      centre,
-      batch,
-      level,
-      report,
-      remark,
-      reportedBy,
-      response,
-      respondedBy,
-      followUp,
-      time: new Date(Date.now()),
-    };
-
-    const updatedReport = await ClassModel.findOneAndUpdate(
-      { _id: classId },
-      { $push: { classreport: newReport } },
-      { new: true }
-    );
-
-    if (!updatedReport) {
-      throw new AppError(404, "No class found by ID!");
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Report inserted successfully!",
-      updatedReport,
-    });
+  if (reportIndex === -1) {
+    throw new AppError(404, "Report not found for the given class Id!");
   }
 
+  console.log(reportData);
+
+  // Update the found report object with new reportData
+  approvedStudent.report[reportIndex].reportDetail = {
+    ...approvedStudent.report[reportIndex].reportDetail, // Preserve existing fields
+    ...reportData, // Only update the fields passed in reportData
+  };
+
+  // Mark the report array as modified so Mongoose knows to save changes
+  approvedStudent.markModified(`report.${reportIndex}.reportDetail`);
+
+  // Save the updated document
+  const updatedDocument = await approvedStudent.save();
+
   res.status(200).json({
-    success: true,
-    message: "Report updated successfully!",
-    existingReport,
+    status: "success",
+    message: "Report updated successfully",
+    data: updatedDocument,
   });
 });
+
+
+
+
 
 
 

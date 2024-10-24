@@ -286,7 +286,23 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
   };
   const duplicateRolls = findDuplicates();
 
-  const handleSaveData = () => {
+  const mergeStudentsWithExcelData = () => {
+    return students.map((student) => {
+      const match = ogExcelData.find((data) => data.roll === student.roll_no);
+      if (match) {
+        return {
+          studentId: student.studentId,
+          roll_no: student.roll_no,
+          student_name: student.student_name,
+          duration: match.duration,
+          late: match.joinTime,
+        };
+      } 
+      return null
+    }).filter(item =>item !==null)
+  };
+
+  const handleSubmitData = () => {
     const existingRolls = checkExistingRollNumbers();
 
     if (duplicateRolls.size > 0) {
@@ -295,7 +311,8 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
     if (!existingRolls) {
       return window.alert("Presence of non-existing rolls");
     }
-    window.alert("thu patti...");
+    const finalData = mergeStudentsWithExcelData();
+    axios.post("/")
   };
 
   return (
@@ -409,7 +426,7 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
             <div className="w-full px-2 flex justify-center items-center gap-2 pt-5">
               <button
                 className="cursor-pointer w-44 h-12 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:shadow-lg transition-all group "
-                onClick={handleSaveData}
+                onClick={handleSubmitData}
               >
                 <span className="">Save Data</span>
               </button>
