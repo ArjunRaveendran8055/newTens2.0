@@ -4,7 +4,7 @@ const { ClassModel } = require("../models/ClassModel");
 const mongoose = require("mongoose");
 const { StudentModel } = require("../models/StudentModel");
 const { ApproveStudentModel } = require("../models/ApproveStudentModel");
-const { pipeline } = require("stream");
+const { ObjectId } = require('mongoose').Types;
 const {
   fetchAAbasedClasses,
   fetchMentorBasedClasses,
@@ -64,17 +64,11 @@ const createReportController = asyncWrapper(async (req, res, next) => {
   });
 });
 
-
-
-
-
-
-
 const getReportForClassController = asyncWrapper(async (req, res, next) => {
   const classId = req.params.id;
   const roll = req.query.roll ? req.query.roll.toLowerCase() : "";
   const { id, role } = res.user;
-  
+
   // Validate classId
   if (!mongoose.Types.ObjectId.isValid(classId)) {
     throw new AppError(400, "Invalid class Id!");
@@ -90,51 +84,48 @@ const getReportForClassController = asyncWrapper(async (req, res, next) => {
   try {
     // Perform aggregation query
     const studentData = await ClassModel.aggregate([
-      { $match: { _id: documentId, 'students.roll_no': roll } }, // Match by documentId and roll_no
-      { $unwind: '$students' }, // Unwind students array
-      { $match: { 'students.roll_no': roll } }, // Match specific student after unwind
-      { $replaceRoot: { newRoot: '$students' } }, // Replace root with students object
+      { $match: { _id: documentId, "students.roll_no": roll } }, // Match by documentId and roll_no
+      { $unwind: "$students" }, // Unwind students array
+      { $match: { "students.roll_no": roll } }, // Match specific student after unwind
+      { $replaceRoot: { newRoot: "$students" } }, // Replace root with students object
       { $addFields: { studentIdd: { $toObjectId: "$studentId" } } }, // Convert studentId to ObjectId
-      { 
-        $lookup: { // Lookup in the approvedstudents collection
-          from: 'approvedstudents',
-          localField: 'studentIdd',
-          foreignField: '_id',
-          as: 'approvedStudentInfo'
-        }
+      {
+        $lookup: {
+          // Lookup in the approvedstudents collection
+          from: "approvedstudents",
+          localField: "studentIdd",
+          foreignField: "_id",
+          as: "approvedStudentInfo",
+        },
       },
       { $unwind: "$approvedStudentInfo" }, // Unwind approvedStudentInfo array
       { $replaceRoot: { newRoot: "$approvedStudentInfo" } }, // Replace root with approvedStudentInfo
-      
+
       { $unwind: "$report" }, // Unwind the report array
-      { $match: { 'report.classId': documentId } }, // Match the specific classId in the report with documentId
-      
+      { $match: { "report.classId": documentId } }, // Match the specific classId in the report with documentId
+
       // Project only the report field in the final output
-      { $project: { report: 1, student_name: 1, informedData: 1 } }
+      { $project: { report: 1, student_name: 1, informedData: 1 } },
     ]);
 
     // Check if the aggregation result is empty
     if (!studentData || studentData.length === 0) {
-      throw new AppError(404, "No report found for the specified class or roll number!");
+      throw new AppError(
+        404,
+        "No report found for the specified class or roll number!"
+      );
     }
 
     // Respond with the found data
     return res.status(200).json({
       status: "success",
-      data: studentData
+      data: studentData,
     });
-    
   } catch (error) {
     // Catch any unexpected errors
     next(new AppError(500, "An error occurred while fetching the report!"));
   }
 });
-
-
-
-
-
-
 
 //get all report in that perticular class using classId( tattanam pinned)
 const getReportController = asyncWrapper(async (req, res, next) => {
@@ -367,12 +358,33 @@ const addMentorResponseController = asyncWrapper(async (req, res, next) => {
   });
 });
 
-
-const uploadAttendanceController=asyncWrapper(
-  async(req,res,next)=>{
-    console.log("hello world")
+const uploadAttendanceController = asyncWrapper(async (req, res, next) => {
+  const { classId, finalData } = req.body;
+  if (!mongoose.Types.ObjectId.isValid(classId)) {
+    throw new AppError(400, "Invalid class Id!");
   }
-)
+
+  // Prepare the bulk operations array
+  const bulkOps = finalData.map(entry => ({
+    updateOne: {
+        filter: {
+            _id: new ObjectId(entry.studentId), // Convert string ID to ObjectId
+            "report.classId": new ObjectId(classId) // Target specific classId in report array
+        },
+        update: {
+            $set: {
+                "report.$.attendDuration": entry.duration,
+                "report.$.joinTime": new Date(entry.late)
+            }
+        }
+    }
+}));
+
+const result = await ApproveStudentModel.bulkWrite(bulkOps);
+console.log(result)
+
+  res.status(200).json({ classId, data: finalData });
+});
 
 module.exports = {
   createReportController,
@@ -380,5 +392,5 @@ module.exports = {
   getClassStudentDetailsController,
   addMentorResponseController,
   getReportForClassController,
-  uploadAttendanceController
+  uploadAttendanceController,
 };

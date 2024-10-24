@@ -194,13 +194,13 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
           // Calculate the time offset for Kolkata (UTC+5:30)
           const offset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
           const date = new Date(
-            `${datePart}T${formattedHours}:${formattedMinutes}:${formattedSeconds}.000Z`
+            `${datePart}T${formattedHours}:${formattedMinutes}:${formattedSeconds}`
           );
-          const utcTime = new Date(date.getTime() - offset);
-          console.log("utc time is:", utcTime);
+          
+          console.log("utc time is:", date);
           return {
             ...item,
-            joinTime: `${utcTime}`,
+            joinTime: `${date.toISOString()}`,
           };
         });
         setOgExcelData([...timeCorrectData]);
@@ -314,8 +314,10 @@ export const ExcelPreview = ({ excelData, setExcelData }) => {
       return window.alert("Presence of non-existing rolls");
     }
     const finalData = mergeStudentsWithExcelData();
+    console.log("final data is",finalData)
     axios
       .post("/classReport/uploadAttendance", {
+        classId:id,
         finalData,
       })
       .then((res) => {
