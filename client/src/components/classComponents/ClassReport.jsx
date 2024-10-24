@@ -26,6 +26,7 @@ function ClassReport() {
   // STATE FOR SAVE BUTTON ENABLE/DISABLE
   const [isDataFetched, setIsDataFetched] = useState(false);
   const [errorMsg, setErrorMsg] = useState("")
+  const [showDiv, setShowDiv] = useState(false)
 
   const [reports, setReports] = useState({
     name: "",
@@ -43,6 +44,10 @@ function ClassReport() {
     if (searchRoll.length === 5) {
       try {
         const responseReport = await axios.get(`/classReport/GetAllReport/${id}?roll=${searchRoll}`);
+
+        // if()
+        console.log(responseReport.data.data);
+        
         // console.log(responseReport.data.data[0]);
   
         const fetchedReportData = responseReport.data.data[0]?.report?.reportDetail?.report;
@@ -52,7 +57,7 @@ function ClassReport() {
         const fetchedStudentName = responseReport.data.data[0]?.student_name;
         const studentId = responseReport.data.data[0]?._id;
 
-        console.log(followUpData);
+         console.log(followUpData);
         
   
         // Ensure fetchedReportData is an array or fallback to an empty array
@@ -212,7 +217,7 @@ function ClassReport() {
     }));
   };
 
-  console.log(reportData);
+  // console.log(reportData);
   
 
   // POST REQUEST TO SERVER
@@ -261,10 +266,10 @@ function ClassReport() {
         </div>
         <div className="mb-6">
           <label className="block text-lg font-medium text-black mb-1" htmlFor="studentName">
-            Student Name : {reports ? reports.name : errorMsg}
+            Student Name : {reports ? studentName : errorMsg}
           </label>
         </div>
-        {reports && (
+        {isDataFetched && (
           <div>
             <h2 className="text-xl text-black font-semibold mb-4">Class Report</h2>
 
