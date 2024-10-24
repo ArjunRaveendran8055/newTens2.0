@@ -1,13 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Switch } from "@material-tailwind/react";
+import { TiTick } from "react-icons/ti";
 
 function ClassReport() {
   const { id } = useParams();
   const { user } = useSelector(state => state.user);
-
   // STATE FOR STORE ROLL NUMBER TO SEARCH
   const [searchRoll, setSearchRoll] = useState("")
   // STATE FOR STORE STUDENT NAME
@@ -26,6 +26,7 @@ function ClassReport() {
   // STATE FOR SAVE BUTTON ENABLE/DISABLE
   const [isDataFetched, setIsDataFetched] = useState(false);
   const [errorMsg, setErrorMsg] = useState("")
+  const [isUpdatedMsg, setIsUpdatedMsg] = useState(false);
 
   useEffect(() => {
     fetchData()
@@ -221,6 +222,8 @@ function ClassReport() {
       .then((res)=>{
         console.log(res)
         setSaveMessage("Report saved successfully!");
+        setIsUpdatedMsg(true);
+          setTimeout(() => setIsUpdatedMsg(false), 3000);
       })
       .catch((err)=>{
         console.log(err)
@@ -241,6 +244,16 @@ function ClassReport() {
     <div className="max-w-4xl min-h-screen h-auto mx-auto p-8">
       <h1 className="text-3xl font-bold text-black text-center mb-6">ReportPage</h1>
       <div className="border p-6 bg-white rounded-lg">
+        {isUpdatedMsg &&
+         <span
+         className={`absolute bg-green-200 border border-green-400 px-4 py-2 rounded-md right-5 text-gray-700 flex justify-center items-center z-10 gap-2`}
+       >
+         <div className="flex p-[1px] justify-center items-center rounded-full border border-gray-500">
+           <TiTick className="text-2xl text-green-500" />
+         </div>
+         <span>Report Added</span>
+       </span>
+        }
         <div className="flex sm:flex-col lg:flex-row justify-between items-center mb-4">
           <label className="block text-lg font-medium text-black" htmlFor="studentId">
             Student ID
